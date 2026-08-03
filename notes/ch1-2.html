@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_2 Unity3D 環境介紹筆記。">
+  <title>ch1_2 Unity3D 環境介紹｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁">
+      <span class="brand-mark" aria-hidden="true">U</span>
+      <span><strong>Unity Notes</strong><small>課程筆記</small></span>
+    </a>
+    <nav class="top-actions" aria-label="網站操作">
+      <a class="text-link" href="../course.html">課程目錄</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑">
+      <a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_2</span>
+    </nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">已整理</span></div>
+        <h1>ch1_2 Unity3D 環境介紹</h1>
+        <p>認識 Unity 編輯器主要視窗、GameObject、Component，以及 Play Mode 的基本行為。</p>
+      </header>
+
+      <section class="note-section">
+        <span class="section-index">01</span>
+        <div>
+          <h2>五個主要區塊</h2>
+          <div class="window-map">
+            <div><strong>Scene</strong><span>編輯場景與擺放物件</span></div>
+            <div><strong>Hierarchy</strong><span>管理場景物件與父子層級</span></div>
+            <div><strong>Inspector</strong><span>查看元件並修改屬性</span></div>
+            <div><strong>Game</strong><span>查看攝影機實際輸出</span></div>
+            <div><strong>Project</strong><span>管理圖片、模型、腳本與 Prefab 等資源</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="note-section two-column-note">
+        <span class="section-index">02</span>
+        <div>
+          <h2>核心概念</h2>
+          <dl class="term-list">
+            <div><dt>GameObject</dt><dd>場景中的物件容器。</dd></div>
+            <div><dt>Component</dt><dd>附加在 GameObject 上，賦予物件資料或功能。</dd></div>
+            <div><dt>Rigidbody</dt><dd>讓物件受到 Unity 物理系統與重力影響。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">03</span>
+        <div>
+          <h2>播放控制</h2>
+          <dl class="term-list compact">
+            <div><dt>Play</dt><dd>執行遊戲。</dd></div>
+            <div><dt>Pause</dt><dd>暫停目前執行狀態。</dd></div>
+            <div><dt>Step</dt><dd>逐幀執行，用來觀察每一步變化。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <aside class="callout danger">
+        <span class="callout-label">Play Mode 警告</span>
+        <p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合把正式設定只改在執行狀態裡。</p>
+      </aside>
+
+      <div class="memory-line"><span>一句話記憶</span><strong>Hierarchy 選物件，Scene 編輯，Inspector 改屬性，Game 看結果，Project 管資源。</strong></div>
+
+      <section class="legacy-box">
+        <h2>舊版課程提醒</h2>
+        <p>MonoDevelop、UnityScript／JavaScript、舊版 Preferences、Build Settings、Asset Store 視窗與 Navigation 流程，現在不必照單全收。</p>
+      </section>
+
+      <section class="checklist">
+        <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
+        <label><input type="checkbox" data-check="lesson-5-transform"> 能建立 Cube 或 Sphere，並查看 Transform</label>
+        <label><input type="checkbox" data-check="lesson-5-rigidbody"> 能加入 Rigidbody 並觀察重力效果</label>
+        <label><input type="checkbox" data-check="lesson-5-playmode"> 能驗證 Play Mode 結束後數值恢復</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽">
+        <a href="ch1-1.html"><small>上一堂</small><strong>← ch1_1 開啟新專案</strong></a>
+        <a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
