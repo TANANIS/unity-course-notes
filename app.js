@@ -2,6 +2,7 @@ const root = document.documentElement;
 const themeToggle = document.querySelector('#theme-toggle');
 const themeKey = 'unity-notes-theme';
 const checklistKey = 'unity-notes-checklist';
+const chapterKey = 'unity-notes-open-chapters';
 
 function applyTheme(theme) {
   root.dataset.theme = theme;
@@ -20,16 +21,15 @@ themeToggle?.addEventListener('click', () => {
   applyTheme(nextTheme);
 });
 
-function readChecklistState() {
+function readJson(key, fallback = {}) {
   try {
-    return JSON.parse(localStorage.getItem(checklistKey) || '{}');
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
   } catch {
-    return {};
+    return fallback;
   }
 }
 
-const checklistState = readChecklistState();
-
+const checklistState = readJson(checklistKey);
 document.querySelectorAll('input[data-check]').forEach((checkbox) => {
   const key = checkbox.dataset.check;
   checkbox.checked = Boolean(checklistState[key]);
@@ -39,3 +39,23 @@ document.querySelectorAll('input[data-check]').forEach((checkbox) => {
     localStorage.setItem(checklistKey, JSON.stringify(checklistState));
   });
 });
+
+const chapters = [...document.querySelectorAll('details.chapter')];
+if (chapters.length) {
+  const savedChapters = readJson(chapterKey, []);
+
+  if (savedChapters.length) {
+    chapters.forEach((chapter, index) => {
+      chapter.open = savedChapters.includes(index);
+    });
+  }
+
+  chapters.forEach((chapter) => {
+    chapter.addEventListener('toggle', () => {
+      const openIndexes = chapters
+        .map((item, index) => item.open ? index : null)
+        .filter((index) => index !== null);
+      localStorage.setItem(chapterKey, JSON.stringify(openIndexes));
+    });
+  });
+}
