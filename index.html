@@ -3,214 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="TANA 的 Unity 3D 遊戲課程重修筆記，整理核心概念、操作流程與版本校正。">
-  <title>Unity 3D 課程重修筆記</title>
+  <meta name="description" content="TANA 的 Unity 3D 遊戲課程重修筆記。">
+  <title>Unity 3D 課程筆記</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#main-content">跳至主要內容</a>
 
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="回到首頁">
+    <a class="brand" href="index.html" aria-label="回到首頁">
       <span class="brand-mark" aria-hidden="true">U</span>
-      <span>
-        <strong>Unity 3D</strong>
-        <small>課程重修筆記</small>
-      </span>
+      <span><strong>Unity Notes</strong><small>TANA'S LEARNING LOG</small></span>
     </a>
-
     <nav class="top-actions" aria-label="網站操作">
-      <a class="text-link" href="https://www.udemy.com/course/unity3dc/?couponCode=MT260803G2" target="_blank" rel="noreferrer">課程頁面</a>
       <a class="text-link" href="https://github.com/TANANIS/unity-course-notes" target="_blank" rel="noreferrer">GitHub</a>
-      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">
-        <span aria-hidden="true">◐</span>
-      </button>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
     </nav>
   </header>
 
-  <div class="layout" id="top">
-    <aside class="sidebar" aria-label="課程章節">
-      <div class="sidebar-heading">
-        <span class="eyebrow">Course map</span>
-        <h2>第 1 章</h2>
-        <p>Unity 基礎環境</p>
+  <main id="main-content" class="home-shell">
+    <section class="home-hero">
+      <span class="eyebrow">COURSE LIBRARY</span>
+      <h1>我的 Unity<br><em>課程筆記。</em></h1>
+      <p>課程是入口，章節是地圖，筆記只在需要時打開。終於不再一進門就遭到兩篇長文伏擊。</p>
+    </section>
+
+    <section class="course-library" aria-labelledby="library-title">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">1 COURSE</span>
+          <h2 id="library-title">目前課程</h2>
+        </div>
       </div>
 
-      <nav class="lesson-nav">
-        <a href="#lesson-4">
-          <span class="lesson-number">04</span>
-          <span>開啟新專案</span>
-          <span class="status-dot" title="已完成" aria-label="已完成"></span>
-        </a>
-        <a href="#lesson-5">
-          <span class="lesson-number">05</span>
-          <span>Unity 3D 環境介紹</span>
-          <span class="status-dot" title="已完成" aria-label="已完成"></span>
-        </a>
-      </nav>
-
-      <div class="progress-card" aria-label="目前學習進度">
-        <div class="progress-label">
-          <span>目前進度</span>
-          <strong>2 / 2</strong>
+      <a class="course-card" href="course.html">
+        <div class="course-visual" aria-hidden="true">
+          <span class="unity-cube">U</span>
+          <span class="course-code">UNITY / C#</span>
         </div>
-        <div class="progress-track" aria-hidden="true">
-          <span style="width: 100%"></span>
-        </div>
-        <small>本次已整理課程</small>
-      </div>
-    </aside>
-
-    <main id="main-content">
-      <section class="hero">
-        <div>
-          <span class="eyebrow">TANA'S LEARNING LOG</span>
-          <h1>重新把 Unity<br><em>學回自己手上。</em></h1>
-          <p class="hero-copy">這裡不保存混亂逐字稿，只留下真正需要理解、實作與日後查找的內容。</p>
-        </div>
-
-        <div class="hero-meta">
-          <div>
-            <span>筆記方向</span>
-            <strong>理解優先</strong>
+        <div class="course-card-body">
+          <div class="course-status-row">
+            <span class="status-pill">重修中</span>
+            <span>2 堂筆記</span>
           </div>
-          <div>
-            <span>課程狀態</span>
-            <strong>重修中</strong>
+          <h3>Unity3D 遊戲設計使用 C#</h3>
+          <p>從 Unity 基礎環境、C# 語法，到 3D 與 2D 遊戲實作。筆記同步標示舊版課程內容與現代 Unity 差異。</p>
+          <div class="course-progress" aria-label="課程筆記進度 2 之 198">
+            <div><span>筆記進度</span><strong>2 / 198</strong></div>
+            <div class="progress-track"><span style="width: 1.02%"></span></div>
           </div>
-          <div>
-            <span>技術版本</span>
-            <strong>舊課程校正</strong>
-          </div>
+          <span class="enter-course">進入課程 <b>→</b></span>
         </div>
-      </section>
+      </a>
+    </section>
+  </main>
 
-      <section class="note-principle" aria-labelledby="principle-title">
-        <span class="section-index">00</span>
-        <div>
-          <h2 id="principle-title">這份筆記怎麼用</h2>
-          <p>每堂課只保留五件事：課程目的、核心概念、操作流程、版本校正，以及看完後應該能做到什麼。影片是輸入，實作才是記憶。</p>
-        </div>
-      </section>
-
-      <article class="lesson" id="lesson-4">
-        <header class="lesson-header">
-          <div class="lesson-kicker">
-            <span>Lesson 04</span>
-            <span class="complete-badge">已整理</span>
-          </div>
-          <h2>ch1_1 開啟新專案</h2>
-          <p>認識 Unity Hub 中建立、開啟與管理專案的基本流程。</p>
-        </header>
-
-        <div class="content-grid">
-          <section class="content-card">
-            <h3>核心操作</h3>
-            <dl class="term-list">
-              <div><dt>Projects</dt><dd>查看並開啟已存在於清單中的專案。</dd></div>
-              <div><dt>New</dt><dd>建立新的 Unity 專案。</dd></div>
-              <div><dt>Open</dt><dd>開啟未列在 Hub 清單中的既有專案資料夾。</dd></div>
-            </dl>
-          </section>
-
-          <section class="content-card accent-card">
-            <h3>建立流程</h3>
-            <ol class="step-list">
-              <li><span>01</span>選擇 New Project</li>
-              <li><span>02</span>使用清楚一致的英文命名</li>
-              <li><span>03</span>選擇固定、好找且會備份的路徑</li>
-              <li><span>04</span>依需求選擇 2D 或 3D 範本</li>
-              <li><span>05</span>建立專案</li>
-            </ol>
-          </section>
-        </div>
-
-        <aside class="callout warning">
-          <span class="callout-label">觀念校正</span>
-          <p>「C 槽容易損毀」並不精確。真正要控制的是系統重灌、容量不足、資料散落與沒有備份的風險。重點不是迷信磁碟代號，而是固定路徑、版本控制與備份。</p>
-        </aside>
-
-        <div class="memory-line">
-          <span>一句話記憶</span>
-          <strong>New Project → 命名 → 選路徑 → 選 2D／3D → Create</strong>
-        </div>
-
-        <section class="checklist">
-          <h3>完成檢查</h3>
-          <label><input type="checkbox" data-check="lesson-4-create"> 能建立新的 3D 專案</label>
-          <label><input type="checkbox" data-check="lesson-4-open"> 知道如何用 Open 找回既有專案</label>
-          <label><input type="checkbox" data-check="lesson-4-path"> 知道自己的 Unity 專案固定存放位置</label>
-        </section>
-      </article>
-
-      <article class="lesson" id="lesson-5">
-        <header class="lesson-header">
-          <div class="lesson-kicker">
-            <span>Lesson 05</span>
-            <span class="complete-badge">已整理</span>
-          </div>
-          <h2>ch1_2 Unity 3D 環境介紹</h2>
-          <p>認識 Unity 編輯器主要視窗、GameObject、Component，以及 Play Mode 的基本行為。</p>
-        </header>
-
-        <section class="window-map" aria-label="Unity 五個主要視窗">
-          <div><strong>Scene</strong><span>編輯場景與擺放物件</span></div>
-          <div><strong>Hierarchy</strong><span>管理場景物件與父子層級</span></div>
-          <div><strong>Inspector</strong><span>查看元件並修改屬性</span></div>
-          <div><strong>Game</strong><span>查看攝影機實際輸出</span></div>
-          <div><strong>Project</strong><span>管理專案資源</span></div>
-        </section>
-
-        <div class="content-grid">
-          <section class="content-card">
-            <h3>核心概念</h3>
-            <dl class="term-list">
-              <div><dt>GameObject</dt><dd>場景中的物件容器。</dd></div>
-              <div><dt>Component</dt><dd>附加在 GameObject 上，賦予物件資料或功能。</dd></div>
-              <div><dt>Rigidbody</dt><dd>讓物件受 Unity 物理系統與重力影響。</dd></div>
-            </dl>
-          </section>
-
-          <section class="content-card">
-            <h3>播放控制</h3>
-            <dl class="term-list">
-              <div><dt>Play</dt><dd>執行遊戲。</dd></div>
-              <div><dt>Pause</dt><dd>暫停目前執行狀態。</dd></div>
-              <div><dt>Step</dt><dd>逐幀執行，觀察每一步變化。</dd></div>
-            </dl>
-          </section>
-        </div>
-
-        <aside class="callout danger">
-          <span class="callout-label">Play Mode 警告</span>
-          <p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合把正式設定只改在執行狀態裡。</p>
-        </aside>
-
-        <div class="memory-line">
-          <span>一句話記憶</span>
-          <strong>Hierarchy 選物件，Scene 編輯，Inspector 改屬性，Game 看結果，Project 管資源。</strong>
-        </div>
-
-        <section class="legacy-box">
-          <h3>舊版課程提醒</h3>
-          <p>MonoDevelop、UnityScript／JavaScript、舊版 Preferences、Build Settings、Asset Store 視窗與 Navigation 流程，現在不必照單全收。</p>
-        </section>
-
-        <section class="checklist">
-          <h3>完成檢查</h3>
-          <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
-          <label><input type="checkbox" data-check="lesson-5-transform"> 能建立 Cube 或 Sphere，並查看 Transform</label>
-          <label><input type="checkbox" data-check="lesson-5-rigidbody"> 能加入 Rigidbody 並觀察重力效果</label>
-          <label><input type="checkbox" data-check="lesson-5-playmode"> 能驗證 Play Mode 結束後數值恢復</label>
-        </section>
-      </article>
-
-      <footer class="site-footer">
-        <p>整理原則：不抄字幕，不製造虛假熟練，只留下能用的理解。</p>
-        <a href="#top">回到頂端 ↑</a>
-      </footer>
-    </main>
-  </div>
+  <footer class="global-footer">
+    <p>不保存逐字稿，只留下能重新使用的理解。</p>
+  </footer>
 </body>
 </html>
