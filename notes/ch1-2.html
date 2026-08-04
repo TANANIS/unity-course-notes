@@ -1,1 +1,352 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Unity 課程 ch1_2 Unity3D 環境介紹筆記。"><title>ch1_2 Unity3D 環境介紹｜Unity 課程筆記</title><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../screenshots.css"><script src="../app.js" defer></script></head><body><a class="skip-link" href="#main-content">跳至主要內容</a><header class="topbar"><a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a><nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav></header><main id="main-content" class="note-shell"><nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_2</span></nav><article class="lesson-note"><header class="note-header"><div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">整理中</span></div><h1>ch1_2 Unity3D 環境介紹</h1><p>認識 Unity 的主要選單與視窗，並建立 Asset、GameObject、Component、物理元件、AI Navigation 與 Android 建置工具鏈的基本概念。</p></header><section class="note-section"><span class="section-index">01</span><div><h2>File 選單：Scene、Project 與建置</h2><dl class="term-list"><div><dt>Save / Save As</dt><dd>儲存目前的 Scene；Scene 會以 <code>.unity</code> 場景資產存在專案中。</dd></div><div><dt>Save Project</dt><dd>儲存專案範圍的資產與設定變更，不應拿來取代目前 Scene 的儲存。</dd></div><div><dt>Build Profiles</dt><dd>設定要輸出的目標平台與建置選項，例如 Windows、Web、Android 或其他已安裝支援模組的平台。</dd></div><div><dt>Build And Run</dt><dd>建置遊戲，並在完成後直接執行。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/file-menu-build-profiles.svg" width="312" height="302" loading="lazy" alt="Unity 6 的 File 選單，包含 Save、Save Project、Build Profiles 與 Build And Run"><figcaption><strong>Unity 6 File 選單。</strong>舊版課程中的 Build Settings，在目前介面已改為 Build Profiles。</figcaption></figure></div></section><aside class="callout danger"><span class="callout-label">版本差異</span><p>老師使用的舊版 Unity 將建置入口稱為 <strong>Build Settings</strong>；Unity 6 已改為 <strong>Build Profiles</strong>。新版可以替不同平台保存各自的建置設定檔。</p></aside><section class="note-section"><span class="section-index">02</span><div><h2>Edit 選單與 Preferences</h2><dl class="term-list"><div><dt>Cut / Copy / Paste</dt><dd>對目前選取的物件或資產進行剪下、複製與貼上；常用快捷鍵分別為 <code>Ctrl+X</code>、<code>Ctrl+C</code>、<code>Ctrl+V</code>。</dd></div><div><dt>Duplicate</dt><dd>複製目前選取內容，快捷鍵為 <code>Ctrl+D</code>。</dd></div><div><dt>Project Settings</dt><dd>修改目前專案的設定，例如輸入、物理、品質、標籤與平台相關設定。</dd></div><div><dt>Preferences</dt><dd>修改這台電腦上 Unity Editor 的個人偏好，例如腳本編輯器、顏色、快取與外部工具。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/edit-menu-unity6.svg" width="396" height="657" loading="lazy" alt="Unity 6 的 Edit 選單，底部包含 Project Settings、Preferences 與 Shortcuts"><figcaption><strong>Unity 6 Edit 選單。</strong>一般編輯操作、選取工具、Project Settings 與 Preferences 都集中在此。</figcaption></figure></div></section><section class="note-section"><span class="section-index">03</span><div><h2>External Tools：程式編輯器與 Android 工具</h2><dl class="term-list"><div><dt>External Script Editor</dt><dd><strong>外部腳本編輯器。</strong>選擇雙擊 C# 腳本時要開啟的程式。本筆記使用 Visual Studio Code。</dd></div><div><dt>Android 工具的位置</dt><dd>Unity 6 仍從 <strong>Edit → Preferences → External Tools → Android</strong> 查看 SDK、NDK、JDK 與 Gradle，並沒有搬到 Build Profiles。</dd></div><div><dt>Build Profile 的作用</dt><dd>切換 Android Profile 只會把 Android 設為目前專案的有效建置目標，不是顯示 External Tools Android 區塊的開關。</dd></div><div><dt>Android 區塊的前提</dt><dd>目前 Unity Editor 必須先安裝 Android Build Support、Android SDK &amp; NDK Tools 與 OpenJDK。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/legacy-preferences-external-tools.svg" width="692" height="586" loading="lazy" alt="老師舊版 Unity Preferences 的 External Tools，包含 MonoDevelop 與 Android SDK、JDK、NDK 路徑"><figcaption><strong>老師使用的舊版 External Tools。</strong>舊畫面直接列出 MonoDevelop，以及 Android SDK、JDK、NDK 的路徑欄位。</figcaption></figure><figure class="lesson-figure"><img src="../assets/ch1-2/build-profiles-windows-current.svg" width="731" height="608" loading="lazy" alt="目前 Unity 6 Build Profiles 視窗，Windows 為 Active，Android 列在平台清單中"><figcaption><strong>目前的 Build Profiles。</strong>Windows 是 Active 平台。Android 出現在左側清單，不代表 Android Build Support 與工具鏈已經安裝完成。</figcaption></figure><figure class="lesson-figure"><img src="../assets/ch1-2/preferences-external-tools-current.svg" width="832" height="614" loading="lazy" alt="目前 Unity 6 Preferences 的 External Tools，只顯示 VS Code 與版本控制工具，沒有 Android SDK、NDK、JDK 區塊"><figcaption><strong>目前的 External Tools。</strong>畫面沒有 Android SDK、NDK、JDK 區塊，通常表示這個 Editor 尚未安裝完整的 Android Build Support 與相關工具。</figcaption></figure></div></section><aside class="callout danger"><span class="callout-label">Android 區塊沒有出現</span><p>到 <strong>Unity Hub → Installs → 該 Editor 版本的設定選單 → Add modules</strong>，確認已安裝 <strong>Android Build Support</strong>、<strong>Android SDK &amp; NDK Tools</strong> 與 <strong>OpenJDK</strong>，完成後重新啟動 Unity。單純切換 Android Build Profile 不會補裝這些工具。</p></aside><section class="note-section"><span class="section-index">04</span><div><h2>Android 建置工具名詞</h2><dl class="term-list"><div><dt>SDK</dt><dd><strong>Software Development Kit，軟體開發套件。</strong>Android SDK 提供平台 API、建置工具與裝置連線工具，是製作 Android App 所需的基礎工具箱。</dd></div><div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>你的理解基本正確，它負責 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，即使主要寫 C#，仍可能需要 NDK。</dd></div><div><dt>JDK</dt><dd><strong>Java Development Kit，Java 開發套件。</strong>Android 建置流程依賴 Java 生態工具；這不代表遊戲邏輯必須改用 Java 寫。</dd></div><div><dt>Gradle</dt><dd><strong>建置自動化工具。</strong>安排編譯、處理相依套件、整合資源，最後封裝成 APK 或 AAB。</dd></div><div><dt>IL2CPP</dt><dd><strong>Intermediate Language To C++。</strong>Unity 的 AOT 編譯後端，將 C# 編譯後的中間語言轉成 C++，再針對目標平台編譯成原生程式。</dd></div></dl></div></section><div class="memory-line"><span>工具鏈關係</span><strong>C# 可經 IL2CPP 轉成 C++；NDK 編譯原生程式，SDK 提供 Android 平台工具，JDK 與 Gradle 協助完成建置與封裝。</strong></div><section class="note-section"><span class="section-index">05</span><div><h2>Assets 選單：專案資產與匯入</h2><dl class="term-list"><div><dt>Asset</dt><dd><strong>專案資產。</strong>存在 Project 視窗與 <code>Assets</code> 資料夾中的檔案，例如 Scene、Script、Material、Texture、Model、Audio、Prefab 與 Input Actions。</dd></div><div><dt>Assets → Create</dt><dd>建立新的專案資產，例如 Folder、Material、MonoBehaviour Script、Physics Material 或 Input Actions。它建立的是檔案或資源，不是場景裡的物件。</dd></div><div><dt>Import Package</dt><dd>通常用來匯入 <code>.unitypackage</code>。套件可以包含 C# 腳本、Editor 工具、Prefab、材質、貼圖、模型、音效或 UI 資源；是否算「外掛」取決於裡面的內容。</dd></div><div><dt>Import New Asset</dt><dd>把外部檔案匯入目前專案，例如圖片、模型、音訊或其他 Unity 支援的檔案格式。</dd></div><div><dt>Package Manager</dt><dd>現代 Unity 安裝官方套件、UPM 套件、Git 套件與部分第三方工具的主要入口。它和匯入傳統 <code>.unitypackage</code> 是兩套不同流程。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/assets-menu-unity6.svg" width="330" height="582" loading="lazy" alt="Unity 6 Assets 選單，包含 Create、Import Package、Import New Asset、Refresh 與 Reimport"><figcaption><strong>Assets 選單。</strong>主要處理 Project 裡的資產建立、匯入、重新匯入與相依關係。</figcaption></figure><figure class="lesson-figure"><img src="../assets/ch1-2/assets-create-menu-unity6.svg" width="751" height="576" loading="lazy" alt="Unity 6 Assets Create 子選單，可建立 Folder、Material、MonoBehaviour Script、Physics Material 與 Input Actions"><figcaption><strong>Assets → Create。</strong>Material、Script、Physics Material 與 Input Actions 都是專案資產，不會因為建立後就自動出現在 Scene 裡。</figcaption></figure></div></section><section class="note-section"><span class="section-index">06</span><div><h2>GameObject 選單：建立場景物件與階層</h2><dl class="term-list"><div><dt>GameObject</dt><dd><strong>場景物件容器。</strong>Hierarchy 裡的每個項目都是 GameObject；它透過附加的 Component 取得外觀與行為。</dd></div><div><dt>3D Object</dt><dd>建立 Cube、Sphere、Capsule、Plane 等常用 3D 場景物件。這些 GameObject 通常會帶有 Mesh、Renderer 與 Collider 等 Component。</dd></div><div><dt>Create Empty</dt><dd>建立只有 Transform 的 GameObject。它沒有 Renderer，所以在 Game 視窗中看不到，但仍然是真正的 GameObject，常用來整理階層、當座標基準或掛管理腳本。</dd></div><div><dt>Create Empty Child</dt><dd>在目前選取物件之下建立子 GameObject。</dd></div><div><dt>Create Empty Parent</dt><dd>替目前選取物件新增一層父 GameObject，方便把多個物件當成群組操作。</dd></div><div><dt>Parent / Child</dt><dd>父子關係主要透過 Transform 階層運作。移動、旋轉或縮放父物件通常會連帶影響子物件；修改子物件不會反向改變父物件。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/gameobject-menu-unity6.svg" width="292" height="586" loading="lazy" alt="Unity 6 GameObject 選單，可建立 Empty、Empty Child、Empty Parent、2D、3D、Light、Audio、UI 與 Camera"><figcaption><strong>GameObject 選單。</strong>這裡建立的是 Scene 與 Hierarchy 裡的物件，包括看得見的模型，也包括 Empty、Camera、Light、Audio 與管理用途物件。</figcaption></figure></div></section><aside class="callout danger"><span class="callout-label">不要用「看得見」判斷 GameObject</span><p><strong>所有 Hierarchy 項目都是 GameObject，不論是否能直接看見。</strong>Empty、Camera、Light、Audio Source 或純腳本管理物件都可能沒有可見外觀。反過來，Project 裡的 Texture、Material、Model 檔案雖然可以預覽，仍只是 Asset；把模型拖進 Scene 後，Unity 才會建立承載它的 GameObject。</p></aside><div class="memory-line"><span>核心區分</span><strong>Assets → Create 建立專案檔案；GameObject 選單建立場景實例。Empty 不是「非 GameObject」，而是沒有可見 Renderer 的 GameObject。</strong></div><section class="note-section"><span class="section-index">07</span><div><h2>Component：附加在 GameObject 上的功能模組</h2><dl class="term-list"><div><dt>Component</dt><dd><strong>元件／功能模組。</strong>它不是單純的「效果」，而是附加在 GameObject 上的資料與功能。Renderer 提供外觀、Audio Source 播放聲音、Collider 定義碰撞形狀，MonoBehaviour 腳本則提供自訂行為。</dd></div><div><dt>附屬關係</dt><dd>Component 必須屬於某個 GameObject；不能單獨漂浮在 Scene 裡。每個 GameObject 都一定有 Transform，其他 Component 則依需求自由組合。</dd></div><div><dt>加入方式</dt><dd>先選取 GameObject，再從上方 <strong>Component</strong> 選單，或 Inspector 底部的 <strong>Add Component</strong> 搜尋並加入。</dd></div><div><dt>Scripts</dt><dd>繼承 MonoBehaviour 的 C# 腳本可以作為自訂 Component 附加到 GameObject，讓物件獲得自己撰寫的行為。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/component-menu-unity6.svg" width="245" height="535" loading="lazy" alt="Unity 6 Component 選單，依 Animation、Audio、Physics、Rendering 與 Scripts 等類別整理元件"><figcaption><strong>Component 選單。</strong>這些分類不是用來建立新的 GameObject，而是替目前選取的 GameObject 增加功能。</figcaption></figure><figure class="lesson-figure"><img src="../assets/ch1-2/component-physics-menu-unity6.svg" width="452" height="564" loading="lazy" alt="Unity 6 Component Physics 子選單，包含 Rigidbody、Character Controller、Collider、Joint 與 Constant Force"><figcaption><strong>Component → Physics。</strong>Rigidbody、Character Controller 與各種 Collider 都屬於物理相關 Component，但用途不同，不能當成同一種東西。</figcaption></figure></div></section><section class="note-section two-column-note"><span class="section-index">08</span><div><h2>常見物理 Component</h2><dl class="term-list"><div><dt>Rigidbody<br><small>剛體</small></dt><dd>讓 GameObject 的移動與旋轉可由物理引擎控制，能接受力與扭矩。<strong>Use Gravity 預設開啟</strong>，所以常會向下掉，但重力可以關閉；Rigidbody 並不等於「只有重力」。</dd></div><div><dt>Collider<br><small>碰撞體</small></dt><dd>定義物理系統使用的隱形碰撞形狀，例如 Box、Sphere、Capsule。Collider 本身不讓物件受重力；沒有 Rigidbody 的 Collider 通常是靜態碰撞體。</dd></div><div><dt>Rigidbody + Collider</dt><dd>常見的動態物理組合。Rigidbody 負責如何移動與受力，Collider 負責在哪裡碰撞。只有 Rigidbody 卻沒有合適 Collider，通常不會依照外觀產生實體碰撞。</dd></div><div><dt>Character Controller</dt><dd>偏向第一／第三人稱角色的膠囊形碰撞控制器，能處理牆面滑動、斜坡與階梯。它通常由腳本命令移動，<strong>不會自動對力作出反應，也不會自動替你處理重力</strong>。</dd></div><div><dt>Joint</dt><dd>關節元件，用來限制或連接 Rigidbody 的相對運動，例如 Hinge Joint 模擬鉸鏈，Fixed Joint 固定兩個剛體。</dd></div></dl></div></section><aside class="callout danger"><span class="callout-label">三個概念不要混在一起</span><p><strong>Rigidbody 管受力與物理移動，Collider 管碰撞形狀，Character Controller 管腳本驅動的角色碰撞移動。</strong>它們都在 Physics 分類，不代表用途相同。</p></aside><section class="note-section"><span class="section-index">09</span><div><h2>Window 選單與常用視窗快捷鍵</h2><dl class="term-list compact"><div><dt>Ctrl+1</dt><dd>切換或聚焦 Scene 視窗。</dd></div><div><dt>Ctrl+2</dt><dd>切換或聚焦 Game 視窗。</dd></div><div><dt>Ctrl+3</dt><dd>切換或聚焦 Inspector 視窗。</dd></div><div><dt>Ctrl+4</dt><dd>切換或聚焦 Hierarchy 視窗。</dd></div><div><dt>Ctrl+5</dt><dd>切換或聚焦 Project 視窗。</dd></div><div><dt>Ctrl+Shift+C</dt><dd>切換或聚焦 Console 視窗。</dd></div><div><dt>Animation</dt><dd>可從 <strong>Window → Animation → Animation</strong> 開啟。舊版常見預設為 <code>Ctrl+6</code>，但實際綁定應以 <strong>Edit → Shortcuts</strong> 為準。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/window-general-shortcuts-unity6.svg" width="609" height="441" loading="lazy" alt="Unity 6 Window General 選單，列出 Scene、Game、Inspector、Hierarchy、Project 與 Console 快捷鍵"><figcaption><strong>Window → General。</strong>目前畫面明確列出 Ctrl+1 到 Ctrl+5；其他快捷鍵應以 Shortcuts Manager 為準。</figcaption></figure></div></section><section class="note-section"><span class="section-index">10</span><div><h2>AI Navigation：建立路面與讓角色尋路</h2><dl class="term-list"><div><dt>NavMesh</dt><dd><strong>Navigation Mesh，導航網格。</strong>描述場景中哪些區域可供角色行走；它不是敵人的思考邏輯，而是尋路時使用的道路資料。</dd></div><div><dt>NavMesh Agent</dt><dd>附加在敵人或 NPC 上，負責沿著 NavMesh 計算路徑並移動。腳本仍要決定追誰、何時追、何時停止，Agent 不會自己產生 AI 決策。</dd></div><div><dt>NavMesh Obstacle</dt><dd>代表導航中的障礙物。開啟 Carve 時，可以在 NavMesh 上暫時挖出不可通行區域。</dd></div><div><dt>NavMesh Surface</dt><dd>由 <strong>AI Navigation</strong> 套件提供，負責收集場景幾何並 Bake 可行走的 NavMesh。可把它理解成「建立道路」的元件。</dd></div><div><dt>Install AI Navigation Package</dt><dd>代表目前能看到內建的 NavMesh Agent，但專案尚未安裝完整的 AI Navigation 套件。安裝後才能使用 NavMesh Surface、Modifier、Link 等新版工作流元件。</dd></div></dl><figure class="lesson-figure"><img src="../assets/ch1-2/navmesh-agent-install-package.svg" width="393" height="411" loading="lazy" alt="Nav Mesh Agent Inspector，上方顯示 Install AI Navigation Package 按鈕"><figcaption><strong>目前的 Nav Mesh Agent。</strong>上方按鈕表示 AI Navigation 套件尚未安裝；Agent 設定本身已存在，但沒有可用 NavMesh 時仍無路可走。</figcaption></figure></div></section><aside class="callout danger"><span class="callout-label">敵人追蹤不一定要用 NavMesh</span><p>單純朝玩家直線移動，可以用 Transform、Character Controller 或 Rigidbody 完成，不必安裝 AI Navigation。需要敵人繞牆、沿走廊、走斜坡或在複雜場景中找路時，才適合使用 <strong>AI Navigation + NavMesh Surface + NavMesh Agent</strong>。</p></aside><div class="memory-line"><span>導航關係</span><strong>AI 腳本決定「要不要追」；NavMesh Surface 建立道路；NavMesh Agent 負責沿道路走；NavMesh Obstacle 負責阻擋道路。</strong></div><section class="note-section"><span class="section-index">11</span><div><h2>五個主要區塊</h2><div class="window-map"><div><strong>Scene</strong><span>編輯場景與擺放物件</span></div><div><strong>Hierarchy</strong><span>管理場景 GameObject 與父子層級</span></div><div><strong>Inspector</strong><span>查看 Component 並修改屬性</span></div><div><strong>Game</strong><span>查看攝影機實際輸出</span></div><div><strong>Project</strong><span>管理圖片、模型、腳本與 Prefab 等 Asset</span></div></div></div></section><section class="note-section two-column-note"><span class="section-index">12</span><div><h2>核心概念</h2><dl class="term-list"><div><dt>Asset</dt><dd>儲存在專案中的檔案或資源。</dd></div><div><dt>GameObject</dt><dd>存在 Scene 與 Hierarchy 中的物件容器。</dd></div><div><dt>Component</dt><dd>附加在 GameObject 上，賦予資料、外觀或行為。</dd></div><div><dt>Transform</dt><dd>每個 GameObject 都必定擁有，記錄位置、旋轉、縮放與父子階層。</dd></div><div><dt>Prefab</dt><dd>可重複使用的 GameObject 結構範本，本身以 Asset 形式存在 Project 中。</dd></div><div><dt>Rigidbody</dt><dd>讓 GameObject 的移動可交由物理系統模擬的 Component。</dd></div><div><dt>Collider</dt><dd>定義 GameObject 在物理世界中的碰撞形狀。</dd></div><div><dt>NavMesh Agent</dt><dd>讓 GameObject 沿著 NavMesh 尋路移動的 Component。</dd></div></dl></div></section><section class="note-section"><span class="section-index">13</span><div><h2>播放控制</h2><dl class="term-list compact"><div><dt>Play</dt><dd>執行遊戲。</dd></div><div><dt>Pause</dt><dd>暫停目前執行狀態。</dd></div><div><dt>Step</dt><dd>逐幀執行，用來觀察每一步變化。</dd></div></dl></div></section><aside class="callout danger"><span class="callout-label">Play Mode 警告</span><p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合把正式設定只改在執行狀態裡。</p></aside><section class="legacy-box"><h2>舊版課程提醒</h2><p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。舊版 Navigation 視窗的 Bake 工作流，現代版本主要改由 AI Navigation 套件中的 NavMesh Surface 在 Inspector 內完成。</p></section><section class="checklist"><h2>完成檢查</h2><label><input type="checkbox" data-check="lesson-5-file-save"> 能說明 Save Scene 與 Save Project 的用途差異</label><label><input type="checkbox" data-check="lesson-5-build-profile"> 能說明 Switch Profile 與安裝平台模組是兩件不同的事</label><label><input type="checkbox" data-check="lesson-5-preferences"> 能區分 Preferences 與 Project Settings</label><label><input type="checkbox" data-check="lesson-5-android-tools"> 能用自己的話解釋 SDK、NDK、JDK、Gradle 與 IL2CPP</label><label><input type="checkbox" data-check="lesson-5-assets"> 能區分 Asset、Import Package 與 Package Manager</label><label><input type="checkbox" data-check="lesson-5-assets-gameobjects"> 能說明 Assets → Create 與 GameObject 選單的差異</label><label><input type="checkbox" data-check="lesson-5-empty"> 能解釋 Empty GameObject 為何看不見但仍是 GameObject</label><label><input type="checkbox" data-check="lesson-5-parent-child"> 能說明父子 GameObject 的 Transform 關係</label><label><input type="checkbox" data-check="lesson-5-components"> 能說明 GameObject 與 Component 的容器／功能關係</label><label><input type="checkbox" data-check="lesson-5-physics-components"> 能區分 Rigidbody、Collider 與 Character Controller</label><label><input type="checkbox" data-check="lesson-5-windows-shortcuts"> 能使用 Ctrl+1 到 Ctrl+5 切換主要視窗，並知道快捷鍵可自訂</label><label><input type="checkbox" data-check="lesson-5-navigation"> 能區分 NavMesh Surface、NavMesh Agent 與 NavMesh Obstacle 的用途</label><label><input type="checkbox" data-check="lesson-5-navigation-choice"> 能判斷直線追蹤與 NavMesh 尋路何時各自適用</label><label><input type="checkbox" data-check="lesson-5-playmode"> 能驗證 Play Mode 結束後數值恢復</label></section><nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-1.html"><small>上一堂</small><strong>← ch1_1 開啟新專案</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav></article></main></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_2 Unity3D 環境介紹筆記。">
+  <title>ch1_2 Unity3D 環境介紹｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁">
+      <span class="brand-mark" aria-hidden="true">U</span>
+      <span><strong>Unity Notes</strong><small>課程筆記</small></span>
+    </a>
+    <nav class="top-actions" aria-label="網站操作">
+      <a class="text-link" href="../course.html">課程目錄</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑">
+      <a href="../index.html">課程首頁</a><span>/</span>
+      <a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span>
+      <span>ch1_2</span>
+    </nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker">
+          <span>LESSON 05</span>
+          <span class="complete-badge">整理中</span>
+        </div>
+        <h1>ch1_2 Unity3D 環境介紹</h1>
+        <p>先建立 Unity 編輯器的整體地圖，再理解 Asset、GameObject、Component，以及物理、導航與建置工具放在哪裡。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div>
+          <span class="eyebrow">READING MAP</span>
+          <h2 id="lesson-map-title">這堂課不用一次記完所有選單</h2>
+          <p>先掌握五個主要視窗與三層核心概念，再把物理、導航、Android 當成需要時再打開的工具箱。否則一進頁面就被 SDK、Collider、NavMesh 圍毆，誰都不會比較聰明。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#editor-map"><strong>01</strong><span>編輯器地圖<small>五個主要視窗</small></span></a>
+          <a href="#object-model"><strong>02</strong><span>核心物件模型<small>Asset → GameObject → Component</small></span></a>
+          <a href="#daily-tools"><strong>03</strong><span>日常工具<small>選單、建立與快捷鍵</small></span></a>
+          <a href="#physics-navigation"><strong>04</strong><span>物理與導航<small>需要時再展開</small></span></a>
+          <a href="#build-environment"><strong>05</strong><span>建置與環境<small>Build Profiles、Android</small></span></a>
+        </nav>
+      </section>
+
+      <details class="note-group" id="editor-map" open>
+        <summary>
+          <span class="group-index">01</span>
+          <span class="group-title"><strong>先建立編輯器地圖</strong><small>Scene、Hierarchy、Inspector、Game、Project</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <div class="window-map window-map-detailed">
+            <div><strong>Scene</strong><span>開發者編輯遊戲世界的工作區。用來擺放、移動、旋轉與縮放 GameObject。這是施工視角，不是玩家畫面。</span></div>
+            <div><strong>Hierarchy</strong><span>列出目前 Scene 裡的所有 GameObject，並顯示父子階層。它管理場景物件，不管理整個專案檔案。</span></div>
+            <div><strong>Inspector</strong><span>顯示目前選取項目的詳細資料。選到 GameObject 會看到 Component；選到 Asset 會看到匯入與設定內容。</span></div>
+            <div><strong>Game</strong><span>顯示 Camera 實際輸出的畫面，接近玩家執行遊戲時看到的結果。Scene 看得到，不代表 Game 一定拍得到。</span></div>
+            <div><strong>Project</strong><span>管理整個專案的 Asset，例如 Scene、Script、Material、Texture、Model、Audio、Animation 與 Prefab。</span></div>
+          </div>
+
+          <div class="memory-line inset-memory">
+            <span>一句話記憶</span>
+            <strong>Project 管素材，Hierarchy 管物件，Scene 管擺放，Inspector 管屬性，Game 看結果。</strong>
+          </div>
+
+          <div class="concept-flow" aria-label="五個視窗之間的關係">
+            <div><span>Project</span><small>素材與檔案</small></div>
+            <b>拖入</b>
+            <div><span>Scene / Hierarchy</span><small>放置與整理物件</small></div>
+            <b>選取</b>
+            <div><span>Inspector</span><small>查看與修改設定</small></div>
+            <b>Camera</b>
+            <div><span>Game</span><small>玩家看到的結果</small></div>
+          </div>
+
+          <aside class="callout danger inset-callout">
+            <span class="callout-label">最常見的混淆</span>
+            <p><strong>Scene 不等於 Game，Hierarchy 不等於 Project。</strong>前一組是編輯視角與玩家輸出；後一組是場景實例與專案資產。</p>
+          </aside>
+        </div>
+      </details>
+
+      <details class="note-group" id="object-model" open>
+        <summary>
+          <span class="group-index">02</span>
+          <span class="group-title"><strong>核心物件模型</strong><small>Asset → GameObject → Component</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <div class="model-stack">
+            <article>
+              <span class="model-number">A</span>
+              <h3>Asset</h3>
+              <p>儲存在 Project 與 <code>Assets</code> 資料夾中的專案檔案，例如模型、圖片、腳本、材質、聲音、Scene 與 Prefab。</p>
+            </article>
+            <article>
+              <span class="model-number">B</span>
+              <h3>GameObject</h3>
+              <p>存在 Scene 與 Hierarchy 裡的場景物件容器。把模型或 Prefab 拖進 Scene 後，Unity 會建立或放置對應的 GameObject。</p>
+            </article>
+            <article>
+              <span class="model-number">C</span>
+              <h3>Component</h3>
+              <p>附加在 GameObject 上的資料與功能模組。Renderer 提供外觀、Collider 提供碰撞形狀、腳本提供自訂行為。</p>
+            </article>
+          </div>
+
+          <dl class="term-list">
+            <div><dt>Transform</dt><dd>每個 GameObject 都一定擁有，記錄位置、旋轉、縮放與父子階層。</dd></div>
+            <div><dt>Empty GameObject</dt><dd>只有 Transform、沒有 Renderer 的 GameObject。它看不見，但可用來整理階層、當座標基準或掛管理腳本。</dd></div>
+            <div><dt>Parent / Child</dt><dd>父子關係透過 Transform 階層運作。父物件的移動、旋轉與縮放通常會連帶影響子物件。</dd></div>
+            <div><dt>Prefab</dt><dd>可重複使用的 GameObject 結構範本。它在 Project 中以 Asset 存在，放入 Scene 後則成為實例。</dd></div>
+          </dl>
+
+          <aside class="callout danger inset-callout">
+            <span class="callout-label">不要用「看得見」判斷 GameObject</span>
+            <p>Empty、Camera、Light、Audio Source 與純腳本管理物件都可能看不見，但仍是 GameObject；Project 裡可預覽的 Texture 或 Model 則仍只是 Asset。</p>
+          </aside>
+        </div>
+      </details>
+
+      <details class="note-group" id="daily-tools">
+        <summary>
+          <span class="group-index">03</span>
+          <span class="group-title"><strong>日常工具與選單</strong><small>需要查操作位置時再展開</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <section class="note-subsection">
+            <h3>File：儲存與建置</h3>
+            <dl class="term-list compact">
+              <div><dt>Save</dt><dd>儲存目前 Scene。</dd></div>
+              <div><dt>Save Project</dt><dd>儲存專案範圍的資產與設定變更，不取代 Scene 儲存。</dd></div>
+              <div><dt>Build Profiles</dt><dd>選擇建置平台並保存平台設定。舊版課程稱為 Build Settings。</dd></div>
+              <div><dt>Build And Run</dt><dd>建置完成後直接執行遊戲。</dd></div>
+            </dl>
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-2/file-menu-build-profiles.svg" width="312" height="302" loading="lazy" alt="Unity 6 File 選單，包含 Save、Save Project、Build Profiles 與 Build And Run">
+              <figcaption><strong>Unity 6 File 選單。</strong>Build Settings 已改為 Build Profiles。</figcaption>
+            </figure>
+          </section>
+
+          <section class="note-subsection">
+            <h3>Edit：編輯器與專案設定</h3>
+            <dl class="term-list compact">
+              <div><dt>Cut / Copy / Paste</dt><dd>剪下、複製與貼上目前選取的物件或資產。</dd></div>
+              <div><dt>Duplicate</dt><dd>複製目前選取內容，快捷鍵為 <code>Ctrl+D</code>。</dd></div>
+              <div><dt>Preferences</dt><dd>調整這台電腦上的 Unity Editor 個人偏好，例如外部腳本編輯器。</dd></div>
+              <div><dt>Project Settings</dt><dd>修改目前專案的輸入、物理、品質、標籤與平台設定。</dd></div>
+            </dl>
+          </section>
+
+          <section class="note-subsection">
+            <h3>Assets、GameObject、Component</h3>
+            <div class="three-column-cards">
+              <article><h4>Assets → Create</h4><p>建立 Material、Script、Input Actions 等專案資產。</p></article>
+              <article><h4>GameObject</h4><p>建立 Cube、Sphere、Camera、Light、UI、Empty 等場景物件。</p></article>
+              <article><h4>Component</h4><p>替目前選取的 GameObject 增加外觀、物理、聲音或腳本功能。</p></article>
+            </div>
+
+            <div class="figure-grid">
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/assets-menu-unity6.svg" width="330" height="582" loading="lazy" alt="Unity 6 Assets 選單">
+                <figcaption><strong>Assets。</strong>處理專案資產的建立、匯入與重新匯入。</figcaption>
+              </figure>
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/assets-create-menu-unity6.svg" width="751" height="576" loading="lazy" alt="Unity 6 Assets Create 子選單">
+                <figcaption><strong>Assets → Create。</strong>建立的是 Asset，不是場景物件。</figcaption>
+              </figure>
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/gameobject-menu-unity6.svg" width="292" height="586" loading="lazy" alt="Unity 6 GameObject 選單">
+                <figcaption><strong>GameObject。</strong>建立 Scene 與 Hierarchy 裡的物件。</figcaption>
+              </figure>
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/component-menu-unity6.svg" width="245" height="535" loading="lazy" alt="Unity 6 Component 選單">
+                <figcaption><strong>Component。</strong>替 GameObject 增加功能，不建立新物件。</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="note-subsection">
+            <h3>Window 與常用快捷鍵</h3>
+            <dl class="term-list compact">
+              <div><dt>Ctrl+1</dt><dd>Scene</dd></div>
+              <div><dt>Ctrl+2</dt><dd>Game</dd></div>
+              <div><dt>Ctrl+3</dt><dd>Inspector</dd></div>
+              <div><dt>Ctrl+4</dt><dd>Hierarchy</dd></div>
+              <div><dt>Ctrl+5</dt><dd>Project</dd></div>
+              <div><dt>Ctrl+Shift+C</dt><dd>Console</dd></div>
+              <div><dt>Animation</dt><dd>從 <strong>Window → Animation → Animation</strong> 開啟；實際快捷鍵以 <strong>Edit → Shortcuts</strong> 為準。</dd></div>
+            </dl>
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-2/window-general-shortcuts-unity6.svg" width="609" height="441" loading="lazy" alt="Unity 6 Window General 選單與主要視窗快捷鍵">
+              <figcaption><strong>Window → General。</strong>舊課程快捷鍵不一定等於目前 Editor 設定。</figcaption>
+            </figure>
+          </section>
+        </div>
+      </details>
+
+      <details class="note-group" id="physics-navigation">
+        <summary>
+          <span class="group-index">04</span>
+          <span class="group-title"><strong>物理與導航</strong><small>Rigidbody、Collider、Character Controller、NavMesh</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <section class="note-subsection">
+            <h3>常見物理 Component</h3>
+            <dl class="term-list">
+              <div><dt>Rigidbody<br><small>剛體</small></dt><dd>讓 GameObject 的移動與旋轉由物理引擎模擬，可接受力與扭矩。<strong>Use Gravity</strong> 預設開啟，但 Rigidbody 不等於重力。</dd></div>
+              <div><dt>Collider<br><small>碰撞體</small></dt><dd>定義物理系統使用的隱形碰撞形狀。Collider 本身不讓物件受重力。</dd></div>
+              <div><dt>Character Controller</dt><dd>偏向第一／第三人稱角色的碰撞式移動控制器。通常由腳本驅動，不會自動替你處理重力或一般物理受力。</dd></div>
+              <div><dt>Joint</dt><dd>限制或連接 Rigidbody 的相對運動，例如 Hinge Joint 與 Fixed Joint。</dd></div>
+            </dl>
+            <div class="memory-line inset-memory">
+              <span>三者分工</span>
+              <strong>Rigidbody 管受力與物理移動，Collider 管碰撞形狀，Character Controller 管腳本驅動的角色碰撞移動。</strong>
+            </div>
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-2/component-physics-menu-unity6.svg" width="452" height="564" loading="lazy" alt="Unity 6 Component Physics 子選單">
+              <figcaption><strong>Component → Physics。</strong>被放在同一分類，不代表用途可以互換。</figcaption>
+            </figure>
+          </section>
+
+          <section class="note-subsection">
+            <h3>AI Navigation</h3>
+            <dl class="term-list">
+              <div><dt>NavMesh</dt><dd>描述場景中哪些區域可供角色行走的導航資料，不是敵人的思考邏輯。</dd></div>
+              <div><dt>NavMesh Surface</dt><dd>AI Navigation 套件提供，用來收集場景幾何並 Bake 可行走區域，也就是建立道路。</dd></div>
+              <div><dt>NavMesh Agent</dt><dd>掛在敵人或 NPC 上，負責沿 NavMesh 尋路與移動。腳本仍要決定追誰、何時追。</dd></div>
+              <div><dt>NavMesh Obstacle</dt><dd>代表導航障礙物；使用 Carve 時可在 NavMesh 上挖出不可通行區。</dd></div>
+            </dl>
+
+            <div class="decision-grid">
+              <article><strong>不一定要安裝</strong><p>只是朝玩家直線移動，可用 Transform、Character Controller 或 Rigidbody。</p></article>
+              <article><strong>適合安裝</strong><p>敵人需要繞牆、走走廊、斜坡或在複雜場景中找路。</p></article>
+            </div>
+
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-2/navmesh-agent-install-package.svg" width="393" height="411" loading="lazy" alt="Nav Mesh Agent Inspector 顯示 Install AI Navigation Package">
+              <figcaption><strong>Install AI Navigation Package。</strong>表示高階導航套件尚未安裝；跟著目前教學時不必看到按鈕就立刻展開支線任務。</figcaption>
+            </figure>
+          </section>
+        </div>
+      </details>
+
+      <details class="note-group" id="build-environment">
+        <summary>
+          <span class="group-index">05</span>
+          <span class="group-title"><strong>建置與開發環境</strong><small>Build Profiles、外部編輯器與 Android 工具鏈</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <section class="note-subsection">
+            <h3>Build Profiles 與 External Tools</h3>
+            <dl class="term-list">
+              <div><dt>Build Profiles</dt><dd>選擇目標平台並保存建置設定。切換到 Android 只會改變目前建置目標，不會自動安裝 Android 工具。</dd></div>
+              <div><dt>External Script Editor</dt><dd>在 <strong>Edit → Preferences → External Tools</strong> 選擇雙擊 C# 腳本時使用的編輯器，本筆記使用 VS Code。</dd></div>
+              <div><dt>Android 區塊</dt><dd>必須先替目前 Unity Editor 安裝 Android Build Support、Android SDK &amp; NDK Tools 與 OpenJDK，之後才會在 External Tools 顯示。</dd></div>
+            </dl>
+
+            <div class="figure-grid">
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/build-profiles-windows-current.svg" width="731" height="608" loading="lazy" alt="目前 Unity 6 Build Profiles 視窗，Windows 為 Active">
+                <figcaption><strong>Build Profiles。</strong>Android 出現在清單中，不代表相關工具鏈已安裝。</figcaption>
+              </figure>
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/preferences-external-tools-current.svg" width="832" height="614" loading="lazy" alt="目前 Unity 6 External Tools，未顯示 Android 工具區塊">
+                <figcaption><strong>目前 External Tools。</strong>沒有 Android 區塊通常表示平台模組尚未安裝完整。</figcaption>
+              </figure>
+              <figure class="lesson-figure compact-figure">
+                <img src="../assets/ch1-2/legacy-preferences-external-tools.svg" width="692" height="586" loading="lazy" alt="老師舊版 External Tools，直接顯示 Android SDK JDK NDK 路徑">
+                <figcaption><strong>老師的舊版畫面。</strong>介面不同，但仍在處理同一組 Android 建置工具。</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="note-subsection">
+            <h3>Android 工具鏈名詞</h3>
+            <dl class="term-list">
+              <div><dt>SDK</dt><dd><strong>Software Development Kit。</strong>提供 Android 平台 API、建置工具與裝置連線工具。</dd></div>
+              <div><dt>NDK</dt><dd><strong>Native Development Kit。</strong>負責 Android 上的 C／C++ 原生程式碼；使用 IL2CPP 時可能參與編譯。</dd></div>
+              <div><dt>JDK</dt><dd><strong>Java Development Kit。</strong>Android 建置流程依賴的 Java 開發工具。</dd></div>
+              <div><dt>Gradle</dt><dd>安排編譯、相依套件與資源整合，最後封裝成 APK 或 AAB。</dd></div>
+              <div><dt>IL2CPP</dt><dd><strong>Intermediate Language To C++。</strong>把 C# 編譯結果轉成 C++，再針對目標平台編譯成原生程式。</dd></div>
+            </dl>
+            <div class="memory-line inset-memory">
+              <span>工具鏈關係</span>
+              <strong>C# 可經 IL2CPP 轉成 C++；NDK 編譯原生程式，SDK 提供 Android 平台工具，JDK 與 Gradle 協助建置與封裝。</strong>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details class="note-group" id="play-version">
+        <summary>
+          <span class="group-index">06</span>
+          <span class="group-title"><strong>Play Mode 與舊版課程差異</strong><small>最後再看，避免版本落差干擾主線</small></span>
+          <span class="group-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="note-group-body">
+          <dl class="term-list compact">
+            <div><dt>Play</dt><dd>執行遊戲。</dd></div>
+            <div><dt>Pause</dt><dd>暫停目前執行狀態。</dd></div>
+            <div><dt>Step</dt><dd>逐幀執行，方便觀察每一步變化。</dd></div>
+          </dl>
+
+          <aside class="callout danger inset-callout">
+            <span class="callout-label">Play Mode 警告</span>
+            <p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合只在執行狀態保存正式設定。</p>
+          </aside>
+
+          <section class="legacy-box inset-box">
+            <h2>舊版課程提醒</h2>
+            <p>Build Settings 已改為 Build Profiles；MonoDevelop 不再是現代 Unity 的主要選擇；舊版 Navigation 視窗的 Bake 流程，現代版本主要改由 AI Navigation 套件中的 NavMesh Surface 在 Inspector 完成。快捷鍵也應以目前的 Shortcuts Manager 為準。</p>
+          </section>
+        </div>
+      </details>
+
+      <section class="checklist compact-checklist">
+        <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-5-main-windows"> 能說明五個主要視窗的用途與關係</label>
+        <label><input type="checkbox" data-check="lesson-5-object-model"> 能區分 Asset、GameObject 與 Component</label>
+        <label><input type="checkbox" data-check="lesson-5-empty-parent"> 能解釋 Empty GameObject 與父子階層</label>
+        <label><input type="checkbox" data-check="lesson-5-menus"> 能判斷 Assets → Create、GameObject 與 Component 選單各自建立什麼</label>
+        <label><input type="checkbox" data-check="lesson-5-physics-components"> 能區分 Rigidbody、Collider 與 Character Controller</label>
+        <label><input type="checkbox" data-check="lesson-5-navigation"> 能區分 NavMesh Surface、Agent 與 Obstacle</label>
+        <label><input type="checkbox" data-check="lesson-5-build-profile"> 能說明 Build Profile 與安裝平台模組是兩件不同的事</label>
+        <label><input type="checkbox" data-check="lesson-5-playmode"> 能說明 Play Mode 修改為何可能在停止後還原</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽">
+        <a href="ch1-1.html"><small>上一堂</small><strong>← ch1_1 開啟新專案</strong></a>
+        <a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
