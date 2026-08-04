@@ -31,7 +31,7 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">整理中</span></div>
         <h1>ch1_2 Unity3D 環境介紹</h1>
-        <p>認識 Unity 的 File 選單、主要編輯器視窗、GameObject、Component，以及 Play Mode 的基本行為。</p>
+        <p>認識 Unity 的 File、Edit 與 Preferences，以及主要編輯器視窗、GameObject、Component 和 Play Mode。</p>
       </header>
 
       <section class="note-section">
@@ -60,6 +60,64 @@
       <section class="note-section">
         <span class="section-index">02</span>
         <div>
+          <h2>Edit 選單與 Preferences</h2>
+          <dl class="term-list">
+            <div><dt>Cut / Copy / Paste</dt><dd>對目前選取的物件或資產進行剪下、複製與貼上；常用快捷鍵分別為 <code>Ctrl+X</code>、<code>Ctrl+C</code>、<code>Ctrl+V</code>。</dd></div>
+            <div><dt>Duplicate</dt><dd>複製目前選取內容，快捷鍵為 <code>Ctrl+D</code>。</dd></div>
+            <div><dt>Project Settings</dt><dd>修改目前專案的設定，例如輸入、物理、品質、標籤與平台相關設定。</dd></div>
+            <div><dt>Preferences</dt><dd>修改這台電腦上 Unity Editor 的個人偏好，例如腳本編輯器、顏色、快取與外部工具。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/edit-menu-unity6.svg" width="396" height="657" loading="lazy" alt="Unity 6 的 Edit 選單，底部包含 Project Settings、Preferences 與 Shortcuts">
+            <figcaption><strong>Unity 6 Edit 選單。</strong>一般編輯操作、選取工具、Project Settings 與 Preferences 都集中在此。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">03</span>
+        <div>
+          <h2>External Tools：程式編輯器與 Android 工具</h2>
+          <dl class="term-list">
+            <div><dt>External Script Editor</dt><dd><strong>外部腳本編輯器。</strong>選擇雙擊 C# 腳本時要開啟的程式。本筆記使用 Visual Studio Code。</dd></div>
+            <div><dt>Android 工具的位置</dt><dd>Unity 6 仍從 <strong>Edit → Preferences → External Tools → Android</strong> 查看或指定 SDK、NDK、JDK 與 Gradle，並沒有搬到 Build Profiles。</dd></div>
+            <div><dt>Build Profile 的作用</dt><dd>在 Build Profiles 新增 Android Profile 並按下 <strong>Switch Profile</strong>，只會把 Android 設為目前專案的有效建置目標，不是顯示 External Tools Android 區塊的開關。</dd></div>
+            <div><dt>Android 區塊的前提</dt><dd>目前 Unity Editor 必須先安裝 Android Build Support，以及相依的 Android SDK &amp; NDK Tools 和 OpenJDK。若未安裝，Build Profiles 會提供 <em>Install with Unity Hub</em>。</dd></div>
+            <div><dt>自訂路徑</dt><dd>預設建議使用 Unity Hub 安裝的相容版本。需要自訂時，取消勾選對應的 <em>installed with Unity (recommended)</em>，才能用 Browse 指定資料夾。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/legacy-preferences-external-tools.svg" width="692" height="586" loading="lazy" alt="老師舊版 Unity Preferences 的 External Tools，包含 MonoDevelop 與 Android SDK、JDK、NDK 路徑">
+            <figcaption><strong>老師使用的舊版 External Tools。</strong>舊畫面直接列出 MonoDevelop，以及 Android SDK、JDK、NDK 的路徑欄位；新版仍保留同類設定，但必須先替目前 Editor 安裝 Android 平台模組。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <aside class="callout danger">
+        <span class="callout-label">Android 區塊沒有出現</span>
+        <p>到 <strong>Unity Hub → Installs → 該 Editor 版本的設定選單 → Add modules</strong>，確認已安裝 <strong>Android Build Support</strong>、<strong>Android SDK &amp; NDK Tools</strong> 與 <strong>OpenJDK</strong>，完成後重新啟動 Unity。單純切換 Android Build Profile 不會補裝這些工具。</p>
+      </aside>
+
+      <section class="note-section">
+        <span class="section-index">04</span>
+        <div>
+          <h2>Android 建置工具名詞</h2>
+          <dl class="term-list">
+            <div><dt>SDK</dt><dd><strong>Software Development Kit，軟體開發套件。</strong>這裡指 Android SDK，提供 Android 平台 API、建置工具、裝置連線工具等，是「要把應用程式做成 Android App」所需的整套基礎工具。</dd></div>
+            <div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>你的理解基本正確，它處理 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，會先把 C# 編譯結果轉成 C++，再由原生工具鏈編譯成 Android 裝置能執行的程式，因此即使主要寫 C#，仍可能需要 NDK。</dd></div>
+            <div><dt>JDK</dt><dd><strong>Java Development Kit，Java 開發套件。</strong>包含 Java 編譯器、執行環境與相關工具。Android 的建置流程仍依賴 Java 生態工具，所以 Unity 打包 Android 專案時需要它；不代表遊戲邏輯必須改用 Java 寫。</dd></div>
+            <div><dt>Gradle</dt><dd><strong>建置自動化工具。</strong>負責依照建置腳本安排編譯、處理相依套件、整合資源，最後封裝成 APK 或 AAB。可以把它理解成 Android 打包流程的總管。</dd></div>
+            <div><dt>IL2CPP</dt><dd><strong>Intermediate Language To C++。</strong>Unity 的 AOT 編譯後端，將 C# 編譯後的中間語言轉成 C++，再針對目標平台編譯成原生程式。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <div class="memory-line"><span>工具鏈關係</span><strong>C# 腳本可經 IL2CPP 轉成 C++；NDK 編譯原生程式，SDK 提供 Android 平台工具，JDK 與 Gradle 協助完成建置與封裝。</strong></div>
+
+      <section class="note-section">
+        <span class="section-index">05</span>
+        <div>
           <h2>五個主要區塊</h2>
           <div class="window-map">
             <div><strong>Scene</strong><span>編輯場景與擺放物件</span></div>
@@ -72,7 +130,7 @@
       </section>
 
       <section class="note-section two-column-note">
-        <span class="section-index">03</span>
+        <span class="section-index">06</span>
         <div>
           <h2>核心概念</h2>
           <dl class="term-list">
@@ -84,7 +142,7 @@
       </section>
 
       <section class="note-section">
-        <span class="section-index">04</span>
+        <span class="section-index">07</span>
         <div>
           <h2>播放控制</h2>
           <dl class="term-list compact">
@@ -100,17 +158,18 @@
         <p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合把正式設定只改在執行狀態裡。</p>
       </aside>
 
-      <div class="memory-line"><span>一句話記憶</span><strong>Save 儲存場景，Save Project 儲存專案變更，Build Profiles 決定遊戲要用什麼設定輸出到哪個平台。</strong></div>
-
       <section class="legacy-box">
         <h2>舊版課程提醒</h2>
-        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles。MonoDevelop、UnityScript／JavaScript、舊版 Preferences、Asset Store 視窗與 Navigation 流程等內容，也不必依照舊介面逐項照做。</p>
+        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。使用 VS Code 時可在 External Script Editor 指定，但完整的程式分析與除錯仍需要相應的 VS Code 擴充套件。</p>
       </section>
 
       <section class="checklist">
         <h2>完成檢查</h2>
         <label><input type="checkbox" data-check="lesson-5-file-save"> 能說明 Save Scene 與 Save Project 的用途差異</label>
-        <label><input type="checkbox" data-check="lesson-5-build-profile"> 能從 File 開啟 Build Profiles，並找到目標平台設定</label>
+        <label><input type="checkbox" data-check="lesson-5-build-profile"> 能說明 Switch Profile 與安裝平台模組是兩件不同的事</label>
+        <label><input type="checkbox" data-check="lesson-5-preferences"> 能區分 Preferences 與 Project Settings</label>
+        <label><input type="checkbox" data-check="lesson-5-script-editor"> 能在 External Tools 選擇 VS Code</label>
+        <label><input type="checkbox" data-check="lesson-5-android-tools"> 能用自己的話解釋 SDK、NDK、JDK、Gradle 與 IL2CPP</label>
         <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
         <label><input type="checkbox" data-check="lesson-5-transform"> 能建立 Cube 或 Sphere，並查看 Transform</label>
         <label><input type="checkbox" data-check="lesson-5-rigidbody"> 能加入 Rigidbody 並觀察重力效果</label>
