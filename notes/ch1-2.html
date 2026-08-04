@@ -28,13 +28,31 @@
 
     <article class="lesson-note">
       <header class="note-header">
-        <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">已整理</span></div>
+        <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">整理中</span></div>
         <h1>ch1_2 Unity3D 環境介紹</h1>
-        <p>認識 Unity 編輯器主要視窗、GameObject、Component，以及 Play Mode 的基本行為。</p>
+        <p>認識 Unity 的 File 選單、主要編輯器視窗、GameObject、Component，以及 Play Mode 的基本行為。</p>
       </header>
 
       <section class="note-section">
         <span class="section-index">01</span>
+        <div>
+          <h2>File 選單：Scene、Project 與建置</h2>
+          <dl class="term-list">
+            <div><dt>Save / Save As</dt><dd>儲存目前的 Scene；Scene 會以 <code>.unity</code> 場景資產存在專案中。</dd></div>
+            <div><dt>Save Project</dt><dd>儲存專案範圍的資產與設定變更，不應拿來取代目前 Scene 的儲存。</dd></div>
+            <div><dt>Build Profiles</dt><dd>設定要輸出的目標平台與建置選項，例如 Windows、WebGL、Android 或其他已安裝支援模組的平台。</dd></div>
+            <div><dt>Build And Run</dt><dd>建置遊戲，並在完成後直接執行。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <aside class="callout danger">
+        <span class="callout-label">版本差異</span>
+        <p>老師使用的舊版 Unity 將建置入口稱為 <strong>Build Settings</strong>；Unity 6 已改為 <strong>Build Profiles</strong>。核心目的仍包含選擇目標平台與設定建置內容，但新版可以針對平台建立並保存不同的建置設定檔。</p>
+      </aside>
+
+      <section class="note-section">
+        <span class="section-index">02</span>
         <div>
           <h2>五個主要區塊</h2>
           <div class="window-map">
@@ -48,7 +66,7 @@
       </section>
 
       <section class="note-section two-column-note">
-        <span class="section-index">02</span>
+        <span class="section-index">03</span>
         <div>
           <h2>核心概念</h2>
           <dl class="term-list">
@@ -60,7 +78,7 @@
       </section>
 
       <section class="note-section">
-        <span class="section-index">03</span>
+        <span class="section-index">04</span>
         <div>
           <h2>播放控制</h2>
           <dl class="term-list compact">
@@ -76,15 +94,17 @@
         <p>在 Play Mode 中修改 Inspector 數值，停止播放後通常會恢復原狀。播放中適合測試，不適合把正式設定只改在執行狀態裡。</p>
       </aside>
 
-      <div class="memory-line"><span>一句話記憶</span><strong>Hierarchy 選物件，Scene 編輯，Inspector 改屬性，Game 看結果，Project 管資源。</strong></div>
+      <div class="memory-line"><span>一句話記憶</span><strong>Save 儲存場景，Save Project 儲存專案變更，Build Profiles 決定遊戲要用什麼設定輸出到哪個平台。</strong></div>
 
       <section class="legacy-box">
         <h2>舊版課程提醒</h2>
-        <p>MonoDevelop、UnityScript／JavaScript、舊版 Preferences、Build Settings、Asset Store 視窗與 Navigation 流程，現在不必照單全收。</p>
+        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles。MonoDevelop、UnityScript／JavaScript、舊版 Preferences、Asset Store 視窗與 Navigation 流程等內容，也不必依照舊介面逐項照做。</p>
       </section>
 
       <section class="checklist">
         <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-5-file-save"> 能說明 Save Scene 與 Save Project 的用途差異</label>
+        <label><input type="checkbox" data-check="lesson-5-build-profile"> 能從 File 開啟 Build Profiles，並找到目標平台設定</label>
         <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
         <label><input type="checkbox" data-check="lesson-5-transform"> 能建立 Cube 或 Sphere，並查看 Transform</label>
         <label><input type="checkbox" data-check="lesson-5-rigidbody"> 能加入 Rigidbody 並觀察重力效果</label>
