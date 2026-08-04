@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="312" height="302" viewBox="0 0 312 302" role="img" aria-labelledby="title desc">
+  <title id="title">Unity 6 File 選單</title>
+  <desc id="desc">Unity 6 的 File 選單，包含 Scene、Project、Build Profiles、Build And Run 與 Exit 等命令。</desc>
+  <rect width="312" height="302" fill="#f8f8f8"/>
+  <g fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+    <text x="38" y="20">New Scene</text>
+    <text x="284" y="20" text-anchor="end">Ctrl+N</text>
+
+    <text x="38" y="42">Open Scene</text>
+    <text x="284" y="42" text-anchor="end">Ctrl+O</text>
+
+    <text x="38" y="64">Open Recent Scene</text>
+    <text x="289" y="64" text-anchor="end">›</text>
+
+    <line x1="8" y1="74" x2="304" y2="74" stroke="#d1d1d1"/>
+
+    <text x="38" y="96">Save</text>
+    <text x="284" y="96" text-anchor="end">Ctrl+S</text>
+
+    <text x="38" y="118">Save As...</text>
+    <text x="284" y="118" text-anchor="end">Ctrl+Shift+S</text>
+
+    <text x="38" y="140">Save As Scene Template...</text>
+
+    <line x1="8" y1="150" x2="304" y2="150" stroke="#d1d1d1"/>
+
+    <text x="38" y="172">New Project...</text>
+    <text x="38" y="194">Open Project...</text>
+    <text x="38" y="216">Save Project</text>
+
+    <line x1="8" y1="226" x2="304" y2="226" stroke="#d1d1d1"/>
+
+    <text x="38" y="248">Build Profiles</text>
+    <text x="284" y="248" text-anchor="end">Ctrl+Shift+B</text>
+
+    <text x="38" y="270">Build And Run</text>
+    <text x="284" y="270" text-anchor="end">Ctrl+B</text>
+
+    <line x1="8" y1="280" x2="304" y2="280" stroke="#d1d1d1"/>
+    <text x="38" y="298">Exit</text>
+  </g>
+</svg>
