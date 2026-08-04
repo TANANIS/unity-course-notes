@@ -31,7 +31,7 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">整理中</span></div>
         <h1>ch1_2 Unity3D 環境介紹</h1>
-        <p>認識 Unity 的 File、Edit、Assets 與 GameObject 選單，並建立 Asset、GameObject、Component 與 Android 建置工具鏈的基本概念。</p>
+        <p>認識 Unity 的主要選單與視窗，並建立 Asset、GameObject、Component、物理元件與 Android 建置工具鏈的基本概念。</p>
       </header>
 
       <section class="note-section">
@@ -114,7 +114,7 @@
           <h2>Android 建置工具名詞</h2>
           <dl class="term-list">
             <div><dt>SDK</dt><dd><strong>Software Development Kit，軟體開發套件。</strong>Android SDK 提供平台 API、建置工具與裝置連線工具，是製作 Android App 所需的基礎工具箱。</dd></div>
-            <div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>你的理解基本正確，它負責 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，即使主要寫 C#，仍可能需要 NDK。</dd></div>
+            <div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>負責 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，即使主要寫 C#，仍可能需要 NDK。</dd></div>
             <div><dt>JDK</dt><dd><strong>Java Development Kit，Java 開發套件。</strong>Android 建置流程依賴 Java 生態工具；這不代表遊戲邏輯必須改用 Java 寫。</dd></div>
             <div><dt>Gradle</dt><dd><strong>建置自動化工具。</strong>安排編譯、處理相依套件、整合資源，最後封裝成 APK 或 AAB。</dd></div>
             <div><dt>IL2CPP</dt><dd><strong>Intermediate Language To C++。</strong>Unity 的 AOT 編譯後端，將 C# 編譯後的中間語言轉成 C++，再針對目標平台編譯成原生程式。</dd></div>
@@ -178,6 +178,69 @@
       <section class="note-section">
         <span class="section-index">07</span>
         <div>
+          <h2>Component：附加在 GameObject 上的功能模組</h2>
+          <dl class="term-list">
+            <div><dt>Component</dt><dd><strong>元件／功能模組。</strong>它不是單純的「效果」，而是附加在 GameObject 上的資料與功能。Renderer 提供外觀、Audio Source 播放聲音、Collider 定義碰撞形狀，MonoBehaviour 腳本則提供自訂行為。</dd></div>
+            <div><dt>附屬關係</dt><dd>Component 必須屬於某個 GameObject；不能單獨漂浮在 Scene 裡。每個 GameObject 都一定有 Transform，其他 Component 則依需求自由組合。</dd></div>
+            <div><dt>加入方式</dt><dd>先選取 GameObject，再從上方 <strong>Component</strong> 選單，或 Inspector 底部的 <strong>Add Component</strong> 搜尋並加入。</dd></div>
+            <div><dt>Scripts</dt><dd>繼承 MonoBehaviour 的 C# 腳本可以作為自訂 Component 附加到 GameObject，讓物件獲得自己撰寫的行為。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/component-menu-unity6.svg" width="245" height="535" loading="lazy" alt="Unity 6 Component 選單，依 Animation、Audio、Physics、Rendering 與 Scripts 等類別整理元件">
+            <figcaption><strong>Component 選單。</strong>這些分類不是用來建立新的 GameObject，而是替目前選取的 GameObject 增加功能。</figcaption>
+          </figure>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/component-physics-menu-unity6.svg" width="452" height="564" loading="lazy" alt="Unity 6 Component Physics 子選單，包含 Rigidbody、Character Controller、Collider、Joint 與 Constant Force">
+            <figcaption><strong>Component → Physics。</strong>Rigidbody、Character Controller 與各種 Collider 都屬於物理相關 Component，但用途不同，不能當成同一種東西。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="note-section two-column-note">
+        <span class="section-index">08</span>
+        <div>
+          <h2>常見物理 Component</h2>
+          <dl class="term-list">
+            <div><dt>Rigidbody<br><small>剛體</small></dt><dd>讓 GameObject 的移動與旋轉可由物理引擎控制，能接受力與扭矩。<strong>Use Gravity 預設開啟</strong>，所以常會向下掉，但重力可以關閉；Rigidbody 並不等於「只有重力」。</dd></div>
+            <div><dt>Collider<br><small>碰撞體</small></dt><dd>定義物理系統使用的隱形碰撞形狀，例如 Box、Sphere、Capsule。Collider 本身不讓物件受重力；沒有 Rigidbody 的 Collider 通常是靜態碰撞體。</dd></div>
+            <div><dt>Rigidbody + Collider</dt><dd>常見的動態物理組合。Rigidbody 負責如何移動與受力，Collider 負責在哪裡碰撞。只有 Rigidbody 卻沒有合適 Collider，通常不會依照外觀產生實體碰撞。</dd></div>
+            <div><dt>Character Controller</dt><dd>偏向第一／第三人稱角色的膠囊形碰撞控制器，能處理牆面滑動、斜坡與階梯。它通常由腳本命令移動，<strong>不會自動對力作出反應，也不會自動替你處理重力</strong>。</dd></div>
+            <div><dt>Joint</dt><dd>關節元件，用來限制或連接 Rigidbody 的相對運動，例如 Hinge Joint 模擬鉸鏈，Fixed Joint 固定兩個剛體。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <aside class="callout danger">
+        <span class="callout-label">三個概念不要混在一起</span>
+        <p><strong>Rigidbody 管受力與物理移動，Collider 管碰撞形狀，Character Controller 管腳本驅動的角色碰撞移動。</strong>它們都在 Physics 分類，不代表用途相同。Unity 把它們放在同一個抽屜，只是因為介面需要分類，不是因為概念可以互換。</p>
+      </aside>
+
+      <section class="note-section">
+        <span class="section-index">09</span>
+        <div>
+          <h2>Window 選單與常用視窗快捷鍵</h2>
+          <dl class="term-list compact">
+            <div><dt>Ctrl+1</dt><dd>切換或聚焦 Scene 視窗。</dd></div>
+            <div><dt>Ctrl+2</dt><dd>切換或聚焦 Game 視窗。</dd></div>
+            <div><dt>Ctrl+3</dt><dd>切換或聚焦 Inspector 視窗。</dd></div>
+            <div><dt>Ctrl+4</dt><dd>切換或聚焦 Hierarchy 視窗。</dd></div>
+            <div><dt>Ctrl+5</dt><dd>切換或聚焦 Project 視窗。</dd></div>
+            <div><dt>Ctrl+Shift+C</dt><dd>切換或聚焦 Console 視窗。</dd></div>
+            <div><dt>Animation</dt><dd>可從 <strong>Window → Animation → Animation</strong> 開啟。舊版常見預設為 <code>Ctrl+6</code>，但你目前的 Unity 6 畫面沒有在 General 選單列出；實際綁定應以 <strong>Edit → Shortcuts</strong> 為準。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/window-general-shortcuts-unity6.svg" width="609" height="441" loading="lazy" alt="Unity 6 Window General 選單，列出 Scene、Game、Inspector、Hierarchy、Project 與 Console 快捷鍵">
+            <figcaption><strong>Window → General。</strong>目前畫面明確列出 Ctrl+1 到 Ctrl+5；快捷鍵可透過 Shortcuts Manager 查看與修改，不要把舊課程的 Ctrl+6 當成永遠固定的宇宙常數。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">10</span>
+        <div>
           <h2>五個主要區塊</h2>
           <div class="window-map">
             <div><strong>Scene</strong><span>編輯場景與擺放物件</span></div>
@@ -190,7 +253,7 @@
       </section>
 
       <section class="note-section two-column-note">
-        <span class="section-index">08</span>
+        <span class="section-index">11</span>
         <div>
           <h2>核心概念</h2>
           <dl class="term-list">
@@ -199,13 +262,14 @@
             <div><dt>Component</dt><dd>附加在 GameObject 上，賦予資料、外觀或行為。</dd></div>
             <div><dt>Transform</dt><dd>每個 GameObject 都必定擁有，記錄位置、旋轉、縮放與父子階層。</dd></div>
             <div><dt>Prefab</dt><dd>可重複使用的 GameObject 結構範本，本身以 Asset 形式存在 Project 中。</dd></div>
-            <div><dt>Rigidbody</dt><dd>讓 GameObject 受到 Unity 物理系統與重力影響的 Component。</dd></div>
+            <div><dt>Rigidbody</dt><dd>讓 GameObject 的移動可交由物理系統模擬的 Component。</dd></div>
+            <div><dt>Collider</dt><dd>定義 GameObject 在物理世界中的碰撞形狀。</dd></div>
           </dl>
         </div>
       </section>
 
       <section class="note-section">
-        <span class="section-index">09</span>
+        <span class="section-index">12</span>
         <div>
           <h2>播放控制</h2>
           <dl class="term-list compact">
@@ -223,7 +287,7 @@
 
       <section class="legacy-box">
         <h2>舊版課程提醒</h2>
-        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。Assets → Create 與 GameObject 選單一直代表不同層次：前者建立專案資產，後者建立場景物件，不能因為兩邊都有 Create 就混為一談。</p>
+        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。舊版快捷鍵表常將 Ctrl+6 指向 Animation、Ctrl+7 指向 Profiler，但現代 Unity 可在 Shortcuts Manager 自訂，應以目前 Editor 顯示為準。</p>
       </section>
 
       <section class="checklist">
@@ -236,7 +300,9 @@
         <label><input type="checkbox" data-check="lesson-5-assets-gameobjects"> 能說明 Assets → Create 與 GameObject 選單的差異</label>
         <label><input type="checkbox" data-check="lesson-5-empty"> 能解釋 Empty GameObject 為何看不見但仍是 GameObject</label>
         <label><input type="checkbox" data-check="lesson-5-parent-child"> 能說明父子 GameObject 的 Transform 關係</label>
-        <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
+        <label><input type="checkbox" data-check="lesson-5-components"> 能說明 GameObject 與 Component 的容器／功能關係</label>
+        <label><input type="checkbox" data-check="lesson-5-physics-components"> 能區分 Rigidbody、Collider 與 Character Controller</label>
+        <label><input type="checkbox" data-check="lesson-5-windows-shortcuts"> 能使用 Ctrl+1 到 Ctrl+5 切換主要視窗，並知道快捷鍵可自訂</label>
         <label><input type="checkbox" data-check="lesson-5-playmode"> 能驗證 Play Mode 結束後數值恢復</label>
       </section>
 
