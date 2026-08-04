@@ -1,0 +1,31 @@
+.lesson-figure {
+  display: grid;
+  justify-items: center;
+  gap: .75rem;
+  margin: 1.5rem 0 0;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.lesson-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: var(--radius-sm);
+  background: #f8f8f8;
+  box-shadow: var(--shadow-sm);
+}
+
+.lesson-figure figcaption {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: .82rem;
+  text-align: center;
+}
+
+.lesson-figure figcaption strong {
+  color: var(--text);
+}
