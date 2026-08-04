@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="396" height="657" viewBox="0 0 396 657" role="img" aria-labelledby="title desc">
+  <title id="title">Unity 6 Edit 選單</title>
+  <desc id="desc">Edit 選單包含復原、剪下複製貼上、選取、Project Settings、Preferences 與 Shortcuts 等項目。</desc>
+  <rect width="396" height="657" rx="4" fill="#f7f7f7"/>
+  <style>
+    text{font-family:Segoe UI,Arial,sans-serif;font-size:13px;fill:#111}.muted{fill:#999}.key{text-anchor:end}.line{stroke:#d2d2d2;stroke-width:1}
+  </style>
+  <g transform="translate(38 18)">
+    <text class="muted" y="0">Undo</text><text class="muted key" x="330" y="0">Ctrl+Z</text>
+    <text class="muted" y="22">Redo</text><text class="muted key" x="330" y="22">Ctrl+Y</text>
+    <line class="line" x1="-29" x2="355" y1="33" y2="33"/>
+    <text y="55">Cut</text><text class="key" x="330" y="55">Ctrl+X</text>
+    <text y="77">Copy</text><text class="key" x="330" y="77">Ctrl+C</text>
+    <text y="99">Paste</text><text class="key" x="330" y="99">Ctrl+V</text>
+    <text y="121">Paste Special</text><text class="key" x="330" y="121">›</text>
+    <text y="143">Duplicate</text><text class="key" x="330" y="143">Ctrl+D</text>
+    <text y="165">Rename</text>
+    <text y="187">Delete</text><text class="key" x="330" y="187">Del</text>
+    <line class="line" x1="-29" x2="355" y1="199" y2="199"/>
+    <text y="221">Frame Selected in Scene</text>
+    <text y="243">Frame Selected in Window under Cursor</text><text class="key" x="330" y="243">F</text>
+    <text y="265">Lock View to Selected</text><text class="key" x="330" y="265">Shift+F</text>
+    <line class="line" x1="-29" x2="355" y1="277" y2="277"/>
+    <text y="299">Select All</text><text class="key" x="330" y="299">Ctrl+A</text>
+    <text y="321">Deselect All</text><text class="key" x="330" y="321">Shift+D</text>
+    <text y="343">Select Children</text><text class="key" x="330" y="343">Shift+C</text>
+    <text y="365">Select Prefab Root</text><text class="key" x="330" y="365">Ctrl+Shift+R</text>
+    <text y="387">Invert Selection</text><text class="key" x="330" y="387">Ctrl+I</text>
+    <text y="409">Selection Groups</text><text class="key" x="330" y="409">›</text>
+    <line class="line" x1="-29" x2="355" y1="421" y2="421"/>
+    <text y="443">Lighting</text><text class="key" x="330" y="443">›</text>
+    <text y="465">Search</text><text class="key" x="330" y="465">›</text>
+    <text y="487">Play Mode</text><text class="key" x="330" y="487">›</text>
+    <text y="509">Graphics Tier</text><text class="key" x="330" y="509">›</text>
+    <text y="531">Rendering</text><text class="key" x="330" y="531">›</text>
+    <line class="line" x1="-29" x2="355" y1="543" y2="543"/>
+    <text y="565">Clear All PlayerPrefs</text>
+    <line class="line" x1="-29" x2="355" y1="577" y2="577"/>
+    <text y="599">Project Settings...</text>
+    <text y="621">Preferences...</text>
+    <text y="643">Shortcuts...</text>
+  </g>
+</svg>
