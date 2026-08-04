@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="393" height="411" viewBox="0 0 393 411" role="img" aria-labelledby="title desc">
+  <title id="title">Nav Mesh Agent Inspector</title>
+  <desc id="desc">Nav Mesh Agent 元件，上方顯示 Install AI Navigation Package。</desc>
+  <style>
+    .bg{fill:#3b3b3b}.panel{fill:#454545;stroke:#202020}.field{fill:#303030;stroke:#1d1d1d}.label{fill:#d2d2d2;font:14px Arial,sans-serif}.small{fill:#bdbdbd;font:12px Arial,sans-serif}.button{fill:#555;stroke:#222}.check{fill:#222;stroke:#999}.line{stroke:#585858}
+  </style>
+  <rect width="393" height="411" class="bg"/>
+  <rect x="4" y="4" width="385" height="403" rx="3" class="panel"/>
+  <rect x="8" y="8" width="377" height="24" fill="#333"/>
+  <rect x="10" y="12" width="14" height="14" class="check"/><path d="M12 19l4 4 7-9" fill="none" stroke="#ddd" stroke-width="2"/>
+  <text x="31" y="25" class="label">Nav Mesh Agent</text>
+  <rect x="16" y="40" width="361" height="25" rx="3" class="button"/><text x="106" y="57" class="label">Install AI Navigation Package</text>
+  <text x="16" y="88" class="small">Agent Type</text><rect x="158" y="72" width="219" height="22" rx="2" class="field"/><text x="164" y="88" class="label">Humanoid</text>
+  <text x="16" y="113" class="small">Base Offset</text><rect x="158" y="97" width="219" height="22" rx="2" class="field"/><text x="164" y="113" class="label">1.250001</text>
+  <text x="16" y="142" class="label">Steering</text><line x1="16" y1="148" x2="377" y2="148" class="line"/>
+  <text x="16" y="172" class="small">Speed</text><rect x="158" y="156" width="219" height="22" rx="2" class="field"/><text x="164" y="172" class="label">3.5</text>
+  <text x="16" y="197" class="small">Angular Speed</text><rect x="158" y="181" width="219" height="22" rx="2" class="field"/><text x="164" y="197" class="label">120</text>
+  <text x="16" y="222" class="small">Acceleration</text><rect x="158" y="206" width="219" height="22" rx="2" class="field"/><text x="164" y="222" class="label">8</text>
+  <text x="16" y="247" class="small">Stopping Distance</text><rect x="158" y="231" width="219" height="22" rx="2" class="field"/><text x="164" y="247" class="label">0</text>
+  <text x="16" y="272" class="small">Auto Braking</text><rect x="158" y="258" width="14" height="14" class="check"/><path d="M160 265l4 4 7-9" fill="none" stroke="#ddd" stroke-width="2"/>
+  <text x="16" y="302" class="label">Obstacle Avoidance</text><line x1="16" y1="308" x2="377" y2="308" class="line"/>
+  <text x="16" y="332" class="small">Radius</text><rect x="158" y="316" width="219" height="22" rx="2" class="field"/><text x="164" y="332" class="label">3</text>
+  <text x="16" y="357" class="small">Height</text><rect x="158" y="341" width="219" height="22" rx="2" class="field"/><text x="164" y="357" class="label">2.500002</text>
+  <text x="16" y="382" class="small">Quality</text><rect x="158" y="366" width="219" height="22" rx="2" class="field"/><text x="164" y="382" class="label">High Quality</text>
+</svg>
