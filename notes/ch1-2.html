@@ -31,7 +31,7 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 05</span><span class="complete-badge">整理中</span></div>
         <h1>ch1_2 Unity3D 環境介紹</h1>
-        <p>認識 Unity 的 File、Edit 與 Preferences，以及主要編輯器視窗、GameObject、Component 和 Play Mode。</p>
+        <p>認識 Unity 的 File、Edit、Assets 與 GameObject 選單，並建立 Asset、GameObject、Component 與 Android 建置工具鏈的基本概念。</p>
       </header>
 
       <section class="note-section">
@@ -41,7 +41,7 @@
           <dl class="term-list">
             <div><dt>Save / Save As</dt><dd>儲存目前的 Scene；Scene 會以 <code>.unity</code> 場景資產存在專案中。</dd></div>
             <div><dt>Save Project</dt><dd>儲存專案範圍的資產與設定變更，不應拿來取代目前 Scene 的儲存。</dd></div>
-            <div><dt>Build Profiles</dt><dd>設定要輸出的目標平台與建置選項，例如 Windows、WebGL、Android 或其他已安裝支援模組的平台。</dd></div>
+            <div><dt>Build Profiles</dt><dd>設定要輸出的目標平台與建置選項，例如 Windows、Web、Android 或其他已安裝支援模組的平台。</dd></div>
             <div><dt>Build And Run</dt><dd>建置遊戲，並在完成後直接執行。</dd></div>
           </dl>
 
@@ -54,7 +54,7 @@
 
       <aside class="callout danger">
         <span class="callout-label">版本差異</span>
-        <p>老師使用的舊版 Unity 將建置入口稱為 <strong>Build Settings</strong>；Unity 6 已改為 <strong>Build Profiles</strong>。核心目的仍包含選擇目標平台與設定建置內容，但新版可以針對平台建立並保存不同的建置設定檔。</p>
+        <p>老師使用的舊版 Unity 將建置入口稱為 <strong>Build Settings</strong>；Unity 6 已改為 <strong>Build Profiles</strong>。新版可以替不同平台保存各自的建置設定檔。</p>
       </aside>
 
       <section class="note-section">
@@ -81,15 +81,24 @@
           <h2>External Tools：程式編輯器與 Android 工具</h2>
           <dl class="term-list">
             <div><dt>External Script Editor</dt><dd><strong>外部腳本編輯器。</strong>選擇雙擊 C# 腳本時要開啟的程式。本筆記使用 Visual Studio Code。</dd></div>
-            <div><dt>Android 工具的位置</dt><dd>Unity 6 仍從 <strong>Edit → Preferences → External Tools → Android</strong> 查看或指定 SDK、NDK、JDK 與 Gradle，並沒有搬到 Build Profiles。</dd></div>
-            <div><dt>Build Profile 的作用</dt><dd>在 Build Profiles 新增 Android Profile 並按下 <strong>Switch Profile</strong>，只會把 Android 設為目前專案的有效建置目標，不是顯示 External Tools Android 區塊的開關。</dd></div>
-            <div><dt>Android 區塊的前提</dt><dd>目前 Unity Editor 必須先安裝 Android Build Support，以及相依的 Android SDK &amp; NDK Tools 和 OpenJDK。若未安裝，Build Profiles 會提供 <em>Install with Unity Hub</em>。</dd></div>
-            <div><dt>自訂路徑</dt><dd>預設建議使用 Unity Hub 安裝的相容版本。需要自訂時，取消勾選對應的 <em>installed with Unity (recommended)</em>，才能用 Browse 指定資料夾。</dd></div>
+            <div><dt>Android 工具的位置</dt><dd>Unity 6 仍從 <strong>Edit → Preferences → External Tools → Android</strong> 查看 SDK、NDK、JDK 與 Gradle，並沒有搬到 Build Profiles。</dd></div>
+            <div><dt>Build Profile 的作用</dt><dd>切換 Android Profile 只會把 Android 設為目前專案的有效建置目標，不是顯示 External Tools Android 區塊的開關。</dd></div>
+            <div><dt>Android 區塊的前提</dt><dd>目前 Unity Editor 必須先安裝 Android Build Support、Android SDK &amp; NDK Tools 與 OpenJDK。</dd></div>
           </dl>
 
           <figure class="lesson-figure">
             <img src="../assets/ch1-2/legacy-preferences-external-tools.svg" width="692" height="586" loading="lazy" alt="老師舊版 Unity Preferences 的 External Tools，包含 MonoDevelop 與 Android SDK、JDK、NDK 路徑">
-            <figcaption><strong>老師使用的舊版 External Tools。</strong>舊畫面直接列出 MonoDevelop，以及 Android SDK、JDK、NDK 的路徑欄位；新版仍保留同類設定，但必須先替目前 Editor 安裝 Android 平台模組。</figcaption>
+            <figcaption><strong>老師使用的舊版 External Tools。</strong>舊畫面直接列出 MonoDevelop，以及 Android SDK、JDK、NDK 的路徑欄位。</figcaption>
+          </figure>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/build-profiles-windows-current.svg" width="731" height="608" loading="lazy" alt="目前 Unity 6 Build Profiles 視窗，Windows 為 Active，Android 列在平台清單中">
+            <figcaption><strong>目前的 Build Profiles。</strong>Windows 是 Active 平台。Android 出現在左側清單，不代表 Android Build Support 與工具鏈已經安裝完成。</figcaption>
+          </figure>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/preferences-external-tools-current.svg" width="832" height="614" loading="lazy" alt="目前 Unity 6 Preferences 的 External Tools，只顯示 VS Code 與版本控制工具，沒有 Android SDK、NDK、JDK 區塊">
+            <figcaption><strong>目前的 External Tools。</strong>畫面沒有 Android SDK、NDK、JDK 區塊，通常表示這個 Editor 尚未安裝完整的 Android Build Support 與相關工具。</figcaption>
           </figure>
         </div>
       </section>
@@ -104,45 +113,99 @@
         <div>
           <h2>Android 建置工具名詞</h2>
           <dl class="term-list">
-            <div><dt>SDK</dt><dd><strong>Software Development Kit，軟體開發套件。</strong>這裡指 Android SDK，提供 Android 平台 API、建置工具、裝置連線工具等，是「要把應用程式做成 Android App」所需的整套基礎工具。</dd></div>
-            <div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>你的理解基本正確，它處理 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，會先把 C# 編譯結果轉成 C++，再由原生工具鏈編譯成 Android 裝置能執行的程式，因此即使主要寫 C#，仍可能需要 NDK。</dd></div>
-            <div><dt>JDK</dt><dd><strong>Java Development Kit，Java 開發套件。</strong>包含 Java 編譯器、執行環境與相關工具。Android 的建置流程仍依賴 Java 生態工具，所以 Unity 打包 Android 專案時需要它；不代表遊戲邏輯必須改用 Java 寫。</dd></div>
-            <div><dt>Gradle</dt><dd><strong>建置自動化工具。</strong>負責依照建置腳本安排編譯、處理相依套件、整合資源，最後封裝成 APK 或 AAB。可以把它理解成 Android 打包流程的總管。</dd></div>
+            <div><dt>SDK</dt><dd><strong>Software Development Kit，軟體開發套件。</strong>Android SDK 提供平台 API、建置工具與裝置連線工具，是製作 Android App 所需的基礎工具箱。</dd></div>
+            <div><dt>NDK</dt><dd><strong>Native Development Kit，原生開發套件。</strong>你的理解基本正確，它負責 Android 上的 C／C++ 原生程式碼。Unity 使用 IL2CPP 時，即使主要寫 C#，仍可能需要 NDK。</dd></div>
+            <div><dt>JDK</dt><dd><strong>Java Development Kit，Java 開發套件。</strong>Android 建置流程依賴 Java 生態工具；這不代表遊戲邏輯必須改用 Java 寫。</dd></div>
+            <div><dt>Gradle</dt><dd><strong>建置自動化工具。</strong>安排編譯、處理相依套件、整合資源，最後封裝成 APK 或 AAB。</dd></div>
             <div><dt>IL2CPP</dt><dd><strong>Intermediate Language To C++。</strong>Unity 的 AOT 編譯後端，將 C# 編譯後的中間語言轉成 C++，再針對目標平台編譯成原生程式。</dd></div>
           </dl>
         </div>
       </section>
 
-      <div class="memory-line"><span>工具鏈關係</span><strong>C# 腳本可經 IL2CPP 轉成 C++；NDK 編譯原生程式，SDK 提供 Android 平台工具，JDK 與 Gradle 協助完成建置與封裝。</strong></div>
+      <div class="memory-line"><span>工具鏈關係</span><strong>C# 可經 IL2CPP 轉成 C++；NDK 編譯原生程式，SDK 提供 Android 平台工具，JDK 與 Gradle 協助完成建置與封裝。</strong></div>
 
       <section class="note-section">
         <span class="section-index">05</span>
         <div>
+          <h2>Assets 選單：專案資產與匯入</h2>
+          <dl class="term-list">
+            <div><dt>Asset</dt><dd><strong>專案資產。</strong>存在 Project 視窗與 <code>Assets</code> 資料夾中的檔案，例如 Scene、Script、Material、Texture、Model、Audio、Prefab 與 Input Actions。</dd></div>
+            <div><dt>Assets → Create</dt><dd>建立新的專案資產，例如 Folder、Material、MonoBehaviour Script、Physics Material 或 Input Actions。它建立的是檔案或資源，不是場景裡的物件。</dd></div>
+            <div><dt>Import Package</dt><dd>通常用來匯入 <code>.unitypackage</code>。套件可以包含 C# 腳本、Editor 工具、Prefab、材質、貼圖、模型、音效或 UI 資源；是否算「外掛」取決於裡面的內容。</dd></div>
+            <div><dt>Import New Asset</dt><dd>把外部檔案匯入目前專案，例如圖片、模型、音訊或其他 Unity 支援的檔案格式。</dd></div>
+            <div><dt>Package Manager</dt><dd>現代 Unity 安裝官方套件、UPM 套件、Git 套件與部分第三方工具的主要入口。它和匯入傳統 <code>.unitypackage</code> 是兩套不同流程。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/assets-menu-unity6.svg" width="330" height="582" loading="lazy" alt="Unity 6 Assets 選單，包含 Create、Import Package、Import New Asset、Refresh 與 Reimport">
+            <figcaption><strong>Assets 選單。</strong>主要處理 Project 裡的資產建立、匯入、重新匯入與相依關係。</figcaption>
+          </figure>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/assets-create-menu-unity6.svg" width="751" height="576" loading="lazy" alt="Unity 6 Assets Create 子選單，可建立 Folder、Material、MonoBehaviour Script、Physics Material 與 Input Actions">
+            <figcaption><strong>Assets → Create。</strong>Material、Script、Physics Material 與 Input Actions 都是專案資產，不會因為建立後就自動出現在 Scene 裡。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">06</span>
+        <div>
+          <h2>GameObject 選單：建立場景物件與階層</h2>
+          <dl class="term-list">
+            <div><dt>GameObject</dt><dd><strong>場景物件容器。</strong>Hierarchy 裡的每個項目都是 GameObject；它透過附加的 Component 取得外觀與行為。</dd></div>
+            <div><dt>3D Object</dt><dd>建立 Cube、Sphere、Capsule、Plane 等常用 3D 場景物件。這些 GameObject 通常會帶有 Mesh、Renderer 與 Collider 等 Component。</dd></div>
+            <div><dt>Create Empty</dt><dd>建立只有 Transform 的 GameObject。它沒有 Renderer，所以在 Game 視窗中看不到，但仍然是真正的 GameObject，常用來整理階層、當座標基準或掛管理腳本。</dd></div>
+            <div><dt>Create Empty Child</dt><dd>在目前選取物件之下建立子 GameObject。</dd></div>
+            <div><dt>Create Empty Parent</dt><dd>替目前選取物件新增一層父 GameObject，方便把多個物件當成群組操作。</dd></div>
+            <div><dt>Parent / Child</dt><dd>父子關係主要透過 Transform 階層運作。移動、旋轉或縮放父物件通常會連帶影響子物件；修改子物件不會反向改變父物件。</dd></div>
+          </dl>
+
+          <figure class="lesson-figure">
+            <img src="../assets/ch1-2/gameobject-menu-unity6.svg" width="292" height="586" loading="lazy" alt="Unity 6 GameObject 選單，可建立 Empty、Empty Child、Empty Parent、2D、3D、Light、Audio、UI 與 Camera">
+            <figcaption><strong>GameObject 選單。</strong>這裡建立的是 Scene 與 Hierarchy 裡的物件，包括看得見的模型，也包括 Empty、Camera、Light、Audio 與管理用途物件。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <aside class="callout danger">
+        <span class="callout-label">不要用「看得見」判斷 GameObject</span>
+        <p><strong>所有 Hierarchy 項目都是 GameObject，不論是否能直接看見。</strong>Empty、Camera、Light、Audio Source 或純腳本管理物件都可能沒有可見外觀。反過來，Project 裡的 Texture、Material、Model 檔案雖然可以預覽，仍只是 Asset；把模型拖進 Scene 後，Unity 才會建立承載它的 GameObject。</p>
+      </aside>
+
+      <div class="memory-line"><span>核心區分</span><strong>Assets → Create 建立專案檔案；GameObject 選單建立場景實例。Empty 不是「非 GameObject」，而是沒有可見 Renderer 的 GameObject。</strong></div>
+
+      <section class="note-section">
+        <span class="section-index">07</span>
+        <div>
           <h2>五個主要區塊</h2>
           <div class="window-map">
             <div><strong>Scene</strong><span>編輯場景與擺放物件</span></div>
-            <div><strong>Hierarchy</strong><span>管理場景物件與父子層級</span></div>
-            <div><strong>Inspector</strong><span>查看元件並修改屬性</span></div>
+            <div><strong>Hierarchy</strong><span>管理場景 GameObject 與父子層級</span></div>
+            <div><strong>Inspector</strong><span>查看 Component 並修改屬性</span></div>
             <div><strong>Game</strong><span>查看攝影機實際輸出</span></div>
-            <div><strong>Project</strong><span>管理圖片、模型、腳本與 Prefab 等資源</span></div>
+            <div><strong>Project</strong><span>管理圖片、模型、腳本與 Prefab 等 Asset</span></div>
           </div>
         </div>
       </section>
 
       <section class="note-section two-column-note">
-        <span class="section-index">06</span>
+        <span class="section-index">08</span>
         <div>
           <h2>核心概念</h2>
           <dl class="term-list">
-            <div><dt>GameObject</dt><dd>場景中的物件容器。</dd></div>
-            <div><dt>Component</dt><dd>附加在 GameObject 上，賦予物件資料或功能。</dd></div>
-            <div><dt>Rigidbody</dt><dd>讓物件受到 Unity 物理系統與重力影響。</dd></div>
+            <div><dt>Asset</dt><dd>儲存在專案中的檔案或資源。</dd></div>
+            <div><dt>GameObject</dt><dd>存在 Scene 與 Hierarchy 中的物件容器。</dd></div>
+            <div><dt>Component</dt><dd>附加在 GameObject 上，賦予資料、外觀或行為。</dd></div>
+            <div><dt>Transform</dt><dd>每個 GameObject 都必定擁有，記錄位置、旋轉、縮放與父子階層。</dd></div>
+            <div><dt>Prefab</dt><dd>可重複使用的 GameObject 結構範本，本身以 Asset 形式存在 Project 中。</dd></div>
+            <div><dt>Rigidbody</dt><dd>讓 GameObject 受到 Unity 物理系統與重力影響的 Component。</dd></div>
           </dl>
         </div>
       </section>
 
       <section class="note-section">
-        <span class="section-index">07</span>
+        <span class="section-index">09</span>
         <div>
           <h2>播放控制</h2>
           <dl class="term-list compact">
@@ -160,7 +223,7 @@
 
       <section class="legacy-box">
         <h2>舊版課程提醒</h2>
-        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。使用 VS Code 時可在 External Script Editor 指定，但完整的程式分析與除錯仍需要相應的 VS Code 擴充套件。</p>
+        <p>老師畫面中的 Build Settings 在 Unity 6 已改為 Build Profiles；MonoDevelop 也不再是現代 Unity 的主要選擇。Assets → Create 與 GameObject 選單一直代表不同層次：前者建立專案資產，後者建立場景物件，不能因為兩邊都有 Create 就混為一談。</p>
       </section>
 
       <section class="checklist">
@@ -168,11 +231,12 @@
         <label><input type="checkbox" data-check="lesson-5-file-save"> 能說明 Save Scene 與 Save Project 的用途差異</label>
         <label><input type="checkbox" data-check="lesson-5-build-profile"> 能說明 Switch Profile 與安裝平台模組是兩件不同的事</label>
         <label><input type="checkbox" data-check="lesson-5-preferences"> 能區分 Preferences 與 Project Settings</label>
-        <label><input type="checkbox" data-check="lesson-5-script-editor"> 能在 External Tools 選擇 VS Code</label>
         <label><input type="checkbox" data-check="lesson-5-android-tools"> 能用自己的話解釋 SDK、NDK、JDK、Gradle 與 IL2CPP</label>
+        <label><input type="checkbox" data-check="lesson-5-assets"> 能區分 Asset、Import Package 與 Package Manager</label>
+        <label><input type="checkbox" data-check="lesson-5-assets-gameobjects"> 能說明 Assets → Create 與 GameObject 選單的差異</label>
+        <label><input type="checkbox" data-check="lesson-5-empty"> 能解釋 Empty GameObject 為何看不見但仍是 GameObject</label>
+        <label><input type="checkbox" data-check="lesson-5-parent-child"> 能說明父子 GameObject 的 Transform 關係</label>
         <label><input type="checkbox" data-check="lesson-5-windows"> 能指出五個主要視窗的用途</label>
-        <label><input type="checkbox" data-check="lesson-5-transform"> 能建立 Cube 或 Sphere，並查看 Transform</label>
-        <label><input type="checkbox" data-check="lesson-5-rigidbody"> 能加入 Rigidbody 並觀察重力效果</label>
         <label><input type="checkbox" data-check="lesson-5-playmode"> 能驗證 Play Mode 結束後數值恢復</label>
       </section>
 
