@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="692" height="586" viewBox="0 0 346 293" role="img" aria-labelledby="title desc">
+  <title id="title">舊版 Unity Preferences 的 External Tools</title>
+  <desc id="desc">舊版介面可在 External Tools 中選擇腳本編輯器，並直接指定 Android SDK、JDK 與 NDK 路徑。</desc>
+  <rect width="346" height="293" fill="#777"/>
+  <rect x="4" y="4" width="338" height="285" fill="#d8d8d8" stroke="#333"/>
+  <rect x="5" y="5" width="336" height="15" fill="#315c99"/>
+  <text x="9" y="16" font-family="Tahoma,Arial,sans-serif" font-size="8" font-weight="700" fill="#fff">Unity Preferences</text>
+  <rect x="7" y="22" width="79" height="263" fill="#cacaca" stroke="#aaa"/>
+  <style>
+    text{font-family:Tahoma,Arial,sans-serif;fill:#444;font-size:8px}.label{font-size:9px}.head{font-size:13px;fill:#666}.field{fill:#eee;stroke:#aaa}.button{fill:#ddd;stroke:#999}.small{font-size:7px}
+  </style>
+  <text x="50" y="54" text-anchor="middle">General</text>
+  <rect x="8" y="64" width="77" height="23" fill="#4285d4"/>
+  <text x="49" y="78" text-anchor="middle" fill="#fff">External Tools</text>
+  <text x="50" y="102" text-anchor="middle">Colors</text>
+  <text x="50" y="125" text-anchor="middle">Keys</text>
+  <text x="50" y="148" text-anchor="middle">2D</text>
+  <text x="50" y="171" text-anchor="middle">GI Cache</text>
+  <text x="50" y="204" text-anchor="middle">Cache Server</text>
+
+  <text class="head" x="96" y="37">External Tools</text>
+  <text x="96" y="56">External Script Editor</text>
+  <rect class="field" x="232" y="47" width="102" height="12"/>
+  <text class="small" x="236" y="56">MonoDevelop (built-in)</text>
+  <text x="96" y="72">Add .unityproj's to .sln</text><rect x="232" y="64" width="8" height="8" fill="#eee" stroke="#888"/>
+  <text x="96" y="85">Editor Attaching</text><rect x="232" y="77" width="8" height="8" fill="#eee" stroke="#888"/>
+  <text x="96" y="101">Image application</text>
+  <rect class="field" x="232" y="92" width="102" height="12"/>
+  <text class="small" x="236" y="101">Open by file extension</text>
+  <text x="96" y="120">Revision Control Diff/Merge</text>
+  <rect class="field" x="232" y="111" width="102" height="12"/>
+
+  <text class="label" x="96" y="143" font-weight="700">Android</text>
+  <text x="96" y="159">SDK</text><rect class="field" x="121" y="149" width="139" height="12"/><rect class="button" x="262" y="149" width="35" height="12"/><rect class="button" x="299" y="149" width="35" height="12"/>
+  <text class="small" x="124" y="158">E:/android_studio_sdk</text><text class="small" x="267" y="158">Browse</text><text class="small" x="304" y="158">Download</text>
+  <text x="96" y="174">JDK</text><rect class="field" x="121" y="164" width="139" height="12"/><rect class="button" x="262" y="164" width="35" height="12"/><rect class="button" x="299" y="164" width="35" height="12"/>
+  <text class="small" x="124" y="173">C:/Program Files/Java/jdk</text><text class="small" x="267" y="173">Browse</text><text class="small" x="304" y="173">Download</text>
+  <text x="96" y="189">NDK</text><rect class="field" x="121" y="179" width="139" height="12"/><rect class="button" x="262" y="179" width="35" height="12"/><rect class="button" x="299" y="179" width="35" height="12"/>
+  <text class="small" x="267" y="188">Browse</text><text class="small" x="304" y="188">Download</text>
+  <rect x="96" y="198" width="238" height="38" fill="#eee" stroke="#bbb"/>
+  <circle cx="107" cy="210" r="6" fill="#ddd" stroke="#aaa"/><text x="105" y="213" font-weight="700">!</text>
+  <text class="small" x="117" y="207">IL2CPP requires Android NDK installed.</text>
+  <text class="small" x="117" y="217">If targeting IL2CPP you can leave this field</text>
+  <text class="small" x="117" y="227">empty until the NDK is installed.</text>
+</svg>
