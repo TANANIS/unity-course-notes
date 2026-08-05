@@ -30,9 +30,10 @@
         <div><span class="eyebrow">IDENTITY / FILTERING</span><h2 id="lesson-map-title">它是誰，和系統要不要處理它，是兩件事</h2><p>老師用「大分類／小分類」解釋 Layer 與 Tag，勉強能入門，但真正穩定的記法是：Tag 偏向身分，Layer 偏向引擎篩選。</p></div>
         <nav class="lesson-outline" aria-label="本課快速導覽">
           <a href="#inspector-location"><strong>01</strong><span>Inspector 位置<small>Tag 與 Layer 在哪裡</small></span></a>
-          <a href="#tag"><strong>02</strong><span>Tag<small>物件是什麼</small></span></a>
-          <a href="#layer"><strong>03</strong><span>Layer<small>系統要不要處理</small></span></a>
-          <a href="#difference"><strong>04</strong><span>如何選擇<small>避免亂分類</small></span></a>
+          <a href="#material-color"><strong>02</strong><span>Material 配色<small>建立材質並套用顏色</small></span></a>
+          <a href="#tag"><strong>03</strong><span>Tag<small>物件是什麼</small></span></a>
+          <a href="#layer"><strong>04</strong><span>Layer<small>系統要不要處理</small></span></a>
+          <a href="#difference"><strong>05</strong><span>如何選擇<small>避免亂分類</small></span></a>
         </nav>
       </section>
 
@@ -42,7 +43,19 @@
         <p>選取 GameObject 後，Inspector 最上方會看到 Tag 與 Layer 下拉選單。這兩者都不是 Component，而是 GameObject 本身的基本設定。</p>
       </div></section>
 
-      <section class="note-section" id="tag"><span class="section-index">02</span><div>
+      <section class="note-section" id="material-color"><span class="section-index">02</span><div>
+        <h2>課程中的配色準備：建立 Material</h2>
+        <p>字幕中的「meteor」實際上是 <strong>Material（材質）</strong>。老師先替 Cube 與 Sphere 套上不同顏色，目的是讓後面的 Tag／Layer 示範比較容易辨認，並不是 Tag 或 Layer 自己會控制顏色。</p>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>在 Project／Assets 空白處按右鍵</strong><p>選擇 <strong>Create → Material</strong>，建立一個 Material Asset。</p></div></li>
+          <li><span>02</span><div><strong>選取 Material</strong><p>在 Inspector 修改材質顏色。URP 常見欄位是 <strong>Base Map</strong>；舊版 Standard Shader 常見名稱是 <strong>Albedo</strong>。</p></div></li>
+          <li><span>03</span><div><strong>把 Material 套到物件</strong><p>將 Material 從 Project 拖到 Scene 中的物件，或指定到 <strong>Mesh Renderer → Materials → Element 0</strong>。</p></div></li>
+        </ol>
+        <div class="memory-line"><span>流程</span><strong>Project 建立 Material → Inspector 調顏色 → 拖到 GameObject 或指定給 Mesh Renderer。</strong></div>
+        <aside class="callout warning"><span class="callout-label">不是「右鍵直接選顏色」</span><p>右鍵做的是建立 Material；顏色是在選取 Material 後，由 Inspector 調整。GameObject 只是透過 Mesh Renderer 引用這個材質。三個步驟被老師講得很快，但概念不能因此揉成一團。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="tag"><span class="section-index">03</span><div>
         <h2>Tag：表示物件是什麼</h2>
         <dl class="term-list">
           <div><dt>用途</dt><dd>替 GameObject 加上身分標籤，例如 Player、Enemy、Collectible。</dd></div>
@@ -54,7 +67,7 @@
         <aside class="callout warning"><span class="callout-label">不要把多重屬性全部塞進 Tag</span><p>一隻敵人可能同時是 Enemy、Dragon、Fire、Boss，但它不能同時擁有四個 Tag。多重屬性更適合 enum、自訂 Component 或 ScriptableObject。</p></aside>
       </div></section>
 
-      <section class="note-section" id="layer"><span class="section-index">03</span><div>
+      <section class="note-section" id="layer"><span class="section-index">04</span><div>
         <h2>Layer：讓系統篩選物件</h2>
         <dl class="term-list">
           <div><dt>用途</dt><dd>用於 Physics Collision Matrix、Raycast LayerMask、Camera Culling Mask、Light 等系統過濾。</dd></div>
@@ -65,7 +78,7 @@
         <div class="memory-line"><span>位元觀念</span><strong>GameObject.layer 是索引；LayerMask 才是用 32 個 bit 同時選擇多個 Layer。</strong></div>
       </div></section>
 
-      <section class="note-section" id="difference"><span class="section-index">04</span><div>
+      <section class="note-section" id="difference"><span class="section-index">05</span><div>
         <h2>Tag 與 Layer 怎麼選</h2>
         <dl class="term-list">
           <div><dt>它是誰？</dt><dd>用 Tag。例如角色是否為 Player、Enemy、Collectible。</dd></div>
@@ -79,6 +92,7 @@
 
       <section class="checklist compact-checklist"><h2>完成檢查</h2>
         <label><input type="checkbox" data-check="lesson-10-location"> 找得到 Inspector 上方的 Tag 與 Layer</label>
+        <label><input type="checkbox" data-check="lesson-10-material"> 能建立 Material、調整顏色並套用到 GameObject</label>
         <label><input type="checkbox" data-check="lesson-10-tag"> 能說明 Tag 用來辨認物件身分</label>
         <label><input type="checkbox" data-check="lesson-10-layer"> 能說明 Layer 用於物理、Raycast 與 Camera 篩選</label>
         <label><input type="checkbox" data-check="lesson-10-assign"> 知道新增 Tag 或 Layer 後仍要回到物件重新指定</label>
