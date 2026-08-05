@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_8 建立 C# Script、掛載到 GameObject，以及兩種建立方式的差異。">
+  <title>ch1_8 建立 Script｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_8</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 11</span><span class="complete-badge">已整理</span></div>
+        <h1>ch1_8 建立 Script</h1>
+        <p>建立 C# Script Asset，將它掛到 GameObject 上成為 Component，並比較 Project 與 Add Component 兩種建立方式。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">SCRIPT ASSET / COMPONENT</span><h2 id="lesson-map-title">腳本檔存在，不代表它已經在場景中執行</h2><p>Script 先是 Project 裡的 Asset；掛載到 GameObject 後，才會成為該物件的 Component。直接按 Play 卻沒有任何反應，通常只是因為腳本還孤零零地躺在 Assets 裡。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#project-method"><strong>01</strong><span>Project 建立<small>Scripts 資料夾與 C# Script</small></span></a>
+          <a href="#attach-script"><strong>02</strong><span>掛載腳本<small>拖入 Inspector</small></span></a>
+          <a href="#component-method"><strong>03</strong><span>Add Component<small>直接建立並掛載</small></span></a>
+          <a href="#compare-methods"><strong>04</strong><span>兩種方式<small>整理與速度的取捨</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="project-method"><span class="section-index">01</span><div>
+        <h2>方法一：在 Project 建立 C# Script</h2>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>建立 Scripts 資料夾</strong><p>在 Project 視窗的 Assets 空白處按右鍵，選擇 <strong>Create → Folder</strong>，命名為 <code>Scripts</code>。</p></div></li>
+          <li><span>02</span><div><strong>建立 C# Script</strong><p>進入 Scripts 資料夾，在空白處按右鍵，選擇 <strong>Create → C# Script</strong>。</p></div></li>
+          <li><span>03</span><div><strong>立即正確命名</strong><p>例如 <code>TestOne</code>。課程特別提醒命名要正確，避免之後再修改時增加麻煩。</p></div></li>
+          <li><span>04</span><div><strong>雙擊開啟程式碼編輯器</strong><p>老師示範撰寫旋轉程式，但本堂重點是建立與掛載流程，程式語法會在後續章節說明。</p></div></li>
+        </ol>
+        <aside class="callout warning"><span class="callout-label">字幕不足以還原完整程式碼</span><p>字幕可辨認老師使用了旋轉相關程式，可能涉及 <code>transform.Rotate</code> 與 Y 軸，但無法可靠還原完整參數與寫法，因此本頁不把猜測偽裝成原始程式碼。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="attach-script"><span class="section-index">02</span><div>
+        <h2>把 Script 掛到 GameObject</h2>
+        <p>只在 Project 建立 Script，按 Play 不會讓任何場景物件自動執行它。必須先把腳本附加到目標 GameObject。</p>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>選取 GameObject</strong><p>在 Hierarchy 或 Scene 選取要控制的 Cube。</p></div></li>
+          <li><span>02</span><div><strong>找到 Script Asset</strong><p>在 Project 的 Scripts 資料夾選取剛建立的 C# Script。</p></div></li>
+          <li><span>03</span><div><strong>拖到 Inspector</strong><p>把 Script 拖進該 GameObject 的 Inspector。掛載成功後，Inspector 會出現腳本 Component。</p></div></li>
+          <li><span>04</span><div><strong>按 Play 測試</strong><p>老師示範掛載後物件開始旋轉，用來確認腳本確實有執行。</p></div></li>
+        </ol>
+        <div class="memory-line"><span>核心關係</span><strong>Project 裡是 Script Asset；掛到 GameObject 後是 Script Component。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="component-method"><span class="section-index">03</span><div>
+        <h2>方法二：從 Add Component 建立新腳本</h2>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>選取 GameObject</strong><p>先選取要附加腳本的物件。</p></div></li>
+          <li><span>02</span><div><strong>開啟 Add Component</strong><p>在 Inspector 底部點選 <strong>Add Component</strong>。</p></div></li>
+          <li><span>03</span><div><strong>建立 New Script</strong><p>從選單建立新腳本並輸入名稱。建立完成後，腳本會直接掛到目前 GameObject。</p></div></li>
+          <li><span>04</span><div><strong>整理檔案位置</strong><p>這種方式建立的 Script 可能不在預先規劃的 Scripts 資料夾，需要回到 Project 手動移動整理。</p></div></li>
+        </ol>
+        <aside class="callout warning"><span class="callout-label">版本介面可能不同</span><p>字幕顯示老師使用 <strong>Add Component → New Script</strong>。不同 Unity 版本的入口名稱或是否直接提供 New Script 可能不同；本頁保留課程操作，不把介面差異偷偷改寫成另一套流程。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="compare-methods"><span class="section-index">04</span><div>
+        <h2>兩種建立方式的差異</h2>
+        <dl class="term-list">
+          <div><dt>Project → Create → C# Script</dt><dd>可直接指定腳本所在資料夾，專案結構較整齊；建立後還要手動掛到 GameObject。</dd></div>
+          <div><dt>Add Component → New Script</dt><dd>建立後立即掛到目前 GameObject，操作較快；之後可能還要移動 Script Asset 整理資料夾。</dd></div>
+          <div><dt>刪除資料夾或腳本</dt><dd>可在 Project 右鍵選擇 Delete，但刪除 Asset 會影響所有引用它的物件，不能把它當普通場景物件隨意處理。</dd></div>
+        </dl>
+        <div class="memory-line"><span>選擇原則</span><strong>重視專案結構，用 Project 建立；臨時快速掛載，可從 Add Component 建立後再整理。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-11-create-script"> 能在 Project 的指定資料夾建立 C# Script</label>
+        <label><input type="checkbox" data-check="lesson-11-attach-script"> 能把 Script 拖到 GameObject 的 Inspector</label>
+        <label><input type="checkbox" data-check="lesson-11-asset-component"> 能區分 Script Asset 與掛載後的 Script Component</label>
+        <label><input type="checkbox" data-check="lesson-11-two-methods"> 知道兩種建立方式的優缺點</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-7.html"><small>上一堂</small><strong>← ch1_7 Tag 與 Layer</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
