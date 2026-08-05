@@ -35,7 +35,6 @@ const checklistState = readJson(checklistKey);
 document.querySelectorAll('input[data-check]').forEach((checkbox) => {
   const key = checkbox.dataset.check;
   checkbox.checked = Boolean(checklistState[key]);
-
   checkbox.addEventListener('change', () => {
     checklistState[key] = checkbox.checked;
     localStorage.setItem(checklistKey, JSON.stringify(checklistState));
@@ -45,13 +44,11 @@ document.querySelectorAll('input[data-check]').forEach((checkbox) => {
 const chapters = [...document.querySelectorAll('details.chapter')];
 if (chapters.length) {
   const savedChapters = readJson(chapterKey, []);
-
   if (savedChapters.length) {
     chapters.forEach((chapter, index) => {
       chapter.open = savedChapters.includes(index);
     });
   }
-
   chapters.forEach((chapter) => {
     chapter.addEventListener('toggle', () => {
       const openIndexes = chapters
@@ -64,7 +61,6 @@ if (chapters.length) {
 
 function loadSearchStyles() {
   if (document.querySelector('link[data-search-styles]')) return;
-
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet';
   stylesheet.href = new URL('search.css', siteRootUrl).href;
@@ -86,9 +82,7 @@ function getSearchScore(entry, tokens) {
   const description = normalizeSearchText(entry.description);
   const keywords = normalizeSearchText((entry.keywords || []).join(' '));
   const haystack = `${title} ${description} ${keywords}`;
-
   if (!tokens.every((token) => haystack.includes(token))) return -1;
-
   return tokens.reduce((score, token) => {
     if (title === token) return score + 12;
     if (title.startsWith(token)) return score + 8;
@@ -104,27 +98,16 @@ function createSearchNavigation() {
   if (!topbar || !topActions || topbar.querySelector('.site-search')) return;
 
   loadSearchStyles();
-
   const search = document.createElement('div');
   search.className = 'site-search';
   search.innerHTML = `
     <label class="visually-hidden" for="site-search-input">搜尋課程筆記</label>
     <span class="site-search-icon" aria-hidden="true">⌕</span>
-    <input
-      id="site-search-input"
-      class="site-search-input"
-      type="search"
-      inputmode="search"
-      autocomplete="off"
-      placeholder="搜尋筆記，例如：父子物件、Collider"
-      aria-autocomplete="list"
-      aria-controls="site-search-results"
-      aria-expanded="false"
-    >
+    <input id="site-search-input" class="site-search-input" type="search" inputmode="search" autocomplete="off"
+      placeholder="搜尋筆記，例如：父子物件、Collider" aria-autocomplete="list"
+      aria-controls="site-search-results" aria-expanded="false">
     <span class="site-search-shortcut" aria-hidden="true">Ctrl K</span>
-    <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>
-  `;
-
+    <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>`;
   topbar.insertBefore(search, topActions);
 
   const input = search.querySelector('.site-search-input');
@@ -143,14 +126,12 @@ function createSearchNavigation() {
   function setActiveIndex(nextIndex) {
     const options = [...results.querySelectorAll('[role="option"]')];
     if (!options.length) return;
-
     activeIndex = (nextIndex + options.length) % options.length;
     options.forEach((option, index) => {
       const isActive = index === activeIndex;
       option.classList.toggle('is-active', isActive);
       option.setAttribute('aria-selected', String(isActive));
     });
-
     const activeOption = options[activeIndex];
     input.setAttribute('aria-activedescendant', activeOption.id);
     activeOption.scrollIntoView({ block: 'nearest' });
@@ -159,11 +140,7 @@ function createSearchNavigation() {
   function renderResults() {
     const query = normalizeSearchText(input.value);
     const tokens = query.split(' ').filter(Boolean);
-
-    if (!tokens.length) {
-      closeResults();
-      return;
-    }
+    if (!tokens.length) return closeResults();
 
     const visibleEntries = entries
       .map((entry) => ({ entry, score: getSearchScore(entry, tokens) }))
@@ -174,7 +151,6 @@ function createSearchNavigation() {
 
     results.replaceChildren();
     activeIndex = -1;
-
     if (!visibleEntries.length) {
       const empty = document.createElement('p');
       empty.className = 'site-search-empty';
@@ -188,23 +164,14 @@ function createSearchNavigation() {
         option.href = new URL(entry.url, siteRootUrl).href;
         option.setAttribute('role', 'option');
         option.setAttribute('aria-selected', 'false');
-
-        const section = document.createElement('span');
-        section.className = 'site-search-section';
-        section.textContent = entry.section || '課程筆記';
-
-        const title = document.createElement('strong');
-        title.textContent = entry.title;
-
-        const description = document.createElement('small');
-        description.textContent = entry.description || '';
-
-        option.append(section, title, description);
+        option.innerHTML = `<span class="site-search-section"></span><strong></strong><small></small>`;
+        option.querySelector('.site-search-section').textContent = entry.section || '課程筆記';
+        option.querySelector('strong').textContent = entry.title;
+        option.querySelector('small').textContent = entry.description || '';
         option.addEventListener('mousemove', () => setActiveIndex(index));
         results.append(option);
       });
     }
-
     results.hidden = false;
     input.setAttribute('aria-expanded', 'true');
   }
@@ -218,38 +185,23 @@ function createSearchNavigation() {
       entries = Array.isArray(data) ? data : [];
       if (input.value.trim()) renderResults();
     })
-    .catch((error) => {
-      console.error('無法載入搜尋索引：', error);
-    });
+    .catch((error) => console.error('無法載入搜尋索引：', error));
 
   input.addEventListener('input', renderResults);
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) renderResults();
-  });
-
+  input.addEventListener('focus', () => input.value.trim() && renderResults());
   input.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (results.hidden) renderResults();
       setActiveIndex(activeIndex + 1);
-      return;
-    }
-
-    if (event.key === 'ArrowUp') {
+    } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (results.hidden) renderResults();
       setActiveIndex(activeIndex - 1);
-      return;
-    }
-
-    if (event.key === 'Enter' && activeIndex >= 0) {
+    } else if (event.key === 'Enter' && activeIndex >= 0) {
       event.preventDefault();
-      const target = results.querySelectorAll('[role="option"]')[activeIndex];
-      target?.click();
-      return;
-    }
-
-    if (event.key === 'Escape') {
+      results.querySelectorAll('[role="option"]')[activeIndex]?.click();
+    } else if (event.key === 'Escape') {
       closeResults();
       input.blur();
     }
@@ -258,15 +210,63 @@ function createSearchNavigation() {
   document.addEventListener('click', (event) => {
     if (!search.contains(event.target)) closeResults();
   });
-
   document.addEventListener('keydown', (event) => {
     const isShortcut = (event.ctrlKey || event.metaKey) && event.key.toLocaleLowerCase() === 'k';
     if (!isShortcut) return;
-
     event.preventDefault();
     input.focus();
     input.select();
   });
 }
 
+function repairKnownImageSources() {
+  const replacements = new Map([
+    ['scene-tools-overlay.png', 'scene-tools-overlay.svg'],
+    ['transform-inspector.png', 'transform-inspector.svg']
+  ]);
+
+  document.querySelectorAll('.lesson-figure img').forEach((image) => {
+    const fileName = image.src.split('/').pop();
+    const replacement = replacements.get(fileName);
+    if (replacement) image.src = image.src.replace(fileName, replacement);
+
+    image.addEventListener('error', () => {
+      const fallback = document.createElement('div');
+      fallback.className = 'image-fallback';
+      fallback.setAttribute('role', 'img');
+      fallback.setAttribute('aria-label', image.alt || '圖片載入失敗');
+      fallback.textContent = image.alt ? `圖片暫時無法載入：${image.alt}` : '圖片暫時無法載入';
+      image.replaceWith(fallback);
+    }, { once: true });
+  });
+}
+
+function configureLessonPagination() {
+  const pagination = document.querySelector('.note-pagination');
+  const nextButton = pagination?.querySelector('.next');
+  if (!pagination || !nextButton) return;
+
+  const match = location.pathname.match(/\/notes\/ch1-(\d+)\.html$/);
+  if (!match) return;
+
+  const currentNumber = Number(match[1]);
+  const nextNumber = currentNumber + 1;
+  const nextUrl = new URL(`notes/ch1-${nextNumber}.html`, siteRootUrl);
+
+  fetch(nextUrl, { method: 'HEAD', cache: 'no-store' })
+    .then((response) => {
+      if (!response.ok) throw new Error('沒有下一堂');
+      nextButton.href = nextUrl.href;
+      nextButton.querySelector('small').textContent = '下一堂';
+      nextButton.querySelector('strong').textContent = `ch1_${nextNumber} →`;
+    })
+    .catch(() => {
+      nextButton.href = new URL('course.html', siteRootUrl).href;
+      nextButton.querySelector('small').textContent = '完成';
+      nextButton.querySelector('strong').textContent = '返回課程目錄';
+    });
+}
+
 createSearchNavigation();
+repairKnownImageSources();
+configureLessonPagination();
