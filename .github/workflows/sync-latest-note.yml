@@ -1,0 +1,59 @@
+name: Sync latest Unity note
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'notes/ch1-*.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-latest-note:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect latest note number
+        id: latest
+        shell: bash
+        run: |
+          latest=$(find notes -maxdepth 1 -type f -name 'ch1-*.html' \
+            | sed -E 's#notes/ch1-([0-9]+)\.html#\1#' \
+            | sort -n \
+            | tail -1)
+
+          if [[ -z "$latest" ]]; then
+            echo "找不到 notes/ch1-N.html" >&2
+            exit 1
+          fi
+
+          echo "number=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Update LATEST_NOTE
+        shell: bash
+        run: |
+          latest='${{ steps.latest.outputs.number }}'
+          sed -Ei "s/^const LATEST_NOTE = [0-9]+;/const LATEST_NOTE = ${latest};/" app.js
+
+          if ! grep -q "^const LATEST_NOTE = ${latest};" app.js; then
+            echo "無法更新 app.js 的 LATEST_NOTE" >&2
+            exit 1
+          fi
+
+      - name: Commit synchronized value
+        shell: bash
+        run: |
+          if git diff --quiet -- app.js; then
+            echo "LATEST_NOTE 已是最新值，不需要提交。"
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js
+          git commit -m "自動同步 LATEST_NOTE=${{ steps.latest.outputs.number }}"
+          git push
