@@ -8,7 +8,7 @@ const siteRootUrl = new URL('./', appScriptUrl);
 
 // 新增 notes/ch1-N.html 後，只要把這個數字改成最新的 N。
 // 課程目錄、首頁進度、搜尋入口與下一堂按鈕都會自動同步。
-const LATEST_NOTE = 7;
+const LATEST_NOTE = 8;
 const FIRST_COURSE_LESSON_NUMBER = 4;
 const TOTAL_COURSE_LESSONS = 200;
 
