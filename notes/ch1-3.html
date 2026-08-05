@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unity 課程 ch1_3 建立 3D 物件與父子關係筆記。">
+  <meta name="description" content="Unity 課程 ch1_3 建立 3D 物件、複製物件與父子關係筆記。">
   <title>ch1_3 建立物件與父子關係｜Unity 課程筆記</title>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../screenshots.css">
@@ -34,30 +34,41 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 06</span><span class="complete-badge">整理中</span></div>
         <h1>ch1_3 Unity3D 建立物件與父子關係</h1>
-        <p>先認識 GameObject → 3D Object 裡能建立的物件，再理解哪些只是測試用幾何體，哪些其實是完整系統的入口。</p>
+        <p>分清楚 Hierarchy 與 Project 各自在建立什麼，再掌握 Primitive、Duplicate，以及 Parent／Child 對 Transform 的影響。</p>
       </header>
 
       <section class="lesson-intro" aria-labelledby="map-title">
         <div>
-          <span class="eyebrow">3D OBJECT MENU</span>
-          <h2 id="map-title">這份選單不是「各種形狀大全」</h2>
-          <p>Cube 到 Quad 是基本幾何體；Text、Ragdoll、Terrain、Tree、Wind Zone 則分別屬於文字、角色物理與地形植被系統。Unity 把它們塞進同一個選單，只能說分類學再次敗給了方便。</p>
+          <span class="eyebrow">GAMEOBJECT / ASSET / TRANSFORM</span>
+          <h2 id="map-title">右鍵選單長得很像，不代表建立的是同一種東西</h2>
+          <p>Hierarchy 管的是目前 Scene 裡的 GameObject；Project 管的是專案檔案與 Asset。Unity 很慷慨地讓兩邊都能右鍵 Create，也很節省地沒有替初學者承擔混淆成本。</p>
         </div>
       </section>
 
-      <section class="note-section">
+      <section class="note-section" id="create-context">
         <span class="section-index">01</span>
         <div>
-          <h2>建立方式</h2>
-          <p>可從上方選單 <strong>GameObject → 3D Object</strong>，或在 Hierarchy 空白處按右鍵後選擇 <strong>3D Object</strong>。</p>
+          <h2>從哪裡建立？先看你要的是 GameObject 還是 Asset</h2>
+          <dl class="term-list">
+            <div><dt>GameObject 選單</dt><dd>從上方選單選擇 <strong>GameObject → 3D Object</strong>，在目前 Scene 中建立新的場景物件。</dd></div>
+            <div><dt>Hierarchy 右鍵</dt><dd>在 Hierarchy 空白處按右鍵，可建立 Scene 裡的 GameObject；建立後會直接出現在 Hierarchy。</dd></div>
+            <div><dt>Project 右鍵</dt><dd>在 Project 的指定資料夾按右鍵並選擇 <strong>Create</strong>，建立的是 Material、Script、Folder 等 Asset 或專案檔案，不是直接出現在 Scene 裡的 GameObject。</dd></div>
+            <div><dt>Asset 放進 Scene</dt><dd>模型或 Prefab 等 Asset 可以從 Project 拖到 Scene／Hierarchy，Unity 才會在場景中建立對應的 GameObject 實例。</dd></div>
+          </dl>
+
+          <aside class="callout danger">
+            <span class="callout-label">觀念校正</span>
+            <p><strong>不是「在哪裡右鍵都能建立任何需要的東西」。</strong>Hierarchy 建立或整理場景物件；Project 建立與管理專案資產。兩者都叫 Create，只是 Unity 對命名重複有某種難以割捨的感情。</p>
+          </aside>
+
           <figure class="lesson-figure compact-figure">
             <img src="../assets/ch1-3/3d-object-menu.png" width="492" height="293" loading="lazy" alt="Unity Hierarchy 右鍵選單中的 3D Object 子選單">
-            <figcaption><strong>3D Object 子選單。</strong>上半部是基本幾何體，下半部是文字、布娃娃、地形與植被工具。</figcaption>
+            <figcaption><strong>Hierarchy 的 3D Object 子選單。</strong>這些項目會建立在目前 Scene 中，而不是變成 Project 資料夾裡的獨立檔案。</figcaption>
           </figure>
         </div>
       </section>
 
-      <section class="note-section">
+      <section class="note-section" id="primitives">
         <span class="section-index">02</span>
         <div>
           <h2>基本幾何體 Primitive</h2>
@@ -65,7 +76,7 @@
             <div><dt>Cube 方體</dt><dd>六面立方體。最常拿來快速搭牆、地板、平台、障礙物與碰撞區，是灰盒原型的主力。</dd></div>
             <div><dt>Sphere 球體</dt><dd>球形物件。適合球、行星、範圍提示或測試滾動物理。預設碰撞器為 Sphere Collider。</dd></div>
             <div><dt>Capsule 膠囊體</dt><dd>中間是圓柱、上下為半球。形狀接近站立角色，常用來暫代玩家或敵人，也適合作為角色碰撞體。</dd></div>
-            <div><dt>Cylinder 圓柱體</dt><dd>上下平面、側面為圓弧。適合柱子、桶子、輪軸與圓形平台。注意預設通常使用 Mesh Collider，不一定適合直接拿來做大量動態物理。</dd></div>
+            <div><dt>Cylinder 圓柱體</dt><dd>上下平面、側面為圓弧。適合柱子、桶子、輪軸與圓形平台。碰撞形狀與效能仍要依實際用途檢查，不能因為外觀看起來合理就宣布物理系統已經畢業。</dd></div>
             <div><dt>Plane 平面</dt><dd>由多個網格面組成的大型水平面，預設尺寸約為 10×10 Unity 單位。常作為測試地面，也方便之後做網格細分或頂點變形。</dd></div>
             <div><dt>Quad 四邊面</dt><dd>只有一個矩形面，預設面向本地 Z 軸。適合 3D 場景中的圖片、告示牌、特效面片與簡單背景。</dd></div>
           </dl>
@@ -76,7 +87,7 @@
         </div>
       </section>
 
-      <section class="note-section">
+      <section class="note-section" id="primitive-components">
         <span class="section-index">03</span>
         <div>
           <h2>建立後通常會有哪些 Component？</h2>
@@ -84,7 +95,7 @@
             <div><dt>Transform</dt><dd>位置、旋轉、縮放與父子階層。所有 GameObject 都一定有。</dd></div>
             <div><dt>Mesh Filter</dt><dd>指定物件使用哪個 Mesh，也就是實際的幾何形狀資料。</dd></div>
             <div><dt>Mesh Renderer</dt><dd>負責把 Mesh 畫到畫面上，並使用指定的 Material。</dd></div>
-            <div><dt>Collider</dt><dd>提供碰撞形狀。Cube、Sphere、Capsule 等會依形狀附上對應 Collider。</dd></div>
+            <div><dt>Collider</dt><dd>提供碰撞形狀。Cube、Sphere、Capsule 等會依形狀附上相應的 Collider。</dd></div>
           </dl>
           <div class="memory-line"><span>一句話記憶</span><strong>Mesh Filter 決定長什麼形狀，Mesh Renderer 決定怎麼被畫出來，Collider 決定怎麼碰撞。</strong></div>
         </div>
@@ -105,31 +116,58 @@
         </div>
       </section>
 
-      <section class="note-section">
+      <section class="note-section" id="duplicate">
         <span class="section-index">05</span>
         <div>
-          <h2>父子關係的起點</h2>
-          <p>把一個 GameObject 在 Hierarchy 中拖到另一個 GameObject 下方，就會建立 Parent / Child 關係。子物件的 Transform 會改以父物件作為座標參考。</p>
+          <h2>複製物件：Ctrl + D</h2>
           <dl class="term-list">
-            <div><dt>父物件移動</dt><dd>子物件會跟著移動。</dd></div>
-            <div><dt>父物件旋轉</dt><dd>子物件會繞著父物件的 Transform 一起旋轉。</dd></div>
-            <div><dt>父物件縮放</dt><dd>子物件的世界尺寸通常也會受到影響。</dd></div>
-            <div><dt>Local Position</dt><dd>子物件相對於父物件的位置，不是相對於整個世界原點。</dd></div>
+            <div><dt>Hierarchy 中使用</dt><dd>選取 GameObject 後按 <code>Ctrl+D</code>，會複製所選的場景物件；複製品通常保留相同的 Component、Transform 與子物件結構。</dd></div>
+            <div><dt>Project 中使用</dt><dd>選取 Asset 後按 <code>Ctrl+D</code>，複製的是該資產檔案。快捷鍵相同，結果依目前選取的視窗與項目而定。</dd></div>
+            <div><dt>macOS</dt><dd>對應快捷鍵為 <code>Command+D</code>。</dd></div>
           </dl>
+          <aside class="callout warning">
+            <span class="callout-label">複製不是建立關聯</span>
+            <p>一般 Duplicate 會得到另一份物件或資產，不代表兩者之後會自動同步。需要可重複且集中管理的物件結構時，應理解 Prefab，而不是養出一群外表相同、內部各自叛變的複製品。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="parent-child">
+        <span class="section-index">06</span>
+        <div>
+          <h2>父子物件 Parent / Child</h2>
+          <p>在 Hierarchy 中把一個 GameObject 拖到另一個 GameObject 上，前者就會成為後者的子物件。也可以先選定父物件，再使用建立子物件的操作，把新物件直接放在其階層底下。</p>
+          <dl class="term-list">
+            <div><dt>父物件 Parent</dt><dd>位於階層上層的 GameObject，作為子物件 Transform 的參考座標。</dd></div>
+            <div><dt>子物件 Child</dt><dd>位於父物件底下的 GameObject。它仍可擁有自己的 Component，也可以在父物件範圍內獨立調整 Local Transform。</dd></div>
+            <div><dt>父物件移動</dt><dd>子物件會跟著一起移動。</dd></div>
+            <div><dt>父物件旋轉</dt><dd>子物件會受到父物件旋轉影響，並繞著階層中的參考點一起改變世界位置與方向。</dd></div>
+            <div><dt>父物件縮放</dt><dd>子物件的世界尺寸與位置通常也會受到影響。</dd></div>
+            <div><dt>Local Position</dt><dd>子物件相對於父物件的位置。Inspector 中子物件的 Transform 數值主要以父物件為參考，不再只是相對於世界原點。</dd></div>
+          </dl>
+
+          <div class="memory-line"><span>一句話記憶</span><strong>父物件控制整組的座標基準；子物件繼承父物件的變換，但仍保有自己的 Local Transform。</strong></div>
+
           <aside class="callout danger">
-            <span class="callout-label">不要把父子關係當資料夾</span>
-            <p>Hierarchy 確實能用來整理，但 Parent / Child 會實際改變 Transform 的計算。若只想分類物件，通常建立 Empty GameObject 當群組，並留意其位置、旋轉與縮放是否乾淨。</p>
+            <span class="callout-label">不要只理解成「它們會一起移動」</span>
+            <p>一起移動只是最表面的結果。真正發生的是子物件的 Transform 被放進父物件的座標系統，因此移動、旋轉與縮放都可能沿著階層傳遞。</p>
+          </aside>
+
+          <aside class="callout warning">
+            <span class="callout-label">父子關係也不是普通資料夾</span>
+            <p>Hierarchy 可以用來整理，但 Parent / Child 會實際改變 Transform 計算。若只想把多個物件組成一組，通常會建立 Empty GameObject 當群組，並讓它的 Position、Rotation 與 Scale 保持可預期。</p>
           </aside>
         </div>
       </section>
 
       <section class="checklist compact-checklist">
         <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-6-create-context"> 能區分 Hierarchy 建立 GameObject 與 Project 建立 Asset</label>
         <label><input type="checkbox" data-check="lesson-6-primitives"> 能說明六種 Primitive 的差異與用途</label>
         <label><input type="checkbox" data-check="lesson-6-plane-quad"> 能區分 Plane 與 Quad</label>
         <label><input type="checkbox" data-check="lesson-6-components"> 能說明 Mesh Filter、Mesh Renderer 與 Collider 的分工</label>
-        <label><input type="checkbox" data-check="lesson-6-systems"> 知道 Ragdoll、Terrain、Tree 與 Wind Zone 不是單純幾何體</label>
-        <label><input type="checkbox" data-check="lesson-6-parent-child"> 能解釋父子關係如何影響 Transform</label>
+        <label><input type="checkbox" data-check="lesson-6-duplicate"> 知道 Ctrl+D 會依目前選取項目複製 GameObject 或 Asset</label>
+        <label><input type="checkbox" data-check="lesson-6-parent-child"> 能解釋父子關係如何影響 Local Transform 與世界變換</label>
       </section>
 
       <nav class="note-pagination" aria-label="課程筆記導覽">
