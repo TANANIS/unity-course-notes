@@ -14,13 +14,6 @@ TANA 的 Unity 3D 遊戲課程重修筆記網站。
 - 4. ch1_1 開啟新專案
 - 5. ch1_2 Unity 3D 環境介紹
 
-## 本機預覽
-
-直接開啟 `index.html`，或使用任意靜態伺服器。
-
-## GitHub Pages
-
-在 Repository Settings → Pages，將來源設定為 `Deploy from a branch`，Branch 選擇 `main`，資料夾選擇 `/ (root)`。
 
 發布網址預期為：
 
