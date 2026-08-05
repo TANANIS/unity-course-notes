@@ -6,6 +6,14 @@ const chapterKey = 'unity-notes-open-chapters';
 const appScriptUrl = new URL(document.currentScript?.src || 'app.js', window.location.href);
 const siteRootUrl = new URL('./', appScriptUrl);
 
+// 新增 notes/ch1-N.html 後，只要把這個數字改成最新的 N。
+// 課程目錄、首頁進度、搜尋入口與下一堂按鈕都會自動同步。
+const LATEST_NOTE = 7;
+const FIRST_COURSE_LESSON_NUMBER = 4;
+const TOTAL_COURSE_LESSONS = 200;
+
+let lessonMetadataPromise;
+
 function applyTheme(theme) {
   root.dataset.theme = theme;
   const isDark = theme === 'dark';
@@ -59,6 +67,114 @@ if (chapters.length) {
   });
 }
 
+function getLessonMetadata() {
+  if (lessonMetadataPromise) return lessonMetadataPromise;
+
+  const noteNumbers = Array.from({ length: LATEST_NOTE }, (_, index) => index + 1);
+  lessonMetadataPromise = Promise.all(noteNumbers.map(async (noteNumber) => {
+    const url = new URL(`notes/ch1-${noteNumber}.html`, siteRootUrl);
+
+    try {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const html = await response.text();
+      const documentFragment = new DOMParser().parseFromString(html, 'text/html');
+      const title = documentFragment.querySelector('h1')?.textContent?.trim() || `ch1_${noteNumber}`;
+      const description = documentFragment.querySelector('meta[name="description"]')?.content?.trim() || '';
+      const lessonLabel = documentFragment.querySelector('.lesson-kicker span')?.textContent?.trim()
+        || `LESSON ${FIRST_COURSE_LESSON_NUMBER + noteNumber - 1}`;
+
+      return {
+        noteNumber,
+        courseLessonNumber: FIRST_COURSE_LESSON_NUMBER + noteNumber - 1,
+        title,
+        description,
+        lessonLabel,
+        url: `notes/ch1-${noteNumber}.html`
+      };
+    } catch (error) {
+      console.error(`無法讀取 ch1_${noteNumber}：`, error);
+      return null;
+    }
+  })).then((items) => items.filter(Boolean));
+
+  return lessonMetadataPromise;
+}
+
+function syncStaticCourseStats() {
+  const progressPercent = Math.min(100, (LATEST_NOTE / TOTAL_COURSE_LESSONS) * 100);
+  const latestCourseLesson = FIRST_COURSE_LESSON_NUMBER + LATEST_NOTE - 1;
+
+  document.querySelectorAll('[data-note-count]').forEach((element) => {
+    element.textContent = String(LATEST_NOTE);
+  });
+
+  document.querySelectorAll('[data-note-count-label]').forEach((element) => {
+    element.textContent = `${LATEST_NOTE} 堂筆記`;
+  });
+
+  document.querySelectorAll('[data-note-progress-text]').forEach((element) => {
+    element.textContent = `${LATEST_NOTE} / ${TOTAL_COURSE_LESSONS}`;
+  });
+
+  document.querySelectorAll('[data-note-progress-track]').forEach((element) => {
+    element.style.width = `${progressPercent}%`;
+  });
+
+  document.querySelectorAll('[data-note-progress]').forEach((element) => {
+    element.setAttribute('aria-label', `課程筆記進度 ${LATEST_NOTE} 之 ${TOTAL_COURSE_LESSONS}`);
+  });
+
+  document.querySelectorAll('[data-note-section-progress]').forEach((element) => {
+    element.textContent = `已整理 ${LATEST_NOTE} 堂｜至第 ${latestCourseLesson} 堂`;
+  });
+
+  document.querySelectorAll('[data-latest-note]').forEach((element) => {
+    element.textContent = `目前整理至：第 2 節，第 ${latestCourseLesson} 堂。`;
+  });
+}
+
+function createLessonRow(lesson) {
+  const link = document.createElement('a');
+  link.className = 'lesson-row available';
+  link.href = new URL(lesson.url, siteRootUrl).href;
+
+  const state = document.createElement('span');
+  state.className = 'lesson-state';
+  state.textContent = '✓';
+
+  const copy = document.createElement('span');
+  const title = document.createElement('strong');
+  title.textContent = `${lesson.courseLessonNumber}. ${lesson.title}`;
+  const meta = document.createElement('small');
+  meta.textContent = '已有筆記';
+  copy.append(title, meta);
+
+  const enter = document.createElement('span');
+  enter.className = 'lesson-enter';
+  enter.textContent = '閱讀 →';
+
+  link.append(state, copy, enter);
+  return link;
+}
+
+function syncCourseLessonList() {
+  const lessonList = document.querySelector('[data-auto-lesson-list]');
+  if (!lessonList) return;
+
+  getLessonMetadata().then((lessons) => {
+    lessonList.replaceChildren(...lessons.map(createLessonRow));
+
+    if (!lessons.length) {
+      const empty = document.createElement('div');
+      empty.className = 'lesson-row disabled';
+      empty.textContent = '目前讀不到任何筆記頁面。這次不是你漏看，是網站真的沒抓到。';
+      lessonList.append(empty);
+    }
+  });
+}
+
 function loadSearchStyles() {
   if (document.querySelector('link[data-search-styles]')) return;
   const stylesheet = document.createElement('link');
@@ -90,6 +206,31 @@ function getSearchScore(entry, tokens) {
     if (keywords.includes(token)) return score + 3;
     return score + 1;
   }, 0);
+}
+
+async function loadSearchEntries() {
+  const [indexResponse, lessons] = await Promise.all([
+    fetch(new URL('search-index.json', siteRootUrl)),
+    getLessonMetadata()
+  ]);
+
+  if (!indexResponse.ok) throw new Error(`Search index request failed: ${indexResponse.status}`);
+  const manualEntries = await indexResponse.json();
+  const entries = Array.isArray(manualEntries) ? manualEntries : [];
+  const knownUrls = new Set(entries.map((entry) => entry.url));
+
+  lessons.forEach((lesson) => {
+    if (knownUrls.has(lesson.url)) return;
+    entries.push({
+      title: lesson.title,
+      section: lesson.lessonLabel,
+      description: lesson.description,
+      url: lesson.url,
+      keywords: [`ch1_${lesson.noteNumber}`, `ch1-${lesson.noteNumber}`, 'Unity 課程筆記']
+    });
+  });
+
+  return entries;
 }
 
 function createSearchNavigation() {
@@ -176,13 +317,9 @@ function createSearchNavigation() {
     input.setAttribute('aria-expanded', 'true');
   }
 
-  fetch(new URL('search-index.json', siteRootUrl))
-    .then((response) => {
-      if (!response.ok) throw new Error(`Search index request failed: ${response.status}`);
-      return response.json();
-    })
+  loadSearchEntries()
     .then((data) => {
-      entries = Array.isArray(data) ? data : [];
+      entries = data;
       if (input.value.trim()) renderResults();
     })
     .catch((error) => console.error('無法載入搜尋索引：', error));
@@ -251,22 +388,24 @@ function configureLessonPagination() {
 
   const currentNumber = Number(match[1]);
   const nextNumber = currentNumber + 1;
-  const nextUrl = new URL(`notes/ch1-${nextNumber}.html`, siteRootUrl);
 
-  fetch(nextUrl, { method: 'HEAD', cache: 'no-store' })
-    .then((response) => {
-      if (!response.ok) throw new Error('沒有下一堂');
-      nextButton.href = nextUrl.href;
-      nextButton.querySelector('small').textContent = '下一堂';
-      nextButton.querySelector('strong').textContent = `ch1_${nextNumber} →`;
-    })
-    .catch(() => {
-      nextButton.href = new URL('course.html', siteRootUrl).href;
-      nextButton.querySelector('small').textContent = '完成';
-      nextButton.querySelector('strong').textContent = '返回課程目錄';
-    });
+  if (nextNumber > LATEST_NOTE) {
+    nextButton.href = new URL('course.html', siteRootUrl).href;
+    nextButton.querySelector('small').textContent = '完成';
+    nextButton.querySelector('strong').textContent = '返回課程目錄';
+    return;
+  }
+
+  getLessonMetadata().then((lessons) => {
+    const nextLesson = lessons.find((lesson) => lesson.noteNumber === nextNumber);
+    nextButton.href = new URL(`notes/ch1-${nextNumber}.html`, siteRootUrl).href;
+    nextButton.querySelector('small').textContent = '下一堂';
+    nextButton.querySelector('strong').textContent = `${nextLesson?.title || `ch1_${nextNumber}`} →`;
+  });
 }
 
+syncStaticCourseStats();
+syncCourseLessonList();
 createSearchNavigation();
 repairKnownImageSources();
 configureLessonPagination();
