@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_6 Scene 工具快捷鍵操作筆記。">
+  <title>ch1_6 快捷鍵操作｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_6</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 09</span><span class="complete-badge">已整理</span></div>
+        <h1>ch1_6 快捷鍵操作</h1>
+        <p>這堂主要是把上一堂的 Scene 工具再用快捷鍵操作一次，重點不是新增概念，而是讓手開始記住工具切換。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">Q / W / E / R</span><h2 id="lesson-map-title">快捷鍵不是另一套功能，只是更快切換同一組工具</h2><p>按鍵只是在切換 Scene 工具。真正改變物件的仍然是 Move、Rotate、Scale 對 Transform 的操作。</p></div>
+      </section>
+
+      <section class="note-section" id="shortcut-map"><span class="section-index">01</span><div>
+        <h2>常用快捷鍵</h2>
+        <dl class="term-list">
+          <div><dt>Q｜View Tool</dt><dd>切換到場景檢視工具，用來平移或導覽 Scene 視角，不會修改 GameObject。</dd></div>
+          <div><dt>W｜Move Tool</dt><dd>切換到移動工具，沿 X、Y、Z 軸改變物件的 Position。</dd></div>
+          <div><dt>E｜Rotate Tool</dt><dd>切換到旋轉工具，繞 X、Y、Z 軸改變物件的 Rotation。</dd></div>
+          <div><dt>R｜Scale Tool</dt><dd>切換到縮放工具，沿單一軸或等比例改變物件的 Scale。</dd></div>
+          <div><dt>T｜Rect Tool</dt><dd>切換矩形工具，常用於 2D Sprite、UI 與 RectTransform。</dd></div>
+          <div><dt>Y｜Transform Tool</dt><dd>切換整合移動、旋轉與縮放的綜合工具。</dd></div>
+        </dl>
+        <div class="memory-line"><span>最小記憶</span><strong>Q 看場景，W 移動，E 旋轉，R 縮放。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="practice"><span class="section-index">02</span><div>
+        <h2>練習方式</h2>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>選取 Cube</strong><p>先在 Hierarchy 選取一個物件。</p></div></li>
+          <li><span>02</span><div><strong>按 W 移動</strong><p>分別拖曳紅、綠、藍軸，觀察 Inspector 的 Position 如何改變。</p></div></li>
+          <li><span>03</span><div><strong>按 E 旋轉</strong><p>拖曳不同顏色圓環，觀察 Rotation 數值。</p></div></li>
+          <li><span>04</span><div><strong>按 R 縮放</strong><p>先單軸縮放，再拖曳中央控制點等比例縮放。</p></div></li>
+          <li><span>05</span><div><strong>按 Q 回到檢視</strong><p>確認此時拖動畫面只是在移動 Scene 視角，Transform 不會改變。</p></div></li>
+        </ol>
+        <aside class="callout warning"><span class="callout-label">這堂與 ch1_5 的差別</span><p><strong>ch1_5 是理解工具、Transform、Pivot／Center、Local／Global；ch1_6 是把 Q、W、E、R 操作熟練。</strong>內容重疊不是筆記寫錯，而是課程本身在安排操作練習。</p></aside>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-9-qwer"> 不看工具列也能用 Q、W、E、R 切換工具</label>
+        <label><input type="checkbox" data-check="lesson-9-transform-values"> 操作物件時會同步觀察 Transform 數值</label>
+        <label><input type="checkbox" data-check="lesson-9-view-difference"> 能分辨 Q 移動視角與 W 移動物件</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-5.html"><small>上一堂</small><strong>← ch1_5 移動、縮放與旋轉</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
