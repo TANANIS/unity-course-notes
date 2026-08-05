@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="682" height="198" viewBox="0 0 682 198" role="img" aria-labelledby="title desc">
+  <title id="title">Unity Transform Component</title>
+  <desc id="desc">Unity Inspector 的 Transform 元件，包含 Position、Rotation 與 Scale 三組 X、Y、Z 數值。</desc>
+  <rect width="682" height="198" rx="8" fill="#2b2e32"/>
+  <rect x="0" y="0" width="682" height="38" rx="8" fill="#34373b"/>
+  <path d="M15 14h12l-6 8z" fill="#aeb4ba"/>
+  <circle cx="48" cy="19" r="4" fill="#e85b4f"/>
+  <circle cx="55" cy="12" r="4" fill="#62c676"/>
+  <circle cx="62" cy="19" r="4" fill="#5796df"/>
+  <text x="76" y="25" fill="#e7e7e7" font-family="Segoe UI,Arial,sans-serif" font-size="20">Transform</text>
+  <text x="625" y="25" fill="#d2d2d2" font-family="Segoe UI,Arial,sans-serif" font-size="18">?</text>
+  <text x="650" y="25" fill="#d2d2d2" font-family="Segoe UI,Arial,sans-serif" font-size="18">⋮</text>
+
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="18">
+    <text x="38" y="70" fill="#c7c7c7">Position</text>
+    <text x="38" y="113" fill="#c7c7c7">Rotation</text>
+    <text x="38" y="156" fill="#c7c7c7">Scale</text>
+
+    <g fill="#c7c7c7">
+      <text x="205" y="70">X</text><text x="365" y="70">Y</text><text x="525" y="70">Z</text>
+      <text x="205" y="113">X</text><text x="365" y="113">Y</text><text x="525" y="113">Z</text>
+      <text x="205" y="156">X</text><text x="365" y="156">Y</text><text x="525" y="156">Z</text>
+    </g>
+
+    <g fill="#202226" stroke="#15171a">
+      <rect x="225" y="47" width="125" height="31" rx="4"/><rect x="385" y="47" width="125" height="31" rx="4"/><rect x="545" y="47" width="125" height="31" rx="4"/>
+      <rect x="225" y="90" width="125" height="31" rx="4"/><rect x="385" y="90" width="125" height="31" rx="4"/><rect x="545" y="90" width="125" height="31" rx="4"/>
+      <rect x="225" y="133" width="125" height="31" rx="4"/><rect x="385" y="133" width="125" height="31" rx="4"/><rect x="545" y="133" width="125" height="31" rx="4"/>
+    </g>
+
+    <g fill="#d8d8d8">
+      <text x="236" y="69">-5.9144</text><text x="396" y="69">4.98</text><text x="556" y="69">3.9633</text>
+      <text x="236" y="112">0</text><text x="396" y="112">0</text><text x="556" y="112">0</text>
+      <text x="236" y="155">1</text><text x="396" y="155">1</text><text x="556" y="155">1</text>
+    </g>
+  </g>
+  <g stroke="#aeb4ba" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M178 143c8-8 16-8 24 0M178 151c8 8 16 8 24 0"/>
+    <path d="M181 139l-5 4 5 4M199 155l5-4-5-4"/>
+  </g>
+</svg>
