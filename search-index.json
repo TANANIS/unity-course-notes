@@ -1,0 +1,86 @@
+[
+  {
+    "title": "ch1_1 開啟新專案",
+    "section": "LESSON 04",
+    "description": "Unity Hub 建立與開啟專案、命名、路徑與 2D／3D 範本。",
+    "url": "notes/ch1-1.html",
+    "keywords": ["Unity Hub", "New Project", "Open", "專案", "路徑", "範本", "3D"]
+  },
+  {
+    "title": "五個主要視窗",
+    "section": "ch1_2 Unity3D 環境介紹",
+    "description": "Scene、Hierarchy、Inspector、Game 與 Project 的用途與關係。",
+    "url": "notes/ch1-2.html#editor-map",
+    "keywords": ["Scene", "Hierarchy", "Inspector", "Game", "Project", "視窗", "介面"]
+  },
+  {
+    "title": "Asset、GameObject、Component",
+    "section": "ch1_2 Unity3D 環境介紹",
+    "description": "區分專案資產、場景物件容器與附加功能元件。",
+    "url": "notes/ch1-2.html#object-model",
+    "keywords": ["Asset", "GameObject", "Component", "Transform", "Prefab", "Empty"]
+  },
+  {
+    "title": "Unity 選單與日常工具",
+    "section": "ch1_2 Unity3D 環境介紹",
+    "description": "File、Edit、Assets、GameObject、Component、Window 與快捷鍵。",
+    "url": "notes/ch1-2.html#daily-tools",
+    "keywords": ["File", "Edit", "Assets", "GameObject", "Component", "Window", "快捷鍵", "Ctrl D"]
+  },
+  {
+    "title": "物理與 AI Navigation",
+    "section": "ch1_2 Unity3D 環境介紹",
+    "description": "Rigidbody、Collider、Character Controller 與 NavMesh 基本概念。",
+    "url": "notes/ch1-2.html#physics-navigation",
+    "keywords": ["Rigidbody", "Collider", "Character Controller", "NavMesh", "Navigation", "物理", "導航"]
+  },
+  {
+    "title": "Build Profiles 與 Android 工具鏈",
+    "section": "ch1_2 Unity3D 環境介紹",
+    "description": "建置平台、SDK、NDK、JDK、Gradle 與 IL2CPP。",
+    "url": "notes/ch1-2.html#build-environment",
+    "keywords": ["Build Profiles", "Android", "SDK", "NDK", "JDK", "Gradle", "IL2CPP", "建置"]
+  },
+  {
+    "title": "ch1_3 建立物件與父子關係",
+    "section": "LESSON 06",
+    "description": "建立 3D Object、複製物件，以及 Parent／Child 的 Transform 繼承。",
+    "url": "notes/ch1-3.html",
+    "keywords": ["3D Object", "Primitive", "父子物件", "Parent", "Child", "Ctrl D", "Duplicate"]
+  },
+  {
+    "title": "Hierarchy 與 Project 建立內容的差別",
+    "section": "ch1_3 建立物件與父子關係",
+    "description": "Hierarchy 建立場景 GameObject；Project 建立與管理 Asset。",
+    "url": "notes/ch1-3.html#create-context",
+    "keywords": ["Hierarchy", "Project", "右鍵", "Create", "GameObject", "Asset", "建立物件"]
+  },
+  {
+    "title": "Cube、Sphere、Capsule、Cylinder、Plane、Quad",
+    "section": "ch1_3 建立物件與父子關係",
+    "description": "六種基本幾何體 Primitive 的差異與常見用途。",
+    "url": "notes/ch1-3.html#primitives",
+    "keywords": ["Cube", "Sphere", "Capsule", "Cylinder", "Plane", "Quad", "方體", "球體", "膠囊", "圓柱", "平面"]
+  },
+  {
+    "title": "Mesh Filter、Mesh Renderer 與 Collider",
+    "section": "ch1_3 建立物件與父子關係",
+    "description": "幾何形狀、畫面渲染與碰撞形狀的分工。",
+    "url": "notes/ch1-3.html#primitive-components",
+    "keywords": ["Mesh Filter", "Mesh Renderer", "Collider", "Component", "Mesh", "Material", "碰撞"]
+  },
+  {
+    "title": "Ctrl + D 複製物件或 Asset",
+    "section": "ch1_3 建立物件與父子關係",
+    "description": "Duplicate 會依目前選取的視窗複製 GameObject 或專案資產。",
+    "url": "notes/ch1-3.html#duplicate",
+    "keywords": ["Ctrl D", "Command D", "Duplicate", "複製物件", "複製資產", "快捷鍵"]
+  },
+  {
+    "title": "父子物件 Parent / Child",
+    "section": "ch1_3 建立物件與父子關係",
+    "description": "子物件以父物件為座標基準，繼承移動、旋轉與縮放。",
+    "url": "notes/ch1-3.html#parent-child",
+    "keywords": ["父子物件", "父物件", "子物件", "Parent", "Child", "Local Position", "Transform", "拖曳"]
+  }
+]
