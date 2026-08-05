@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="106" height="424" viewBox="0 0 106 424" role="img" aria-labelledby="title desc">
+  <title id="title">Unity Scene Tools Overlay</title>
+  <desc id="desc">Unity Scene 視窗工具列，依序顯示 View、Move、Rotate、Scale、Rect 與 Transform 工具。</desc>
+  <rect width="106" height="424" rx="18" fill="#151820"/>
+  <rect x="9" y="7" width="88" height="410" rx="12" fill="#242830" stroke="#48505a"/>
+  <g stroke="#d8dde4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 22h26"/>
+    <path d="M40 28h26"/>
+    <path d="M40 34h26"/>
+
+    <path d="M38 55l15-9 15 9-15 9zM38 55v17l15 9 15-9V55M53 64v17"/>
+    <path d="M76 55l7 7 7-7"/>
+  </g>
+
+  <g>
+    <rect x="17" y="94" width="72" height="50" rx="6" fill="#3f4750"/>
+    <path d="M43 127c-4-3-6-8-4-12l3-8c1-3 5-2 5 1v7-12c0-4 5-4 5 0v11-13c0-4 5-4 5 0v13-10c0-4 5-4 5 0v15l4-5c2-3 7 0 5 4l-6 10c-3 5-7 7-13 7h-3c-3 0-5-1-6-3z" fill="#e6eaef"/>
+
+    <rect x="17" y="148" width="72" height="50" rx="6" fill="#506b7c"/>
+    <g stroke="#eef3f6" stroke-width="3" stroke-linecap="round">
+      <path d="M53 158v30M38 173h30"/>
+      <path d="M53 158l-5 6M53 158l5 6M53 188l-5-6M53 188l5-6M38 173l6-5M38 173l6 5M68 173l-6-5M68 173l-6 5"/>
+    </g>
+
+    <rect x="17" y="202" width="72" height="50" rx="6" fill="#3f4750"/>
+    <path d="M37 227a16 16 0 1 1 4 11" fill="none" stroke="#e6eaef" stroke-width="3"/>
+    <path d="M34 239l8-1-3-7" fill="none" stroke="#e6eaef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="17" y="256" width="72" height="50" rx="6" fill="#3f4750"/>
+    <g stroke="#e6eaef" stroke-width="2.5" fill="none">
+      <rect x="37" y="271" width="32" height="20"/>
+      <path d="M33 267h8v8h-8zM65 267h8v8h-8zM33 287h8v8h-8zM65 287h8v8h-8z"/>
+    </g>
+
+    <rect x="17" y="310" width="72" height="50" rx="6" fill="#3f4750"/>
+    <g stroke="#e6eaef" stroke-width="2.5" fill="none">
+      <rect x="35" y="323" width="36" height="24"/>
+      <path d="M35 319v8M71 319v8M31 323h8M67 323h8M35 343v8M71 343v8M31 347h8M67 347h8"/>
+    </g>
+
+    <rect x="17" y="364" width="72" height="43" rx="6" fill="#3f4750"/>
+    <g stroke="#e6eaef" stroke-width="2.5" fill="none" stroke-linecap="round">
+      <circle cx="53" cy="383" r="12"/>
+      <path d="M53 369v28M39 383h28M53 369l-4 5M53 369l4 5M67 383l-5-4M67 383l-5 4"/>
+    </g>
+  </g>
+</svg>
