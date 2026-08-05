@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_9 Prefabs 筆記，介紹 Prefab Asset、Instance、Override 與 Apply。">
+  <title>ch1_9 Prefabs｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_9</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 12</span><span class="complete-badge">已整理</span></div>
+        <h1>ch1_9 Prefabs</h1>
+        <p>把設定好的 GameObject 做成可重複使用的 Prefab Asset，再從它建立多個能集中維護的場景 Instance。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">PREFAB ASSET / INSTANCE</span><h2 id="lesson-map-title">先做一個範本，再重複使用</h2><p>當敵人、道具、子彈或場景物件會大量重複出現時，不必逐個重新設定。Prefab 把 GameObject 的階層、Component、材質與其他設定保存成 Project 裡的範本。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#prefab-concept"><strong>01</strong><span>Prefab 概念<small>Asset 與 Instance</small></span></a>
+          <a href="#create-prefab"><strong>02</strong><span>建立 Prefab<small>Hierarchy 拖到 Project</small></span></a>
+          <a href="#edit-prefab"><strong>03</strong><span>同步修改<small>材質與子物件</small></span></a>
+          <a href="#overrides"><strong>04</strong><span>Overrides<small>Apply 與個別差異</small></span></a>
+          <a href="#memory-note"><strong>05</strong><span>效能校正<small>Prefab 不等於零成本</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="prefab-concept"><span class="section-index">01</span><div>
+        <h2>Prefab 是 GameObject 的可重複使用範本</h2>
+        <dl class="term-list">
+          <div><dt>Prefab Asset</dt><dd>儲存在 Project 裡的範本，保存 GameObject 的階層、Component、材質與設定。</dd></div>
+          <div><dt>Prefab Instance</dt><dd>把 Prefab Asset 拖進 Scene 後建立的場景實例。多個 Instance 可以共用同一份 Prefab 設定。</dd></div>
+          <div><dt>常見用途</dt><dd>敵人、道具、子彈、特效、可互動物件與重複使用的 UI 元件。</dd></div>
+          <div><dt>程式生成</dt><dd>之後可透過 <code>Instantiate</code> 在執行期間動態建立 Prefab Instance。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>Prefab Asset 是範本；Scene 裡的是 Prefab Instance。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="create-prefab"><span class="section-index">02</span><div>
+        <h2>建立與使用 Prefab</h2>
+        <ol class="step-list large">
+          <li><span>01</span><div><strong>先設定 GameObject</strong><p>在 Scene／Hierarchy 建立 Cube，調整需要的 Component、材質與子物件。</p></div></li>
+          <li><span>02</span><div><strong>拖到 Project</strong><p>把 Hierarchy 裡的 Cube 拖到 Project 資料夾，Unity 會建立 Prefab Asset。</p></div></li>
+          <li><span>03</span><div><strong>建立多個 Instance</strong><p>把 Project 裡的 Prefab 多次拖回 Scene，即可建立多個 Prefab Instance。</p></div></li>
+          <li><span>04</span><div><strong>辨認 Prefab 關係</strong><p>Prefab Asset 與其場景 Instance 通常會以藍色圖示或藍色名稱標示。</p></div></li>
+        </ol>
+        <aside class="callout warning"><span class="callout-label">老師刪除原 Cube 的原因</span><p>刪除原本場景中的 Cube，只是為了讓後續練習都使用從 Prefab 建立的 Instance，避免把普通 GameObject 和 Prefab Instance 混在一起。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="edit-prefab"><span class="section-index">03</span><div>
+        <h2>修改 Prefab，集中更新多個 Instance</h2>
+        <dl class="term-list">
+          <div><dt>修改材質</dt><dd>建立黃色 Material 並套到 Prefab Asset 後，未覆寫材質的場景 Instance 會一起更新。</dd></div>
+          <div><dt>新增子物件</dt><dd>在 Prefab 中加入 Sphere 子物件後，其他使用同一 Prefab 的 Instance 也會得到相同階層。</dd></div>
+          <div><dt>Prefab Mode</dt><dd>可雙擊 Project 裡的 Prefab Asset，進入 Prefab Mode，直接編輯範本內容。</dd></div>
+        </dl>
+        <div class="memory-line"><span>主要價值</span><strong>只維護一份範本，就能同步大量重複物件的共同設定。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="overrides"><span class="section-index">04</span><div>
+        <h2>Instance Override、Apply 與 Revert</h2>
+        <p>場景中的 Prefab Instance 可以暫時擁有和 Prefab Asset 不同的設定，這些差異稱為 <strong>Override</strong>。</p>
+        <dl class="term-list">
+          <div><dt>Override</dt><dd>只修改目前這一個 Instance。例如單獨改變位置、材質、Component 數值或新增子物件。</dd></div>
+          <div><dt>Apply</dt><dd>把 Instance 的修改寫回 Prefab Asset。老師字幕裡辨識成「Play」的地方，實際概念應是 Apply。</dd></div>
+          <div><dt>Revert</dt><dd>捨棄目前 Instance 的 Override，恢復成 Prefab Asset 的設定。</dd></div>
+        </dl>
+        <aside class="callout danger"><span class="callout-label">不是所有 Instance 都無條件同步</span><p>修改 Prefab Asset 時，通常只有沒有針對該項目建立 Override 的 Instance 會跟著更新。某個 Instance 若單獨覆寫材質，它可能繼續保留自己的材質。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="memory-note"><span class="section-index">05</span><div>
+        <h2>Prefab 的主要價值不是自動節省所有記憶體</h2>
+        <p>Prefab 能讓多個物件引用相同的 Mesh、Material、Texture 等 Asset，也能避免把相同設定人工複製到處。但每個生成出的 GameObject Instance 仍然需要自己的 Transform、Component 與執行狀態。</p>
+        <dl class="term-list">
+          <div><dt>真正的優點</dt><dd>重複使用結構、批次維護、保持設定一致，以及方便透過程式動態生成。</dd></div>
+          <div><dt>不是免費複製</dt><dd>大量 Prefab Instance 仍會消耗 CPU 與記憶體；敵人很多時，之後還可能需要物件池、LOD 或其他效能策略。</dd></div>
+        </dl>
+        <div class="memory-line"><span>完整結論</span><strong>Prefab 解決的是重複建置與集中維護，不是讓每個 Instance 變成零成本幻影。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-12-prefab-asset"> 能區分 Prefab Asset 與 Prefab Instance</label>
+        <label><input type="checkbox" data-check="lesson-12-create-prefab"> 能把 Hierarchy 的 GameObject 拖到 Project 建立 Prefab</label>
+        <label><input type="checkbox" data-check="lesson-12-overrides"> 能說明 Override、Apply 與 Revert</label>
+        <label><input type="checkbox" data-check="lesson-12-memory"> 知道 Prefab 的主要價值是重複使用與集中維護</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-8.html"><small>上一堂</small><strong>← ch1_8 建立 Script</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
