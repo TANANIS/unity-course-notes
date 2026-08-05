@@ -82,5 +82,68 @@
     "description": "子物件以父物件為座標基準，繼承移動、旋轉與縮放。",
     "url": "notes/ch1-3.html#parent-child",
     "keywords": ["父子物件", "父物件", "子物件", "Parent", "Child", "Local Position", "Transform", "拖曳"]
+  },
+  {
+    "title": "ch1_4 移除物件與建立空白物件",
+    "section": "LESSON 07",
+    "description": "刪除、重新命名、Create Empty 與 Scene 圖示設定。",
+    "url": "notes/ch1-4.html",
+    "keywords": ["Delete", "Rename", "F2", "Create Empty", "Empty GameObject", "Gizmos", "Icon"]
+  },
+  {
+    "title": "刪除與重新命名 GameObject",
+    "section": "ch1_4 移除物件與建立空白物件",
+    "description": "Delete、Hierarchy 右鍵刪除、Inspector 改名與 F2。",
+    "url": "notes/ch1-4.html#delete-rename",
+    "keywords": ["Delete", "刪除", "Rename", "改名", "F2", "Inspector", "Hierarchy"]
+  },
+  {
+    "title": "Empty GameObject 與 Scene 圖示",
+    "section": "ch1_4 移除物件與建立空白物件",
+    "description": "只有 Transform 的場景容器，以及 Label Icon、Gizmos 與 3D Icons。",
+    "url": "notes/ch1-4.html#empty-gameobject",
+    "keywords": ["Empty GameObject", "Create Empty", "Transform", "Label Icon", "Gizmos", "3D Icons"]
+  },
+  {
+    "title": "ch1_5 移動、縮放與旋轉",
+    "section": "LESSON 08",
+    "description": "Scene 工具、Transform、Pivot／Center 與 Local／Global。",
+    "url": "notes/ch1-5.html",
+    "keywords": ["Move", "Rotate", "Scale", "Transform", "Pivot", "Center", "Local", "Global"]
+  },
+  {
+    "title": "Scene 工具 Q、W、E、R、T、Y",
+    "section": "ch1_5 移動、縮放與旋轉",
+    "description": "View、Move、Rotate、Scale、Rect 與 Transform Tool。",
+    "url": "notes/ch1-5.html#scene-tools",
+    "keywords": ["Q", "W", "E", "R", "T", "Y", "View Tool", "Move Tool", "Rotate Tool", "Scale Tool"]
+  },
+  {
+    "title": "Transform Position、Rotation、Scale",
+    "section": "ch1_5 移動、縮放與旋轉",
+    "description": "Inspector Transform 欄位、比例鎖定與 Reset。",
+    "url": "notes/ch1-5.html#transform-inspector",
+    "keywords": ["Position", "Rotation", "Scale", "Transform", "Reset", "Constrained Proportions"]
+  },
+  {
+    "title": "Pivot／Center 與 Local／Global",
+    "section": "ch1_5 移動、縮放與旋轉",
+    "description": "Gizmo 放置位置與控制軸方向的差異。",
+    "url": "notes/ch1-5.html#pivot-center",
+    "keywords": ["Pivot", "Center", "Local", "Global", "Gizmo", "本地座標", "世界座標"]
+  },
+  {
+    "title": "ch1_6 快捷鍵操作",
+    "section": "LESSON 09",
+    "description": "用 Q、W、E、R 快速切換 Scene 工具並操作物件。",
+    "url": "notes/ch1-6.html",
+    "keywords": ["快捷鍵", "Q", "W", "E", "R", "移動", "旋轉", "縮放"]
+  },
+  {
+    "title": "Q、W、E、R 快捷鍵練習",
+    "section": "ch1_6 快捷鍵操作",
+    "description": "Q 導覽場景，W 移動，E 旋轉，R 縮放。",
+    "url": "notes/ch1-6.html#shortcut-map",
+    "keywords": ["QWER", "View Tool", "Move Tool", "Rotate Tool", "Scale Tool", "快捷鍵操作"]
   }
 ]
