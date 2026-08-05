@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_4 移除物件、重新命名、建立空白物件與 Scene 圖示筆記。">
+  <title>ch1_4 移除物件與建立空白物件｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁">
+      <span class="brand-mark" aria-hidden="true">U</span>
+      <span><strong>Unity Notes</strong><small>課程筆記</small></span>
+    </a>
+    <nav class="top-actions" aria-label="網站操作">
+      <a class="text-link" href="../course.html">課程目錄</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑">
+      <a href="../index.html">課程首頁</a><span>/</span>
+      <a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span>
+      <span>ch1_4</span>
+    </nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 07</span><span class="complete-badge">整理中</span></div>
+        <h1>ch1_4 移除物件與建立空白物件</h1>
+        <p>處理 GameObject 的刪除、命名與 Empty GameObject，並釐清新版 Unity 中 Scene 圖示為何可能沒有顯示。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div>
+          <span class="eyebrow">DELETE / RENAME / EMPTY / ICON</span>
+          <h2 id="lesson-map-title">Empty GameObject 看不見，不代表它不存在</h2>
+          <p>它只是沒有 Renderer。Unity 沒有把物件吞掉，只是終於有一次忠實地呈現「沒有可渲染內容」這件事。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#delete-rename"><strong>01</strong><span>刪除與改名<small>Delete、Rename、F2</small></span></a>
+          <a href="#empty-gameobject"><strong>02</strong><span>建立空白物件<small>只有 Transform 的容器</small></span></a>
+          <a href="#assign-icon"><strong>03</strong><span>指定 Scene 圖示<small>Label、Image、Other</small></span></a>
+          <a href="#gizmos-troubleshooting"><strong>04</strong><span>圖示沒有顯示<small>Gizmos 與 3D Icons</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="delete-rename">
+        <span class="section-index">01</span>
+        <div>
+          <h2>刪除與重新命名 GameObject</h2>
+          <dl class="term-list">
+            <div><dt>Delete</dt><dd>在 Hierarchy 或 Scene 選取 GameObject 後按 <code>Delete</code>，可將它從目前 Scene 中移除。</dd></div>
+            <div><dt>Hierarchy 右鍵 → Delete</dt><dd>在 Hierarchy 對物件按右鍵，再選擇 <strong>Delete</strong>，結果相同。</dd></div>
+            <div><dt>Inspector 名稱欄位</dt><dd>選取 GameObject 後，可直接修改 Inspector 最上方的名稱。</dd></div>
+            <div><dt>Hierarchy 重新命名</dt><dd>選取物件後再次點擊名稱，或按 <code>F2</code>，再輸入新名稱。</dd></div>
+            <div><dt>Undo</dt><dd>誤刪或改錯時可先嘗試 <code>Ctrl+Z</code> 復原。不要把 Delete 當成測試膽量的按鈕。</dd></div>
+          </dl>
+
+          <aside class="callout warning">
+            <span class="callout-label">「點兩下」要講精確</span>
+            <p>快速雙擊 Hierarchy 項目常用來在 Scene 中定位或聚焦物件；重新命名通常是<strong>先選取，再次點名稱</strong>，或直接按 <code>F2</code>。兩個操作看似都用了兩次滑鼠，行為卻不是同一件事。</p>
+          </aside>
+
+          <aside class="callout danger">
+            <span class="callout-label">Hierarchy 與 Project 的 Delete 不同</span>
+            <p>在 Hierarchy 刪除的是目前 Scene 裡的 GameObject；在 Project 刪除的則是 Asset 檔案。刪一個場景實例與刪掉專案資源，後果差得很有教育意義。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="empty-gameobject">
+        <span class="section-index">02</span>
+        <div>
+          <h2>Create Empty：建立空白 GameObject</h2>
+          <p>可從上方選單 <strong>GameObject → Create Empty</strong>，或在 Hierarchy 空白處按右鍵選擇 <strong>Create Empty</strong>。</p>
+
+          <dl class="term-list">
+            <div><dt>預設內容</dt><dd>Empty GameObject 預設只有 <strong>Transform</strong>，沒有 Mesh Filter、Renderer 或 Collider。</dd></div>
+            <div><dt>為什麼看不見？</dt><dd>它沒有 Renderer，因此 Game 覛窗不會畫出任何外觀；Scene 覛窗中通常只能看到 Transform 操作軸、選取外框或額外指定的圖示。</dd></div>
+            <div><dt>整理階層</dt><dd>可當作父物件，將多個物件組成一組，例如 <code>Enemies</code>、<code>Environment</code>、<code>SpawnPoints</code>。</dd></div>
+            <div><dt>座標基準</dt><dd>可作為旋轉中心、出生點、攝影機目標、路徑節點或其他空間參考點。</dd></div>
+            <div><dt>掛載功能</dt><dd>可附加管理腳本、Audio Source 或其他不需要外觀的 Component。</dd></div>
+          </dl>
+
+          <div class="memory-line">
+            <span>一句話記憶</span>
+            <strong>Empty GameObject 是只有 Transform 的場景容器與座標節點，不是空白 Asset，也不是不存在的物件。</strong>
+          </div>
+
+          <aside class="callout warning">
+            <span class="callout-label">拿來分組時先整理 Transform</span>
+            <p>若 Empty 只是階層群組，通常讓 Rotation 保持 <code>0, 0, 0</code>、Scale 保持 <code>1, 1, 1</code>，並確認 Position 是否符合用途。否則子物件會繼承一堆日後很難解釋的偏移與縮放。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="assign-icon">
+        <span class="section-index">03</span>
+        <div>
+          <h2>替看不見的物件指定 Scene 圖示</h2>
+          <p>選取 GameObject，在 Inspector 最上方名稱左側按下 <strong>Select Icon</strong>，即可指定編輯器圖示。這只協助編輯，不會變成遊戲中的實際畫面。</p>
+
+          <figure class="lesson-figure compact-figure">
+            <img src="../assets/ch1-4/select-icon-menu.png" width="136" height="163" loading="lazy" alt="Unity Inspector 的 Select Icon 選單，包含彩色標籤、純圖示與 Other">
+            <figcaption><strong>Select Icon 選單。</strong>上方彩色長條是 Label icon；下方小型彩色圖示是 Image-only icon；Other 可選擇專案內的自訂圖片。</figcaption>
+          </figure>
+
+          <dl class="term-list">
+            <div><dt>Label Icon</dt><dd>在 Scene 覛窗顯示彩色標籤與 GameObject 名稱，適合需要直接辨認用途的節點。</dd></div>
+            <div><dt>Image-only Icon</dt><dd>只顯示小型彩色圖示，不顯示物件名稱，適合 Spawn Point、Waypoint 等大量節點。</dd></div>
+            <div><dt>Other…</dt><dd>從 Project 中選擇圖片作為自訂圖示，例如危險區、互動點或任務標記。</dd></div>
+            <div><dt>None</dt><dd>移除自訂圖示，恢復預設圖示。</dd></div>
+          </dl>
+
+          <aside class="callout danger">
+            <span class="callout-label">圖示不是 Component，也不是 Renderer</span>
+            <p>它是 Unity Editor 的工作標記，只用來幫助開發者在 Scene 中找物件。建置遊戲後，玩家不會看到這個標記。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="gizmos-troubleshooting">
+        <span class="section-index">04</span>
+        <div>
+          <h2>新版 Unity 指定圖示後，為什麼 Scene 沒顯示？</h2>
+          <p><strong>功能沒有被新版移除。</strong>Unity 6 仍支援替 GameObject 指定圖示；顯示與否改由 Scene 視窗的 <strong>Gizmos</strong> 設定共同控制。</p>
+
+          <ol class="step-list large">
+            <li><span>01</span><div><strong>確認 Scene 的 Gizmos 已開啟</strong><p>查看 Scene 覛窗右上方的 Gizmos 按鈕。主開關關閉時，自訂圖示與其他 Gizmo 都不會顯示。</p></div></li>
+            <li><span>02</span><div><strong>展開 Gizmos 選單</strong><p>在 Recently Changed、Scripts 或其他對應項目中，確認圖示欄沒有被關閉。全彩圖示表示會顯示，淡色圖示表示被隱藏。</p></div></li>
+            <li><span>03</span><div><strong>檢查 3D Icons 大小</strong><p>若啟用 3D Icons，圖示會依距離縮放，也可能被場景幾何遮住。把滑桿拉大，或暫時關閉 3D Icons，讓圖示以固定大小顯示在物件上方。</p></div></li>
+            <li><span>04</span><div><strong>檢查 Fade Gizmos</strong><p>若啟用 Fade Gizmos，畫面上太小的 Gizmo 可能被淡出甚至停止繪製。測試時可先關閉。</p></div></li>
+            <li><span>05</span><div><strong>重新指定一個明顯圖示</strong><p>先選擇 Label Icon 或顏色明顯的 Image-only Icon，再拉近 Scene Camera，排除圖示太小、被遮擋或選到 None 的情況。</p></div></li>
+          </ol>
+
+          <aside class="callout warning">
+            <span class="callout-label">最可能的原因</span>
+            <p>依你描述的情況，優先檢查 <strong>Scene 右上角 Gizmos 主開關</strong>、Gizmos 選單中的圖示可見性，以及 <strong>3D Icons 滑桿</strong>。這比直接判定「新版不能顯示」合理得多，軟體雖然常把按鈕搬家，還不至於每版都銷毀一項基本功能。</p>
+          </aside>
+
+          <div class="memory-line">
+            <span>排查順序</span>
+            <strong>Select Icon 已指定 → Gizmos 開啟 → 圖示項目可見 → 調整 3D Icons／Fade Gizmos → 拉近 Scene Camera。</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="checklist compact-checklist">
+        <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-7-delete"> 能用 Delete 或 Hierarchy 右鍵移除 GameObject</label>
+        <label><input type="checkbox" data-check="lesson-7-rename"> 能用 Inspector、再次點名稱或 F2 重新命名</label>
+        <label><input type="checkbox" data-check="lesson-7-empty"> 能解釋 Empty GameObject 為何看不見及其用途</label>
+        <label><input type="checkbox" data-check="lesson-7-icon"> 能替 GameObject 指定 Label、Image-only 或自訂圖示</label>
+        <label><input type="checkbox" data-check="lesson-7-gizmos"> 圖示未顯示時，知道檢查 Gizmos、3D Icons 與 Fade Gizmos</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽">
+        <a href="ch1-3.html"><small>上一堂</small><strong>← ch1_3 建立物件與父子關係</strong></a>
+        <a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
