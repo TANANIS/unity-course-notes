@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_5 Scene 工具、Transform、Pivot／Center 與 Local／Global 筆記。">
+  <title>ch1_5 移動、縮放與旋轉｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁">
+      <span class="brand-mark" aria-hidden="true">U</span>
+      <span><strong>Unity Notes</strong><small>課程筆記</small></span>
+    </a>
+    <nav class="top-actions" aria-label="網站操作">
+      <a class="text-link" href="../course.html">課程目錄</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑">
+      <a href="../index.html">課程首頁</a><span>/</span>
+      <a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span>
+      <span>ch1_5</span>
+    </nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 08</span><span class="complete-badge">整理中</span></div>
+        <h1>ch1_5 移動、縮放與旋轉</h1>
+        <p>分清楚「移動 Scene 攝影機」與「修改 GameObject Transform」，再掌握工具快捷鍵、Inspector 數值、Pivot／Center 與 Local／Global。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div>
+          <span class="eyebrow">SCENE TOOLS / TRANSFORM / COORDINATES</span>
+          <h2 id="lesson-map-title">先判斷你在移動畫面，還是在移動物件</h2>
+          <p>View Tool 只改變開發者觀察 Scene 的角度；Move、Rotate、Scale 才會改變 GameObject。兩種操作都在畫面上動來動去，正好適合拿來折磨初學者。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#scene-tools"><strong>01</strong><span>Scene 工具列<small>Q、W、E、R、T、Y</small></span></a>
+          <a href="#transform-inspector"><strong>02</strong><span>Transform Inspector<small>Position、Rotation、Scale</small></span></a>
+          <a href="#scene-navigation"><strong>03</strong><span>Scene 導航<small>Alt、滑鼠與 Flythrough</small></span></a>
+          <a href="#pivot-center"><strong>04</strong><span>Pivot 與 Center<small>控制柄放在哪裡</small></span></a>
+          <a href="#local-global"><strong>05</strong><span>Local 與 Global<small>本地軸與世界軸</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="scene-tools">
+        <span class="section-index">01</span>
+        <div>
+          <h2>Scene 工具列與快捷鍵</h2>
+
+          <div class="figure-grid">
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-5/scene-tools-overlay.png" width="106" height="424" loading="lazy" alt="Unity Scene 視窗工具列，依序顯示 View、Move、Rotate、Scale、Rect 與 Transform 工具">
+              <figcaption><strong>Scene Tools Overlay。</strong>從手掌開始依序是 View、Move、Rotate、Scale、Rect 與 Transform。</figcaption>
+            </figure>
+            <figure class="lesson-figure compact-figure">
+              <img src="../assets/ch1-5/transform-inspector.png" width="682" height="198" loading="lazy" alt="Unity Inspector 中的 Transform Component，包含 Position、Rotation 與 Scale">
+              <figcaption><strong>Transform Component。</strong>可直接輸入精確數值，也可在 Scene 中拖曳 Gizmo 修改。</figcaption>
+            </figure>
+          </div>
+
+          <dl class="term-list">
+            <div><dt>Q — View Tool</dt><dd>平移或旋轉 Scene Camera，只改變編輯器中的觀察視角，不修改任何 GameObject 的 Transform。</dd></div>
+            <div><dt>W — Move Tool</dt><dd>移動所選 GameObject。拖曳紅、綠、藍軸可沿單一軸移動；拖曳軸之間的小平面可同時改變兩個軸。</dd></div>
+            <div><dt>E — Rotate Tool</dt><dd>旋轉所選 GameObject。紅、綠、藍圓環分別對應 X、Y、Z 軸。</dd></div>
+            <div><dt>R — Scale Tool</dt><dd>縮放所選 GameObject。拖曳中央方塊可等比例縮放，拖曳單一軸則只改變該軸。</dd></div>
+            <div><dt>T — Rect Tool</dt><dd>把移動、縮放與旋轉整合成矩形控制柄，常用於 Sprite、2D 與 UI，也能操作 3D GameObject。</dd></div>
+            <div><dt>Y — Transform Tool</dt><dd>把 Move、Rotate、Scale 的控制柄整合在同一工具中。Local 模式下還會提供縮放控制柄。</dd></div>
+          </dl>
+
+          <aside class="callout danger">
+            <span class="callout-label">字幕校正</span>
+            <p>字幕中的「W 是位移、旋轉、R 是說話、T 是二 D 平面縮放」應重建為：<strong>W 移動、E 旋轉、R 縮放、T Rect、Y Transform</strong>。自動字幕不是筆記，只是術語遭遇車禍後留下的現場紀錄。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="transform-inspector">
+        <span class="section-index">02</span>
+        <div>
+          <h2>Inspector 中的 Transform</h2>
+          <dl class="term-list">
+            <div><dt>Position</dt><dd>物件在 X、Y、Z 軸的位置。沒有父物件時通常以世界座標表示；有父物件時 Inspector 顯示的是相對於父物件的 Local Position。</dd></div>
+            <div><dt>Rotation</dt><dd>物件繞 X、Y、Z 軸旋轉的角度，Inspector 以度數顯示。Unity 內部的旋轉儲存不等於單純三個角度，因此之後寫程式時不能只把它當普通 Vector3。</dd></div>
+            <div><dt>Scale</dt><dd>沿 X、Y、Z 軸的縮放倍率。<code>1, 1, 1</code> 代表原始比例；三軸不同就是非等比例縮放。</dd></div>
+            <div><dt>Constrained Proportions</dt><dd>Scale 左側的連結圖示。啟用後，修改一個軸會依目前比例連動其他軸。</dd></div>
+          </dl>
+
+          <div class="memory-line">
+            <span>軸向顏色</span>
+            <strong>X 是紅色、Y 是綠色、Z 是藍色。Unity 世界中正 X 向右、正 Y 向上、正 Z 向前。</strong>
+          </div>
+
+          <aside class="callout warning">
+            <span class="callout-label">Reset 不一定回到世界原點</span>
+            <p>在 Transform 標題列的內容選單選擇 <strong>Reset</strong>，會把 Local Position 設為 <code>0,0,0</code>、Local Rotation 設為 <code>0,0,0</code>、Local Scale 設為 <code>1,1,1</code>。若物件有 Parent，它會回到父物件的座標原點，不一定是整個 Scene 的世界原點。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="scene-navigation">
+        <span class="section-index">03</span>
+        <div>
+          <h2>移動 Scene Camera，不修改 GameObject</h2>
+          <dl class="term-list">
+            <div><dt>平移 Pan</dt><dd>按住滑鼠中鍵拖曳；選擇 View Tool 後也可直接拖曳 Scene 畫面。</dd></div>
+            <div><dt>環繞 Orbit</dt><dd>按住 <code>Alt</code> 再以滑鼠左鍵拖曳，繞目前軸心旋轉 Scene Camera。2D 模式下不可用。</dd></div>
+            <div><dt>縮放 Zoom</dt><dd>使用滑鼠滾輪，或按住 <code>Alt</code> 加滑鼠右鍵拖曳。</dd></div>
+            <div><dt>Flythrough</dt><dd>按住滑鼠右鍵後，用滑鼠改變觀看方向，並以 <code>WASD</code> 前後左右移動、<code>Q/E</code> 上下移動。</dd></div>
+            <div><dt>速度</dt><dd>Flythrough 中按住 <code>Shift</code> 可加速；移動時使用滾輪可調整 Scene Camera 的飛行速度。</dd></div>
+            <div><dt>F</dt><dd>選取 GameObject 後把滑鼠移到 Scene 視窗並按 <code>F</code>，可將視角聚焦到所選物件。</dd></div>
+          </dl>
+
+          <aside class="callout danger">
+            <span class="callout-label">字幕中的「LT」其實是 Alt</span>
+            <p>正確操作是 <code>Alt + 左鍵</code> 環繞，而不是某個神祕的 LT 鍵。字幕也把 <code>WASD</code> 拆成了「wsdao」，足以證明語音辨識有時只是很自信地猜字。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="pivot-center">
+        <span class="section-index">04</span>
+        <div>
+          <h2>Pivot 與 Center：決定控制柄放在哪裡</h2>
+          <dl class="term-list">
+            <div><dt>Pivot</dt><dd>把 Transform Gizmo 放在 GameObject 實際的軸心點，也就是 Transform 所定義的原點。</dd></div>
+            <div><dt>Center</dt><dd>把 Gizmo 放在依目前選取物件計算出的中心位置；多選物件時通常能得到整組選取範圍的中心。</dd></div>
+          </dl>
+
+          <aside class="callout warning">
+            <span class="callout-label">「自轉／公轉」只是操作結果的比喻</span>
+            <p>老師用自轉與公轉說明多選旋轉，直覺上能理解，但核心概念不是天文學：<strong>Pivot／Center 控制的是 Gizmo 的位置</strong>。控制柄位置改變後，旋轉或縮放的結果才可能看起來像各自旋轉或繞共同中心旋轉。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section" id="local-global">
+        <span class="section-index">05</span>
+        <div>
+          <h2>Local 與 Global：決定控制柄朝哪個方向</h2>
+          <dl class="term-list">
+            <div><dt>Local</dt><dd>Gizmo 的軸向跟著物件自身的旋轉。物件轉向後，它的紅、綠、藍軸也會一起轉。</dd></div>
+            <div><dt>Global</dt><dd>Gizmo 固定對齊世界座標。無論物件自身怎麼旋轉，控制柄仍維持世界 X、Y、Z 的方向。</dd></div>
+            <div><dt>世界座標</dt><dd>整個 Scene 共用的固定座標系，可參考 Scene 視窗右上角的方向覆蓋層。</dd></div>
+            <div><dt>本地座標</dt><dd>以物件自身方向與 Parent Transform 為基準的座標系，適合表達「往物件自己的前方移動」。</dd></div>
+          </dl>
+
+          <div class="memory-line">
+            <span>一句話記憶</span>
+            <strong>Pivot／Center 管 Gizmo 放哪裡；Local／Global 管 Gizmo 朝哪裡。前者是位置，後者是方向。</strong>
+          </div>
+
+          <aside class="callout danger">
+            <span class="callout-label">不要把 Local／Global 誤解成修改 Transform 數值模式</span>
+            <p>這個切換主要控制 Scene Gizmo 的方向，不會把 Inspector 裡的 Position 欄位直接改成「世界座標顯示器」。有 Parent 時，Inspector 的 Transform 數值仍主要是相對父物件的局部值。</p>
+          </aside>
+
+          <aside class="callout warning">
+            <span class="callout-label">左手座標系</span>
+            <p>Unity 使用左手座標系：正 X 向右、正 Y 向上、正 Z 向前。字幕中「立軸」「Vocal」「LOGO」分別是在誤認 <strong>Z 軸、Local、Global</strong>，不要把這些幽靈術語抄進腦袋。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="checklist compact-checklist">
+        <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-8-view-transform"> 能區分移動 Scene Camera 與修改 GameObject Transform</label>
+        <label><input type="checkbox" data-check="lesson-8-tools"> 記得 Q、W、E、R、T、Y 對應的工具</label>
+        <label><input type="checkbox" data-check="lesson-8-inspector"> 能說明 Position、Rotation、Scale 與 Reset</label>
+        <label><input type="checkbox" data-check="lesson-8-navigation"> 能使用 Alt、滑鼠中鍵與右鍵 Flythrough 瀏覽 Scene</label>
+        <label><input type="checkbox" data-check="lesson-8-pivot-center"> 能區分 Pivot 與 Center</label>
+        <label><input type="checkbox" data-check="lesson-8-local-global"> 能區分 Local 與 Global</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽">
+        <a href="ch1-4.html"><small>上一堂</small><strong>← ch1_4 移除物件與建立空白物件</strong></a>
+        <a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
