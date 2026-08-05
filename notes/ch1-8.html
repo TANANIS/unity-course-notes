@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unity 課程 ch1_8 建立 C# Script、掛載到 GameObject，以及兩種建立方式的差異。">
+  <meta name="description" content="Unity 課程 ch1_8 建立 C# Script、掛載到 GameObject，以及 Unity 6 各種腳本範本的差異。">
   <title>ch1_8 建立 Script｜Unity 課程筆記</title>
   <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
   <link rel="stylesheet" href="../lesson-layout.css">
   <script src="../app.js" defer></script>
 </head>
@@ -22,16 +23,17 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 11</span><span class="complete-badge">已整理</span></div>
         <h1>ch1_8 建立 Script</h1>
-        <p>建立 C# Script Asset，將它掛到 GameObject 上成為 Component，並比較 Project 與 Add Component 兩種建立方式。</p>
+        <p>建立 C# Script Asset，將它掛到 GameObject 上成為 Component，並看懂 Unity 6 在 Scripting 選單中提供的不同腳本範本。</p>
       </header>
 
       <section class="lesson-intro" aria-labelledby="lesson-map-title">
         <div><span class="eyebrow">SCRIPT ASSET / COMPONENT</span><h2 id="lesson-map-title">腳本檔存在，不代表它已經在場景中執行</h2><p>Script 先是 Project 裡的 Asset；掛載到 GameObject 後，才會成為該物件的 Component。直接按 Play 卻沒有任何反應，通常只是因為腳本還孤零零地躺在 Assets 裡。</p></div>
         <nav class="lesson-outline" aria-label="本課快速導覽">
           <a href="#project-method"><strong>01</strong><span>Project 建立<small>Scripts 資料夾與 C# Script</small></span></a>
-          <a href="#attach-script"><strong>02</strong><span>掛載腳本<small>拖入 Inspector</small></span></a>
-          <a href="#component-method"><strong>03</strong><span>Add Component<small>直接建立並掛載</small></span></a>
-          <a href="#compare-methods"><strong>04</strong><span>兩種方式<small>整理與速度的取捨</small></span></a>
+          <a href="#script-templates"><strong>02</strong><span>腳本範本<small>Unity 6 Scripting 選單</small></span></a>
+          <a href="#attach-script"><strong>03</strong><span>掛載腳本<small>拖入 Inspector</small></span></a>
+          <a href="#component-method"><strong>04</strong><span>Add Component<small>直接建立並掛載</small></span></a>
+          <a href="#compare-methods"><strong>05</strong><span>兩種方式<small>整理與速度的取捨</small></span></a>
         </nav>
       </section>
 
@@ -39,26 +41,44 @@
         <h2>方法一：在 Project 建立 C# Script</h2>
         <ol class="step-list large">
           <li><span>01</span><div><strong>建立 Scripts 資料夾</strong><p>在 Project 視窗的 Assets 空白處按右鍵，選擇 <strong>Create → Folder</strong>，命名為 <code>Scripts</code>。</p></div></li>
-          <li><span>02</span><div><strong>建立 C# Script</strong><p>進入 Scripts 資料夾，在空白處按右鍵，選擇 <strong>Create → C# Script</strong>。</p></div></li>
+          <li><span>02</span><div><strong>建立 MonoBehaviour Script</strong><p>進入 Scripts 資料夾，在空白處按右鍵，選擇 <strong>Create → Scripting → MonoBehaviour Script</strong>。這就是目前課程要使用的普通 GameObject 行為腳本。</p></div></li>
           <li><span>03</span><div><strong>立即正確命名</strong><p>例如 <code>TestOne</code>。課程特別提醒命名要正確，避免之後再修改時增加麻煩。</p></div></li>
           <li><span>04</span><div><strong>雙擊開啟程式碼編輯器</strong><p>老師示範撰寫旋轉程式，但本堂重點是建立與掛載流程，程式語法會在後續章節說明。</p></div></li>
         </ol>
-        <aside class="callout warning"><span class="callout-label">字幕不足以還原完整程式碼</span><p>字幕可辨認老師使用了旋轉相關程式，可能涉及 <code>transform.Rotate</code> 與 Y 軸，但無法可靠還原完整參數與寫法，因此本頁不把猜測偽裝成原始程式碼。</p></aside>
+        <aside class="callout warning"><span class="callout-label">舊課程與 Unity 6 的名稱差異</span><p>老師畫面中的 <strong>Create → C# Script</strong>，在目前 Unity 6 選單中被拆成多種範本。這堂要選的是 <strong>MonoBehaviour Script</strong>，不是 Empty C# Script。</p></aside>
       </div></section>
 
-      <section class="note-section" id="attach-script"><span class="section-index">02</span><div>
+      <section class="note-section" id="script-templates"><span class="section-index">02</span><div>
+        <h2>Unity 6 的 Scripting 選單在建立什麼</h2>
+        <figure class="lesson-figure"><img src="../assets/ch1-8/scripting-create-menu.png" width="729" height="197" loading="lazy" alt="Unity 6 Project Create 選單中的 Scripting、Playable 與 URP 腳本範本"><figcaption><strong>Unity 6 的 Scripting 選單。</strong>這些選項不是同一種腳本換不同名字，而是替不同 Unity 系統預先建立不同基底與程式碼結構。</figcaption></figure>
+        <dl class="term-list">
+          <div><dt>MonoBehaviour Script</dt><dd>建立繼承 <code>MonoBehaviour</code> 的腳本，可掛到 GameObject 上成為 Component。角色移動、互動、敵人 AI 與一般場景行為通常從這裡開始。<strong>本堂選這個。</strong></dd></div>
+          <div><dt>ScriptableObject Script</dt><dd>建立繼承 <code>ScriptableObject</code> 的資料型腳本，常用來製作物品、角色數值、技能設定等可重複使用的資料 Asset。它不是一般的 GameObject 行為元件。</dd></div>
+          <div><dt>Empty C# Script</dt><dd>建立不預設繼承 Unity 類別的普通 C# 檔案，適合資料模型、工具類別、服務或純邏輯程式。因為沒有繼承 <code>MonoBehaviour</code>，不能直接拖到 GameObject 當 Component。</dd></div>
+          <div><dt>Playable Behaviour Script</dt><dd>建立自訂 <code>PlayableBehaviour</code>，用於 PlayableGraph 或 Timeline 執行期間的自訂行為。這是動畫、音訊與 Timeline 等進階流程，不是普通角色控制腳本。</dd></div>
+          <div><dt>Playable Asset Script</dt><dd>建立描述自訂 Playable 資產的腳本，負責在 PlayableGraph 中建立可播放內容，常與自訂 Timeline Clip 或 Track 搭配。</dd></div>
+          <div><dt>Assembly Definition</dt><dd>建立 <code>.asmdef</code>，把所在資料夾及其子資料夾的腳本編譯成獨立程序集。大型專案可藉此拆分模組、控制引用與縮小重新編譯範圍；這個基礎課程暫時不需要。</dd></div>
+          <div><dt>Assembly Definition Reference</dt><dd>建立 <code>.asmref</code>，讓目前資料夾的腳本加入既有 Assembly Definition 所定義的程序集，不必在每個資料夾再放一份新的 <code>.asmdef</code>。</dd></div>
+          <div><dt>URP Renderer Feature Script</dt><dd>為 Universal Render Pipeline 建立自訂 Renderer Feature 範本，用來插入自訂 Render Pass 或畫面渲染效果。屬於圖形管線進階內容。</dd></div>
+          <div><dt>URP Post-process Volume Scripts</dt><dd>建立自訂 URP 後製效果需要的範本，通常包含 Renderer Feature 與 Volume Component 相關腳本，讓效果能透過 Volume 系統調整。</dd></div>
+        </dl>
+        <aside class="callout danger"><span class="callout-label">現在只需要記一個選項</span><p>你要做「掛到 Cube 上，按 Play 後執行」的腳本，就選 <strong>MonoBehaviour Script</strong>。其他選項是給資料資產、Timeline、程序集與渲染管線使用的專用範本，現在不用逐一開支線研究。選單把整間工具房攤在你面前，不代表你組一張桌子需要先學會焊接核反應爐。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="attach-script"><span class="section-index">03</span><div>
         <h2>把 Script 掛到 GameObject</h2>
         <p>只在 Project 建立 Script，按 Play 不會讓任何場景物件自動執行它。必須先把腳本附加到目標 GameObject。</p>
         <ol class="step-list large">
           <li><span>01</span><div><strong>選取 GameObject</strong><p>在 Hierarchy 或 Scene 選取要控制的 Cube。</p></div></li>
-          <li><span>02</span><div><strong>找到 Script Asset</strong><p>在 Project 的 Scripts 資料夾選取剛建立的 C# Script。</p></div></li>
+          <li><span>02</span><div><strong>找到 Script Asset</strong><p>在 Project 的 Scripts 資料夾選取剛建立的 MonoBehaviour Script。</p></div></li>
           <li><span>03</span><div><strong>拖到 Inspector</strong><p>把 Script 拖進該 GameObject 的 Inspector。掛載成功後，Inspector 會出現腳本 Component。</p></div></li>
           <li><span>04</span><div><strong>按 Play 測試</strong><p>老師示範掛載後物件開始旋轉，用來確認腳本確實有執行。</p></div></li>
         </ol>
         <div class="memory-line"><span>核心關係</span><strong>Project 裡是 Script Asset；掛到 GameObject 後是 Script Component。</strong></div>
+        <aside class="callout warning"><span class="callout-label">字幕不足以還原完整程式碼</span><p>字幕可辨認老師使用了旋轉相關程式，可能涉及 <code>transform.Rotate</code> 與 Y 軸，但無法可靠還原完整參數與寫法，因此本頁不把猜測偽裝成原始程式碼。</p></aside>
       </div></section>
 
-      <section class="note-section" id="component-method"><span class="section-index">03</span><div>
+      <section class="note-section" id="component-method"><span class="section-index">04</span><div>
         <h2>方法二：從 Add Component 建立新腳本</h2>
         <ol class="step-list large">
           <li><span>01</span><div><strong>選取 GameObject</strong><p>先選取要附加腳本的物件。</p></div></li>
@@ -69,10 +89,10 @@
         <aside class="callout warning"><span class="callout-label">版本介面可能不同</span><p>字幕顯示老師使用 <strong>Add Component → New Script</strong>。不同 Unity 版本的入口名稱或是否直接提供 New Script 可能不同；本頁保留課程操作，不把介面差異偷偷改寫成另一套流程。</p></aside>
       </div></section>
 
-      <section class="note-section" id="compare-methods"><span class="section-index">04</span><div>
+      <section class="note-section" id="compare-methods"><span class="section-index">05</span><div>
         <h2>兩種建立方式的差異</h2>
         <dl class="term-list">
-          <div><dt>Project → Create → C# Script</dt><dd>可直接指定腳本所在資料夾，專案結構較整齊；建立後還要手動掛到 GameObject。</dd></div>
+          <div><dt>Project → Create → Scripting → MonoBehaviour Script</dt><dd>可直接指定腳本所在資料夾，專案結構較整齊；建立後還要手動掛到 GameObject。</dd></div>
           <div><dt>Add Component → New Script</dt><dd>建立後立即掛到目前 GameObject，操作較快；之後可能還要移動 Script Asset 整理資料夾。</dd></div>
           <div><dt>刪除資料夾或腳本</dt><dd>可在 Project 右鍵選擇 Delete，但刪除 Asset 會影響所有引用它的物件，不能把它當普通場景物件隨意處理。</dd></div>
         </dl>
@@ -80,7 +100,8 @@
       </div></section>
 
       <section class="checklist compact-checklist"><h2>完成檢查</h2>
-        <label><input type="checkbox" data-check="lesson-11-create-script"> 能在 Project 的指定資料夾建立 C# Script</label>
+        <label><input type="checkbox" data-check="lesson-11-create-script"> 能在 Project 的指定資料夾建立 MonoBehaviour Script</label>
+        <label><input type="checkbox" data-check="lesson-11-template-choice"> 知道本堂應選 MonoBehaviour，而不是 Empty C# Script</label>
         <label><input type="checkbox" data-check="lesson-11-attach-script"> 能把 Script 拖到 GameObject 的 Inspector</label>
         <label><input type="checkbox" data-check="lesson-11-asset-component"> 能區分 Script Asset 與掛載後的 Script Component</label>
         <label><input type="checkbox" data-check="lesson-11-two-methods"> 知道兩種建立方式的優缺點</label>
