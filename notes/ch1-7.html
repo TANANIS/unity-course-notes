@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_7 Tag 與 Layer 筆記。">
+  <title>ch1_7 Tag 與 Layer｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch1_7</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 10</span><span class="complete-badge">已整理</span></div>
+        <h1>ch1_7 Tag 與 Layer</h1>
+        <p>Tag 用來辨認物件身分；Layer 用來讓物理、Raycast、Camera 等系統篩選物件。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">IDENTITY / FILTERING</span><h2 id="lesson-map-title">它是誰，和系統要不要處理它，是兩件事</h2><p>老師用「大分類／小分類」解釋 Layer 與 Tag，勉強能入門，但真正穩定的記法是：Tag 偏向身分，Layer 偏向引擎篩選。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#inspector-location"><strong>01</strong><span>Inspector 位置<small>Tag 與 Layer 在哪裡</small></span></a>
+          <a href="#tag"><strong>02</strong><span>Tag<small>物件是什麼</small></span></a>
+          <a href="#layer"><strong>03</strong><span>Layer<small>系統要不要處理</small></span></a>
+          <a href="#difference"><strong>04</strong><span>如何選擇<small>避免亂分類</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="inspector-location"><span class="section-index">01</span><div>
+        <h2>Tag 與 Layer 位於 Inspector 上方</h2>
+        <figure class="lesson-figure"><img src="../assets/ch1-7/tag-layer-inspector.png" width="344" height="72" loading="lazy" alt="Unity Inspector 上方顯示 GameObject 名稱、Tag Untagged 與 Layer Default"><figcaption><strong>GameObject 頂部設定。</strong>Tag 預設是 Untagged，Layer 預設是 Default。</figcaption></figure>
+        <p>選取 GameObject 後，Inspector 最上方會看到 Tag 與 Layer 下拉選單。這兩者都不是 Component，而是 GameObject 本身的基本設定。</p>
+      </div></section>
+
+      <section class="note-section" id="tag"><span class="section-index">02</span><div>
+        <h2>Tag：表示物件是什麼</h2>
+        <dl class="term-list">
+          <div><dt>用途</dt><dd>替 GameObject 加上身分標籤，例如 Player、Enemy、Collectible。</dd></div>
+          <div><dt>數量</dt><dd>可建立多個自訂 Tag，但一個 GameObject 同一時間只能指定一個 Tag。</dd></div>
+          <div><dt>新增</dt><dd>從 Tag 下拉選單進入 <strong>Add Tag...</strong>，新增後仍要回到原物件重新指定。</dd></div>
+          <div><dt>刪除</dt><dd>若某 Tag 正被物件使用，先把物件改成 Untagged 或其他 Tag，再移除該 Tag。</dd></div>
+          <div><dt>程式判斷</dt><dd>常用 <code>CompareTag("Enemy")</code> 判斷碰撞或觸發到的物件身分。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">不要把多重屬性全部塞進 Tag</span><p>一隻敵人可能同時是 Enemy、Dragon、Fire、Boss，但它不能同時擁有四個 Tag。多重屬性更適合 enum、自訂 Component 或 ScriptableObject。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="layer"><span class="section-index">03</span><div>
+        <h2>Layer：讓系統篩選物件</h2>
+        <dl class="term-list">
+          <div><dt>用途</dt><dd>用於 Physics Collision Matrix、Raycast LayerMask、Camera Culling Mask、Light 等系統過濾。</dd></div>
+          <div><dt>範圍</dt><dd>Layer 索引為 0～31，共 32 層；通常可自行命名的是 8～31，共 24 層。</dd></div>
+          <div><dt>新增</dt><dd>從 Layer 下拉選單進入 <strong>Add Layer...</strong>，建立名稱後仍要回到 GameObject 實際指定。</dd></div>
+          <div><dt>LayerMask</dt><dd>LayerMask 使用 32 個 bit 表示要包含哪些 Layer；GameObject 的 <code>layer</code> 則只是 0～31 的單一索引。</dd></div>
+        </dl>
+        <div class="memory-line"><span>位元觀念</span><strong>GameObject.layer 是索引；LayerMask 才是用 32 個 bit 同時選擇多個 Layer。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="difference"><span class="section-index">04</span><div>
+        <h2>Tag 與 Layer 怎麼選</h2>
+        <dl class="term-list">
+          <div><dt>它是誰？</dt><dd>用 Tag。例如角色是否為 Player、Enemy、Collectible。</dd></div>
+          <div><dt>物理要不要碰撞？</dt><dd>用 Layer 與 Physics Collision Matrix。</dd></div>
+          <div><dt>Raycast 要不要打到？</dt><dd>用 LayerMask。</dd></div>
+          <div><dt>Camera 要不要拍到？</dt><dd>用 Layer 與 Culling Mask。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>Tag 辨認身分；Layer 過濾系統行為。</strong></div>
+        <aside class="callout danger"><span class="callout-label">老師的「Layer 大分類、Tag 小分類」不夠準</span><p>分類大小不是核心。Tag 與 Layer 的差別在使用場景，不在誰比較大。照「大／小」硬套，後面很容易把 Dragon、Fire、Boss 全部亂塞進單一 Tag。</p></aside>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-10-location"> 找得到 Inspector 上方的 Tag 與 Layer</label>
+        <label><input type="checkbox" data-check="lesson-10-tag"> 能說明 Tag 用來辨認物件身分</label>
+        <label><input type="checkbox" data-check="lesson-10-layer"> 能說明 Layer 用於物理、Raycast 與 Camera 篩選</label>
+        <label><input type="checkbox" data-check="lesson-10-assign"> 知道新增 Tag 或 Layer 後仍要回到物件重新指定</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-6.html"><small>上一堂</small><strong>← ch1_6 快捷鍵操作</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
