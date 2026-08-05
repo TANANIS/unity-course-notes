@@ -145,5 +145,26 @@
     "description": "Q 導覽場景，W 移動，E 旋轉，R 縮放。",
     "url": "notes/ch1-6.html#shortcut-map",
     "keywords": ["QWER", "View Tool", "Move Tool", "Rotate Tool", "Scale Tool", "快捷鍵操作"]
+  },
+  {
+    "title": "ch1_7 Tag 與 Layer",
+    "section": "LESSON 10",
+    "description": "Tag 身分辨認、Layer 系統篩選，以及 Material 配色準備。",
+    "url": "notes/ch1-7.html",
+    "keywords": ["Tag", "Layer", "Untagged", "Default", "Material", "Base Map", "Albedo", "Inspector"]
+  },
+  {
+    "title": "Material 建立與套用顏色",
+    "section": "ch1_7 Tag 與 Layer",
+    "description": "在 Project 建立 Material、用 Inspector 調整顏色並套用到 Mesh Renderer。",
+    "url": "notes/ch1-7.html#material-color",
+    "keywords": ["Material", "Create Material", "Base Map", "Albedo", "Mesh Renderer", "顏色", "材質"]
+  },
+  {
+    "title": "Tag 與 Layer 的差別",
+    "section": "ch1_7 Tag 與 Layer",
+    "description": "Tag 用於辨認物件身分；Layer 用於 Physics、Raycast 與 Camera 等系統篩選。",
+    "url": "notes/ch1-7.html#difference",
+    "keywords": ["Tag", "Layer", "CompareTag", "LayerMask", "Collision Matrix", "Culling Mask", "身分", "篩選"]
   }
 ]
