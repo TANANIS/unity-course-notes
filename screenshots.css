@@ -29,3 +29,17 @@
 .lesson-figure figcaption strong {
   color: var(--text);
 }
+
+.image-fallback {
+  display: grid;
+  place-items: center;
+  width: min(100%, 720px);
+  min-height: 150px;
+  padding: 1.25rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .82rem;
+  text-align: center;
+}
