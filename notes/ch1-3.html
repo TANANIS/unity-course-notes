@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch1_3 建立 3D 物件與父子關係筆記。">
+  <title>ch1_3 建立物件與父子關係｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../screenshots.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁">
+      <span class="brand-mark" aria-hidden="true">U</span>
+      <span><strong>Unity Notes</strong><small>課程筆記</small></span>
+    </a>
+    <nav class="top-actions" aria-label="網站操作">
+      <a class="text-link" href="../course.html">課程目錄</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑">
+      <a href="../index.html">課程首頁</a><span>/</span>
+      <a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span>
+      <span>ch1_3</span>
+    </nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 06</span><span class="complete-badge">整理中</span></div>
+        <h1>ch1_3 Unity3D 建立物件與父子關係</h1>
+        <p>先認識 GameObject → 3D Object 裡能建立的物件，再理解哪些只是測試用幾何體，哪些其實是完整系統的入口。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="map-title">
+        <div>
+          <span class="eyebrow">3D OBJECT MENU</span>
+          <h2 id="map-title">這份選單不是「各種形狀大全」</h2>
+          <p>Cube 到 Quad 是基本幾何體；Text、Ragdoll、Terrain、Tree、Wind Zone 則分別屬於文字、角色物理與地形植被系統。Unity 把它們塞進同一個選單，只能說分類學再次敗給了方便。</p>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">01</span>
+        <div>
+          <h2>建立方式</h2>
+          <p>可從上方選單 <strong>GameObject → 3D Object</strong>，或在 Hierarchy 空白處按右鍵後選擇 <strong>3D Object</strong>。</p>
+          <figure class="lesson-figure compact-figure">
+            <img src="../assets/ch1-3/3d-object-menu.png" width="492" height="293" loading="lazy" alt="Unity Hierarchy 右鍵選單中的 3D Object 子選單">
+            <figcaption><strong>3D Object 子選單。</strong>上半部是基本幾何體，下半部是文字、布娃娃、地形與植被工具。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">02</span>
+        <div>
+          <h2>基本幾何體 Primitive</h2>
+          <dl class="term-list">
+            <div><dt>Cube 方體</dt><dd>六面立方體。最常拿來快速搭牆、地板、平台、障礙物與碰撞區，是灰盒原型的主力。</dd></div>
+            <div><dt>Sphere 球體</dt><dd>球形物件。適合球、行星、範圍提示或測試滾動物理。預設碰撞器為 Sphere Collider。</dd></div>
+            <div><dt>Capsule 膠囊體</dt><dd>中間是圓柱、上下為半球。形狀接近站立角色，常用來暫代玩家或敵人，也適合作為角色碰撞體。</dd></div>
+            <div><dt>Cylinder 圓柱體</dt><dd>上下平面、側面為圓弧。適合柱子、桶子、輪軸與圓形平台。注意預設通常使用 Mesh Collider，不一定適合直接拿來做大量動態物理。</dd></div>
+            <div><dt>Plane 平面</dt><dd>由多個網格面組成的大型水平面，預設尺寸約為 10×10 Unity 單位。常作為測試地面，也方便之後做網格細分或頂點變形。</dd></div>
+            <div><dt>Quad 四邊面</dt><dd>只有一個矩形面，預設面向本地 Z 軸。適合 3D 場景中的圖片、告示牌、特效面片與簡單背景。</dd></div>
+          </dl>
+          <aside class="callout warning">
+            <span class="callout-label">Plane 不等於 Quad</span>
+            <p><strong>Plane</strong> 是水平、較大且有多個網格分段的地面；<strong>Quad</strong> 是單一四邊形面片。兩者看起來都扁，不代表用途相同，紙和磁磚也都扁，文明仍勉強把它們分開。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">03</span>
+        <div>
+          <h2>建立後通常會有哪些 Component？</h2>
+          <dl class="term-list">
+            <div><dt>Transform</dt><dd>位置、旋轉、縮放與父子階層。所有 GameObject 都一定有。</dd></div>
+            <div><dt>Mesh Filter</dt><dd>指定物件使用哪個 Mesh，也就是實際的幾何形狀資料。</dd></div>
+            <div><dt>Mesh Renderer</dt><dd>負責把 Mesh 畫到畫面上，並使用指定的 Material。</dd></div>
+            <div><dt>Collider</dt><dd>提供碰撞形狀。Cube、Sphere、Capsule 等會依形狀附上對應 Collider。</dd></div>
+          </dl>
+          <div class="memory-line"><span>一句話記憶</span><strong>Mesh Filter 決定長什麼形狀，Mesh Renderer 決定怎麼被畫出來，Collider 決定怎麼碰撞。</strong></div>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">04</span>
+        <div>
+          <h2>其他 3D Object 項目</h2>
+          <dl class="term-list">
+            <div><dt>Text - TextMeshPro</dt><dd>在 3D 世界中建立 TextMeshPro 文字。文字存在場景座標裡，不是一般 Canvas UI；適合角色頭頂名稱、世界內標示與立體字幕。</dd></div>
+            <div><dt>Legacy</dt><dd>舊版 3D Text 等相容功能。新專案通常優先使用 TextMeshPro，除非正在維護舊內容。</dd></div>
+            <div><dt>Ragdoll...</dt><dd>開啟 Ragdoll Wizard，替已建立骨架的角色配置 Rigidbody、Collider 與 Character Joint，讓角色死亡或失去控制時產生布娃娃物理。它不是一按就憑空生出人體。</dd></div>
+            <div><dt>Terrain</dt><dd>建立 Unity Terrain 地形，可雕刻高度、繪製地表材質並放置草與樹。適合戶外大型地面，不是普通 Plane 的華麗皮膚。</dd></div>
+            <div><dt>Tree</dt><dd>建立 Tree Editor 使用的樹木資產／物件，可配置樹幹與枝葉，之後可放進 Terrain。是否出現或推薦使用，會受 Unity 版本與渲染流程影響。</dd></div>
+            <div><dt>Wind Zone</dt><dd>建立風力區域，主要影響支援風擺動的樹木、植被與部分粒子效果。它不會自動把場景裡所有 Rigidbody 吹走。</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="note-section">
+        <span class="section-index">05</span>
+        <div>
+          <h2>父子關係的起點</h2>
+          <p>把一個 GameObject 在 Hierarchy 中拖到另一個 GameObject 下方，就會建立 Parent / Child 關係。子物件的 Transform 會改以父物件作為座標參考。</p>
+          <dl class="term-list">
+            <div><dt>父物件移動</dt><dd>子物件會跟著移動。</dd></div>
+            <div><dt>父物件旋轉</dt><dd>子物件會繞著父物件的 Transform 一起旋轉。</dd></div>
+            <div><dt>父物件縮放</dt><dd>子物件的世界尺寸通常也會受到影響。</dd></div>
+            <div><dt>Local Position</dt><dd>子物件相對於父物件的位置，不是相對於整個世界原點。</dd></div>
+          </dl>
+          <aside class="callout danger">
+            <span class="callout-label">不要把父子關係當資料夾</span>
+            <p>Hierarchy 確實能用來整理，但 Parent / Child 會實際改變 Transform 的計算。若只想分類物件，通常建立 Empty GameObject 當群組，並留意其位置、旋轉與縮放是否乾淨。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="checklist compact-checklist">
+        <h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-6-primitives"> 能說明六種 Primitive 的差異與用途</label>
+        <label><input type="checkbox" data-check="lesson-6-plane-quad"> 能區分 Plane 與 Quad</label>
+        <label><input type="checkbox" data-check="lesson-6-components"> 能說明 Mesh Filter、Mesh Renderer 與 Collider 的分工</label>
+        <label><input type="checkbox" data-check="lesson-6-systems"> 知道 Ragdoll、Terrain、Tree 與 Wind Zone 不是單純幾何體</label>
+        <label><input type="checkbox" data-check="lesson-6-parent-child"> 能解釋父子關係如何影響 Transform</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽">
+        <a href="ch1-2.html"><small>上一堂</small><strong>← ch1_2 Unity3D 環境介紹</strong></a>
+        <a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
