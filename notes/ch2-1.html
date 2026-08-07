@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_1 變數宣告筆記，整理 C# int、float、string、bool、命名規則與 Debug.Log。">
+  <title>ch2_1 變數宣告｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_1</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 13</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_1 變數宣告</h1>
+        <p>先決定資料要用什麼型別保存，再給它一個有意義的名稱與初始值。這堂只處理 C# 最基本、也最常見的四種型別。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">TYPE / NAME / VALUE</span><h2 id="lesson-map-title">變數就是「型別 + 名稱 + 值」</h2><p>老師用杯子比喻變數：不同資料需要不同容器。實際寫程式時，型別決定變數能保存什麼資料與可進行哪些操作。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#declaration"><strong>01</strong><span>宣告與賦值<small>type name = value</small></span></a>
+          <a href="#basic-types"><strong>02</strong><span>基本型別<small>int / float / string / bool</small></span></a>
+          <a href="#naming"><strong>03</strong><span>命名規則<small>不要從數字開始</small></span></a>
+          <a href="#debug-log"><strong>04</strong><span>Debug.Log<small>把值印到 Console</small></span></a>
+          <a href="#unity-note"><strong>05</strong><span>Unity 補充<small>Start 與 Component</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="declaration"><span class="section-index">01</span><div>
+        <h2>宣告、命名、賦值</h2>
+        <p>基本語法可以拆成三個部分：</p>
+        <pre><code>int hp = 100;
+//  ^   ^    ^
+// 型別 名稱  值</code></pre>
+        <dl class="term-list">
+          <div><dt>型別（type）</dt><dd>決定這個變數可以保存哪一類資料，例如整數、浮點數、文字或布林值。</dd></div>
+          <div><dt>變數名稱</dt><dd>讓程式設計者知道這個值代表什麼。<code>hp</code> 比 <code>a</code> 更容易理解。</dd></div>
+          <div><dt><code>=</code></dt><dd>這裡是「賦值」，把右邊的值交給左邊的變數，不是數學上的相等判斷。</dd></div>
+          <div><dt><code>;</code></dt><dd>C# 陳述式通常以分號結尾。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>左邊決定「這是什麼」，右邊提供「它現在是多少」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="basic-types"><span class="section-index">02</span><div>
+        <h2>四種基本型別</h2>
+        <pre><code>int hp = 100;
+float speed = 7.5f;
+string message = "成功";
+bool isOpen = false;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>int</code></dt><dd>32 位元整數，不包含小數。範圍是 -2,147,483,648 到 2,147,483,647；通常不需要背範圍。</dd></div>
+          <div><dt><code>float</code></dt><dd>單精度浮點數，Unity 的座標、速度與許多數值都常使用它。小數常值通常要加 <code>f</code>，例如 <code>7.5f</code>。</dd></div>
+          <div><dt><code>string</code></dt><dd>文字資料，內容放在雙引號中，例如 <code>"Hello"</code>。</dd></div>
+          <div><dt><code>bool</code></dt><dd>只有 <code>true</code> 與 <code>false</code>，適合表示開／關、成立／不成立等二元狀態。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">為什麼 float 要寫 f？</span><p>C# 中像 <code>7.5</code> 這種沒有後綴的小數常值預設是 <code>double</code>。若要直接指定給 <code>float</code>，寫成 <code>7.5f</code>。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="naming"><span class="section-index">03</span><div>
+        <h2>變數名稱的基本規則</h2>
+        <dl class="term-list">
+          <div><dt>不能以數字開頭</dt><dd><code>1hp</code> 不合法；<code>hp1</code> 可以。</dd></div>
+          <div><dt>底線可以使用</dt><dd><code>_hp</code> 是合法名稱。</dd></div>
+          <div><dt>不要亂塞符號</dt><dd>一般識別字不會使用 <code>%</code>、<code>#</code>、<code>-</code> 等符號。</dd></div>
+          <div><dt>名稱要表達用途</dt><dd>初學階段先養成可讀性。區域變數常見寫法是 camelCase，例如 <code>moveSpeed</code>、<code>playerHp</code>。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">先不要背整份語言規格</span><p>這堂只需要掌握「名稱不要從數字開始、不要亂用符號、名稱要能看懂」即可。C# 識別字的完整規則比這更細，但現在背它沒有任何收益。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="debug-log"><span class="section-index">04</span><div>
+        <h2>用 Debug.Log 查看變數</h2>
+        <pre><code>int hp = 100;
+Debug.Log("HP: " + hp);</code></pre>
+        <p>執行後，Unity Console 會看到：</p>
+        <pre><code>HP: 100</code></pre>
+        <dl class="term-list">
+          <div><dt><code>Debug.Log(...)</code></dt><dd>把訊息輸出到 Unity Console，是最基本的檢查與除錯方式。</dd></div>
+          <div><dt><code>+</code> 與字串</dt><dd>其中一邊是 <code>string</code> 時，這裡的 <code>+</code> 會進行字串串接，<code>hp</code> 會轉成文字後接在後面。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="unity-note"><span class="section-index">05</span><div>
+        <h2>這堂在 Unity 裡實際做了什麼</h2>
+        <p>老師把練習程式寫在 <code>Start()</code>，再把 Script 掛到場景中的 GameObject 上，按下 Play 後由 Unity 執行 <code>Start()</code>，因此 Console 才會出現 <code>Debug.Log</code> 的內容。</p>
+        <dl class="term-list">
+          <div><dt><code>Start()</code></dt><dd>這堂用它當練習入口；老師也說若沒有特別說明，後續基礎語法練習會先放在這裡。</dd></div>
+          <div><dt>掛上 Script</dt><dd>只有把這個 <code>MonoBehaviour</code> Script 作為 Component 掛到啟用中的 GameObject，Unity 才會在執行時呼叫它的生命週期方法。</dd></div>
+          <div><dt>這堂的變數</dt><dd>若宣告在 <code>Start()</code> 內，它們屬於區域變數，只在該方法的作用域中使用。Inspector 欄位是另一個概念，之後再處理。</dd></div>
+        </dl>
+        <div class="memory-line"><span>本堂結論</span><strong>先選資料型別，再取有意義的名稱；需要確認值時就用 Debug.Log。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-13-declaration"> 能看懂 <code>int hp = 100;</code> 的四個部分</label>
+        <label><input type="checkbox" data-check="lesson-13-types"> 能區分 <code>int</code>、<code>float</code>、<code>string</code>、<code>bool</code></label>
+        <label><input type="checkbox" data-check="lesson-13-float"> 知道 <code>float</code> 小數常值常需要 <code>f</code></label>
+        <label><input type="checkbox" data-check="lesson-13-debug-log"> 能用 <code>Debug.Log</code> 印出變數內容</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch1-9.html"><small>上一堂</small><strong>← ch1_9 Prefabs</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
