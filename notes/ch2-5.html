@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_5 for 迴圈筆記，整理 C# for 的初始化、條件、每輪更新與作用域。">
+  <title>ch2_5 for 迴圈｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_5</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 17</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_5 for 迴圈</h1>
+        <p><code>for</code> 適合處理「重複執行固定次數」的情況。老師用跑操場 10 圈當例子，示範迴圈如何自己計數並在條件不成立時停止。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">LOOP</span><h2 id="lesson-map-title">初始化 → 檢查條件 → 執行 → 更新</h2><p><code>for</code> 小括號裡有三個區塊，由兩個分號隔開。每跑完一輪，就更新計數值，再重新檢查條件。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#syntax"><strong>01</strong><span>基本結構<small>三個區塊</small></span></a>
+          <a href="#flow"><strong>02</strong><span>執行流程<small>跑 10 圈</small></span></a>
+          <a href="#scope"><strong>03</strong><span>作用域<small>i 只活在迴圈裡</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="syntax"><span class="section-index">01</span><div>
+        <h2>for 的基本結構</h2>
+        <pre><code>for (int i = 1; i <= 10; i++)
+{
+    Debug.Log("跑了 " + i + " 圈");
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>int i = 1</code></dt><dd>初始化。迴圈開始前先建立計數變數。</dd></div>
+          <div><dt><code>i <= 10</code></dt><dd>條件。只要條件是 <code>true</code>，就繼續執行迴圈。</dd></div>
+          <div><dt><code>i++</code></dt><dd>每輪結束後執行的更新。這裡代表 <code>i</code> 每次加 1。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>for = 從哪裡開始、什麼時候繼續、每輪結束後怎麼更新。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="flow"><span class="section-index">02</span><div>
+        <h2>迴圈會怎麼跑？</h2>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>建立 <code>i = 1</code></strong><p>初始化只在最開始執行一次。</p></div></li>
+          <li><span>02</span><div><strong>檢查 <code>i <= 10</code></strong><p>成立就進入迴圈內容。</p></div></li>
+          <li><span>03</span><div><strong>執行大括號內容</strong><p>例如印出目前跑到第幾圈。</p></div></li>
+          <li><span>04</span><div><strong>執行 <code>i++</code></strong><p>每跑完一輪，計數值加 1，再回去檢查條件。</p></div></li>
+        </ol>
+        <p>當 <code>i</code> 變成 11 時，<code>11 <= 10</code> 為 <code>false</code>，因此離開迴圈。</p>
+      </div></section>
+
+      <section class="note-section" id="scope"><span class="section-index">03</span><div>
+        <h2>for 裡宣告的變數有自己的作用域</h2>
+        <pre><code>for (int i = 1; i <= 10; i++)
+{
+    Debug.Log(i);
+}
+
+// Debug.Log(i);  // 這裡不能再使用 i</code></pre>
+        <p>老師特別提醒：如果 <code>i</code> 是在 <code>for</code> 裡宣告的，它只存在於這個迴圈的作用範圍內。離開迴圈後就不能再使用。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>需要重複固定次數時，for 會幫你管理計數、條件與每輪更新。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-17-syntax"> 能看懂 <code>for (int i = 1; i <= 10; i++)</code> 的三個部分</label>
+        <label><input type="checkbox" data-check="lesson-17-flow"> 知道每輪結束後會先更新再重新檢查條件</label>
+        <label><input type="checkbox" data-check="lesson-17-scope"> 知道在 <code>for</code> 內宣告的 <code>i</code> 有自己的作用域</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-4.html"><small>上一堂</small><strong>← ch2_4 邏輯判斷式</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
