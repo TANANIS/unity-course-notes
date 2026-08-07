@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_2 變數計算筆記，整理 C# 四則運算、整數除法、bool 邏輯運算、複合指定與 ++/--。">
+  <title>ch2_2 變數計算｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_2</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 14</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_2 變數計算</h1>
+        <p>這堂把變數拿來做實際運算：數值的加減乘除、布林邏輯，以及遊戲裡很常見的累加與遞增寫法。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">OPERATORS</span><h2 id="lesson-map-title">變數不只是保存資料，也會參與運算</h2><p>數值可以計算，布林值可以組合條件，而複合指定可以把「取出舊值、計算、再存回去」寫得更簡潔。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#arithmetic"><strong>01</strong><span>四則運算<small>+ - * /</small></span></a>
+          <a href="#division"><strong>02</strong><span>整數除法<small>int / int</small></span></a>
+          <a href="#bool"><strong>03</strong><span>布林運算<small>&& || !</small></span></a>
+          <a href="#assignment"><strong>04</strong><span>複合指定<small>+= -= *= /=</small></span></a>
+          <a href="#increment"><strong>05</strong><span>遞增遞減<small>++ / --</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="arithmetic"><span class="section-index">01</span><div>
+        <h2>數值的基本四則運算</h2>
+        <pre><code>int a = 20;
+int b = 10;
+
+int add = a + b;
+int subtract = a - b;
+int multiply = a * b;
+int divide = a / b;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>+</code></dt><dd>加法</dd></div>
+          <div><dt><code>-</code></dt><dd>減法</dd></div>
+          <div><dt><code>*</code></dt><dd>乘法</dd></div>
+          <div><dt><code>/</code></dt><dd>除法</dd></div>
+        </dl>
+        <p>遊戲中的 HP、攻擊力、金錢、經驗值與速度等數值，都會大量使用這些基本運算。</p>
+      </div></section>
+
+      <section class="note-section" id="division"><span class="section-index">02</span><div>
+        <h2>整數除法會捨去小數部分</h2>
+        <pre><code>int a = 10;
+int b = 20;
+
+int result = a / b;   // 0</code></pre>
+        <p>當兩個運算元都是整數時，除法結果也會以整數方式處理，所以 <code>10 / 20</code> 不會得到 <code>0.5</code>，而是 <code>0</code>。</p>
+        <p>如果希望保留小數，運算中要有浮點數，結果也要用能承接浮點數的型別：</p>
+        <pre><code>float a = 10f;
+int b = 20;
+
+float result = a / b;   // 0.5</code></pre>
+        <div class="memory-line"><span>本堂重要觀念</span><strong>運算元的型別會影響運算結果；做除法時特別注意是不是兩邊都是 int。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="bool"><span class="section-index">03</span><div>
+        <h2>bool 的邏輯運算</h2>
+        <pre><code>bool hasFireStone = true;
+bool hasWaterStone = false;
+
+bool canOpenGate = hasFireStone && hasWaterStone;
+bool hasAnyStone = hasFireStone || hasWaterStone;
+bool noFireStone = !hasFireStone;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>&&</code> AND</dt><dd>兩邊都為 <code>true</code> 才會得到 <code>true</code>。老師用「火之石與水之石都要有才能開門」舉例。</dd></div>
+          <div><dt><code>||</code> OR</dt><dd>只要其中一邊為 <code>true</code>，結果就是 <code>true</code>。老師用「受到攻擊或中毒都會扣血」舉例。</dd></div>
+          <div><dt><code>!</code> NOT</dt><dd>把布林值反轉：<code>true</code> 變 <code>false</code>，<code>false</code> 變 <code>true</code>。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="assignment"><span class="section-index">04</span><div>
+        <h2>複合指定運算子</h2>
+        <pre><code>int count = 0;
+
+count += 2;
+count += 5;
+
+Debug.Log(count);   // 7</code></pre>
+        <p><code>count += 2</code> 可以理解成把原本的 <code>count</code> 加 2，再把結果存回 <code>count</code>。</p>
+        <pre><code>count += 2;   // 加
+count -= 2;   // 減
+count *= 2;   // 乘
+count /= 2;   // 除</code></pre>
+        <p>這類寫法在遊戲數值更新時很常見，例如扣血可以用 <code>hp -= damage;</code>。</p>
+      </div></section>
+
+      <section class="note-section" id="increment"><span class="section-index">05</span><div>
+        <h2>只加一或減一：++ / --</h2>
+        <pre><code>count++;
+count--;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>count++</code></dt><dd>讓 <code>count</code> 增加 1。</dd></div>
+          <div><dt><code>count--</code></dt><dd>讓 <code>count</code> 減少 1。</dd></div>
+        </dl>
+        <p>如果不是加減 1，就改用 <code>+=</code>、<code>-=</code> 等複合指定運算子。</p>
+        <aside class="callout"><span class="callout-label">老師順帶示範</span><p>為了暫時忽略一段測試程式碼，可以使用 <code>/* ... */</code> 多行註解。這只是課堂示範的小工具，不是本堂主要內容。</p></aside>
+        <div class="memory-line"><span>本堂結論</span><strong>數值用運算子計算，條件用布林運算組合；需要反覆更新同一個變數時，複合指定會很常出現。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-14-arithmetic"> 能使用 <code>+ - * /</code> 做基本數值運算</label>
+        <label><input type="checkbox" data-check="lesson-14-division"> 知道兩個 <code>int</code> 相除時小數部分不會保留</label>
+        <label><input type="checkbox" data-check="lesson-14-bool"> 能區分 <code>&&</code>、<code>||</code>、<code>!</code></label>
+        <label><input type="checkbox" data-check="lesson-14-assignment"> 看得懂 <code>+=</code>、<code>-=</code> 與 <code>++</code>、<code>--</code></label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-1.html"><small>上一堂</small><strong>← ch2_1 變數宣告</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
