@@ -43,7 +43,7 @@
         {"id":"ch2-2","courseLessonNumber":14,"title":"變數計算","duration":"11:30","url":"notes/ch2-2.html","keywords":["四則運算","整數除法","bool","AND","OR","NOT","複合指定","++","--"]},
         {"id":"ch2-3","courseLessonNumber":15,"title":"比較","duration":"5:05","url":"notes/ch2-3.html","keywords":["比較運算子","==","!=",">","<",">=","<=","bool"]},
         {"id":"ch2-4","courseLessonNumber":16,"title":"邏輯判斷式","duration":"9:29","url":"notes/ch2-4.html","keywords":["if","else","else if","條件判斷","邏輯判斷","HP","區間判斷","&&"]},
-        {"id":"ch2-5","courseLessonNumber":17,"title":"for 迴圈","duration":"3:29"},
+        {"id":"ch2-5","courseLessonNumber":17,"title":"for 迴圈","duration":"3:29","url":"notes/ch2-5.html","keywords":["for","迴圈","loop","重複執行","i++","作用域"]},
         {"id":"ch2-6","courseLessonNumber":18,"title":"while 迴圈","duration":"4:24"},
         {"id":"ch2-7","courseLessonNumber":19,"title":"陣列","duration":"6:29"},
         {"id":"ch2-8","courseLessonNumber":20,"title":"方法","duration":"13:27"},
