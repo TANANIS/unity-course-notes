@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自主練習：從空白 Unity 專案中角色需要地面可站的需求出發，整理 Plane、Cube、ProBuilder、Terrain 與 Modular Assets 的用途。">
+  <title>建立基礎空間與地板｜自主練習｜Unity Notes</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>自主練習</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../practice.html">自主練習</a><a class="text-link" href="../course.html">目前課程</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">首頁</a><span>/</span><a href="../practice.html">自主練習</a><span>/</span><span>建立基礎空間與地板</span></nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>SELF PRACTICE 01</span><span class="complete-badge">探索中</span></div>
+        <h1>建立基礎空間與地板</h1>
+        <p>開啟空白 Unity 專案後，第一個很實際的需求是：如果要放入角色，角色至少要有一個可以站立的地面。從這個問題出發，開始整理 Unity 中建立地板與場景空間的幾種方式。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="practice-map-title">
+        <div>
+          <span class="eyebrow">FROM NEED TO TOOL</span>
+          <h2 id="practice-map-title">不是先選工具，而是先確認要解決什麼問題</h2>
+          <p>Plane、Cube、ProBuilder、Terrain 與 Modular Assets 並不是誰比較高級，而是適合不同階段、尺度與場景需求。這次的需求很單純：先建立一塊能讓角色站立、能測試移動與碰撞的地面。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本篇快速導覽">
+          <a href="#why"><strong>01</strong><span>問題起點<small>角色需要地面</small></span></a>
+          <a href="#choices"><strong>02</strong><span>方法比較<small>Plane / Cube / Terrain...</small></span></a>
+          <a href="#plane"><strong>03</strong><span>Plane<small>目前先使用</small></span></a>
+          <a href="#prototype"><strong>04</strong><span>Prototype<small>先能測試再談正式場景</small></span></a>
+          <a href="#next"><strong>05</strong><span>下一步<small>建立可玩的簡單空間</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="why"><span class="section-index">01</span><div>
+        <h2>問題是怎麼出現的？</h2>
+        <p>這次不是因為課程要求建立 Plane，而是在空白專案中準備放入角色時，自然遇到了「角色要站在哪裡？」這個問題。</p>
+        <div class="memory-line"><span>思考路徑</span><strong>想建立角色 → 角色需要碰撞與支撐 → 需要地面 → 開始研究 Unity 如何建立空間。</strong></div>
+        <p>因此這篇筆記的重點不是背誦「地板要用 Plane」，而是建立一個判斷框架：不同場景與開發階段，應該選擇不同的空間建立方式。</p>
+      </div></section>
+
+      <section class="note-section" id="choices"><span class="section-index">02</span><div>
+        <h2>常見的空間與地板建立方式</h2>
+        <dl class="term-list">
+          <div><dt>Plane</dt><dd>最快建立平坦地面的方式。適合測試地面、簡單平坦區域與 Prototype。</dd></div>
+          <div><dt>Cube</dt><dd>具有體積，可以壓成薄樓板，也能直接拿來做牆、平台與室內 Greybox。</dd></div>
+          <div><dt>ProBuilder</dt><dd>Unity 官方的關卡 Blockout / 簡易建模工具，適合直接在 Editor 中拉出較複雜的房間與關卡形狀。</dd></div>
+          <div><dt>Terrain</dt><dd>Unity 的地形系統，適合山丘、草原、坡地等大型自然環境，而不是一般室內地板。</dd></div>
+          <div><dt>Modular Assets</dt><dd>以固定規格的地板、牆壁、門框等模型模組進行拼接，常用於正式的室內、地城或城鎮關卡。</dd></div>
+        </dl>
+
+        <div class="decision-grid">
+          <article><strong>快速測試</strong><p>Plane / Cube</p></article>
+          <article><strong>室內 Greybox</strong><p>Cube / ProBuilder</p></article>
+          <article><strong>大型自然戶外</strong><p>Terrain</p></article>
+          <article><strong>正式模組化關卡</strong><p>Modular Assets</p></article>
+        </div>
+      </div></section>
+
+      <section class="note-section" id="plane"><span class="section-index">03</span><div>
+        <h2>目前先使用 Plane</h2>
+        <p>現在只需要一塊能讓角色站立、可以測試移動與碰撞的平坦地面，因此 Plane 已經足夠。</p>
+        <pre><code>Hierarchy
+→ 3D Object
+→ Plane</code></pre>
+        <dl class="term-list">
+          <div><dt>尺寸</dt><dd>Unity 預設 Plane 約為 10 × 10 Unity units。一般 3D 專案中常把 1 Unity unit 當作約 1 公尺來建立尺度感。</dd></div>
+          <div><dt>厚度</dt><dd>Plane 是平面 Mesh，沒有像 Cube 一樣的實際厚度。</dd></div>
+          <div><dt>碰撞</dt><dd>預設建立的 Plane 會帶有 Mesh Collider，因此可以直接作為角色站立與碰撞測試的地面。</dd></div>
+          <div><dt>放大</dt><dd>可以透過 Transform Scale 快速擴大測試區域。</dd></div>
+        </dl>
+
+        <aside class="callout"><span class="callout-label">Plane 放大後，貼圖發生什麼事？</span><p>Transform Scale 不會重新修改 Mesh 的 UV；真正發生的是同一組 UV 被鋪在更大的世界面積上，因此紋理視覺上會變大。正式材質可以再透過 Material Tiling 等方式調整重複密度。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="prototype"><span class="section-index">04</span><div>
+        <h2>Prototype / Greybox 階段先解決玩法問題</h2>
+        <p>現在沒有必要先決定正式遊戲最後要用 Terrain、Blender 模型還是模組化場景。Prototype 階段更重要的是先快速建立可以測試的空間。</p>
+        <ul class="step-list">
+          <li><span>01</span><div><strong>角色能站嗎？</strong><p>先確認 Collider、重力與角色控制正常。</p></div></li>
+          <li><span>02</span><div><strong>移動空間合理嗎？</strong><p>測試移動速度、轉向、跳躍以及 Camera 距離。</p></div></li>
+          <li><span>03</span><div><strong>空間比例合理嗎？</strong><p>角色與房間、牆壁、平台之間的尺度，需要實際操作才能感覺出來。</p></div></li>
+          <li><span>04</span><div><strong>再決定正式製作方式</strong><p>玩法與尺度確認後，再考慮 ProBuilder、Terrain 或正式 Modular Assets。</p></div></li>
+        </ul>
+        <div class="memory-line"><span>核心觀念</span><strong>Prototype 的地板首先是測試工具，不是最終美術資產。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="next"><span class="section-index">05</span><div>
+        <h2>接下來可以怎麼練？</h2>
+        <p>先從最小可玩的空間開始，不需要一次把場景做成建築設計作業。</p>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>建立 Plane</strong><p>作為第一塊角色可以站立的地面。</p></div></li>
+          <li><span>02</span><div><strong>放入簡單角色</strong><p>確認角色與地面的碰撞關係。</p></div></li>
+          <li><span>03</span><div><strong>加入 Cube</strong><p>做牆壁、平台或障礙物，開始感受場景尺度。</p></div></li>
+          <li><span>04</span><div><strong>再比較 Plane 與 Cube</strong><p>實際操作後理解「平面測試地面」和「有體積的場景結構」差在哪裡。</p></div></li>
+        </ol>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>這次自主練習想確認的事</h2>
+        <label><input type="checkbox" data-check="practice-ground-plane"> 能建立 Plane 並把它當作測試地面</label>
+        <label><input type="checkbox" data-check="practice-ground-choice"> 能說明 Plane、Cube、Terrain 的用途差異</label>
+        <label><input type="checkbox" data-check="practice-ground-prototype"> 知道 Prototype 不等於正式場景製作</label>
+        <label><input type="checkbox" data-check="practice-ground-character"> 能讓角色實際站在建立的地面上</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="自主練習導覽"><a href="../practice.html"><small>返回</small><strong>← 自主練習</strong></a><a class="next" href="../practice.html"><small>目前</small><strong>繼續實作 →</strong></a></nav>
+    </article>
+  </main>
+
+  <footer class="global-footer"><p>從真正遇到的問題建立自己的 Unity 判斷框架。</p></footer>
+</body>
+</html>
