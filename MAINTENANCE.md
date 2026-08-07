@@ -39,6 +39,9 @@
 - HTML
 - UI 狀態
 
+### `data/practice.json`
+放自主練習清單。自主練習與 Udemy 課程進度分離，不要混入 `course.json`。
+
 ### `notes/*.html`
 放：
 - 真正需要複習的內容
@@ -70,6 +73,22 @@
 
 如果只是新增課程內容，原則上不應修改它。
 
+## CSS 維護地圖
+
+`styles.css` 現在只是一個 CSS 入口檔，不在裡面堆實際樣式。
+
+- `css/core.css`：tokens、reset、body、topbar、breadcrumb、共用 badge／按鈕／footer
+- `css/home.css`：首頁 hero、目前課程卡、自主練習入口卡
+- `css/course.css`：課程 header、進度摘要、章節 accordion、lesson rows
+- `css/note.css`：一般筆記頁、程式碼、callout、checklist、pagination
+- `css/practice.css`：自主練習列表頁
+- `css/responsive.css`：共用 RWD 覆寫
+- `lesson-layout.css`：筆記頁的進階／特殊版型，例如多欄導覽、note group、figure grid
+- `search.css`：搜尋 UI
+- `screenshots.css`：截圖與圖片展示
+
+修改外觀時先找對應模組，不要再把規則丟回 `styles.css`。
+
 ## 命名規則
 
 - 檔名：`notes/chX-Y.html`
@@ -84,8 +103,13 @@
 ## 修改前快速判斷
 
 - 新增／完成一堂：改 `notes/` + `data/course.json`
+- 新增自主練習：改練習頁 + `data/practice.json`
 - 補深層搜尋：改 `search-index.json`
-- 改外觀：看 `styles.css` / `lesson-layout.css` / `search.css`
+- 改首頁外觀：`css/home.css`
+- 改課程目錄外觀：`css/course.css`
+- 改筆記正文外觀：`css/note.css`；特殊筆記版型才看 `lesson-layout.css`
+- 改全站共用外觀：`css/core.css`
+- 改手機／平板布局：`css/responsive.css` 或特殊版型自己的 media query
 - 改全站行為：才看 `app.js`
 - 改首頁文案：`index.html`
 - 改課程目錄外框：`course.html`
