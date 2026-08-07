@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{DESCRIPTION}}">
+  <title>{{LESSON_ID}} {{TITLE}}｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>{{LESSON_ID}}</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON {{COURSE_LESSON_NUMBER}}</span><span class="complete-badge">已整理</span></div>
+        <h1>{{LESSON_ID}} {{TITLE}}</h1>
+        <p>{{SUMMARY}}</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">{{KEYWORDS}}</span><h2 id="lesson-map-title">{{CORE_IDEA}}</h2><p>{{INTRO}}</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#concept"><strong>01</strong><span>{{SECTION_1_TITLE}}<small>{{SECTION_1_HINT}}</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="concept"><span class="section-index">01</span><div>
+        <h2>{{SECTION_1_TITLE}}</h2>
+        <p>{{CONTENT}}</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>{{MEMORY}}</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="{{LESSON_ID}}-core"> {{CHECK_ITEM}}</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="../course.html"><small>上一堂</small><strong>← 課程目錄</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
