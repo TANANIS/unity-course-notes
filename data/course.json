@@ -1,0 +1,17 @@
+{
+  "course": {
+    "title": "Unity3D 遊戲設計使用 C#",
+    "lessonCount": 200,
+    "sectionCount": 7,
+    "sourceUrl": "https://www.udemy.com/course/unity3dc/?couponCode=MT260803G2"
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "number": 1,
+      "title": "資源下載與介紹",
+      "lessonCount": 3,
+      "duration": "6 分鐘",
+      "notePolicy": "none",
+      "summary": "2 / 3｜6 分鐘",
+      "noteMessage": "內容僅包含課程介紹與
