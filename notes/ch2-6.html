@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_6 while 迴圈筆記，整理 C# while 條件迴圈、避免無限迴圈，以及 Random.Range 隨機 HP 範例。">
+  <title>ch2_6 while 迴圈｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_6</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 18</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_6 while 迴圈</h1>
+        <p><code>while</code> 會在條件為 <code>true</code> 時持續重複執行。和 <code>for</code> 相比，它更直接地把重點放在「這個條件還成立嗎？」。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">WHILE LOOP</span><h2 id="lesson-map-title">條件成立就繼續，條件失敗才離開</h2><p>這堂用角色 HP 當條件：只要 HP 還大於 0，就持續執行迴圈；每跑一圈消耗一些 HP，直到條件不再成立。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#syntax"><strong>01</strong><span>基本結構<small>while (condition)</small></span></a>
+          <a href="#infinite"><strong>02</strong><span>無限迴圈<small>條件必須有機會改變</small></span></a>
+          <a href="#random"><strong>03</strong><span>Random.Range<small>隨機初始 HP</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="syntax"><span class="section-index">01</span><div>
+        <h2>while 的基本結構</h2>
+        <pre><code>int hp = 50;
+int count = 0;
+
+while (hp > 0)
+{
+    count++;
+    Debug.Log("跑了 " + count + " 圈");
+    hp--;
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>while (hp > 0)</code></dt><dd>每一輪開始前先檢查條件。只要仍為 <code>true</code>，就繼續進入迴圈。</dd></div>
+          <div><dt><code>count++</code></dt><dd>記錄目前已經執行幾次。</dd></div>
+          <div><dt><code>hp--</code></dt><dd>讓 HP 每輪減少，最後使 <code>hp > 0</code> 變成 <code>false</code>，迴圈才能結束。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>while 不管你想跑幾次，它只管「條件還成立嗎？」</strong></div>
+      </div></section>
+
+      <section class="note-section" id="infinite"><span class="section-index">02</span><div>
+        <h2>小心無限迴圈</h2>
+        <p>老師特別提醒：如果 <code>while</code> 的條件一直成立，而且迴圈內又沒有任何東西讓它改變，程式就會不停執行。</p>
+        <pre><code>int hp = 50;
+
+while (hp > 0)
+{
+    Debug.Log("一直跑");
+    // hp 沒有改變
+}</code></pre>
+        <p>這個例子裡 <code>hp</code> 永遠大於 0，所以條件永遠是 <code>true</code>。課堂示範因此加入 HP 遞減，讓迴圈最終可以停止。</p>
+        <aside class="callout warning"><span class="callout-label">重要</span><p>寫 <code>while</code> 時，要確認迴圈內或外部狀態真的有機會讓條件變成 <code>false</code>。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="random"><span class="section-index">03</span><div>
+        <h2>用隨機 HP 觀察 while 執行次數</h2>
+        <p>字幕中的 API 名稱辨識很亂，但依老師描述的寫法與輸出範圍，這段是在用 Unity 的 <code>Random.Range</code> 產生整數 HP。</p>
+        <pre><code>int hp = Random.Range(1, 101);
+int count = 0;
+
+while (hp > 0)
+{
+    count++;
+    hp--;
+}
+
+Debug.Log("總共跑了 " + count + " 圈");</code></pre>
+        <p>老師說明整數版本的範圍上限不包含在結果內，因此 <code>Random.Range(1, 101)</code> 會得到 1～100；若寫成 <code>Random.Range(1, 50)</code>，則是 1～49。</p>
+        <p>因為初始 HP 每次都不同，所以迴圈實際跑的次數也會不同。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>for 常用來管理已知的重複次數；while 則更適合表達「只要條件成立就繼續」。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-18-syntax"> 能看懂 <code>while (hp > 0)</code> 的意思</label>
+        <label><input type="checkbox" data-check="lesson-18-infinite"> 知道 while 條件若永遠成立會造成無限迴圈</label>
+        <label><input type="checkbox" data-check="lesson-18-update"> 知道要讓迴圈中的狀態改變，使條件最終能變成 false</label>
+        <label><input type="checkbox" data-check="lesson-18-random"> 看得懂課堂中用 <code>Random.Range(1, 101)</code> 產生 1～100 的 HP</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-5.html"><small>上一堂</small><strong>← ch2_5 for 迴圈</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
