@@ -1,0 +1,35 @@
+@media (max-width: 760px) {
+  .home-hero { display: block; }
+  .home-hero p { margin-top: 1.5rem; }
+
+  .course-card,
+  .practice-entry-card,
+  .course-header,
+  .lesson-intro,
+  .note-section {
+    grid-template-columns: 1fr;
+  }
+
+  .course-visual { min-height: 210px; }
+  .practice-entry-icon { min-height: 110px; }
+  .course-summary { flex-wrap: wrap; }
+  .section-index { margin-bottom: -.4rem; }
+  .term-list > div {
+    grid-template-columns: 1fr;
+    gap: .25rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .course-summary div { min-width: 80px; }
+  .chapter summary {
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    padding-inline: .75rem;
+  }
+  .lesson-row {
+    grid-template-columns: 1.6rem minmax(0, 1fr);
+  }
+  .lesson-enter { display: none; }
+  .note-pagination { grid-template-columns: 1fr; }
+  .note-pagination .next { text-align: left; }
+}
