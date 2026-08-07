@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_4 邏輯判斷式筆記，整理 C# if、else if、else 與比較、&& 條件組合。">
+  <title>ch2_4 邏輯判斷式｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_4</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 16</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_4 邏輯判斷式</h1>
+        <p>前一堂已經能用比較運算得到 <code>true</code> / <code>false</code>；這堂把結果放進 <code>if</code>、<code>else if</code>、<code>else</code>，讓程式依條件選擇不同動作。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">CONDITIONAL BRANCHING</span><h2 id="lesson-map-title">如果條件成立，就做對應的事情</h2><p>條件判斷的核心很直接：先檢查條件，成立就執行指定區塊；不成立時，可以交給下一個條件或最後的 <code>else</code>。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#if-else"><strong>01</strong><span>if / else<small>成立與否兩條路</small></span></a>
+          <a href="#else-if"><strong>02</strong><span>else if<small>多個條件</small></span></a>
+          <a href="#range"><strong>03</strong><span>區間判斷<small>比較 + &&</small></span></a>
+          <a href="#game-use"><strong>04</strong><span>遊戲用途<small>HP 對應不同狀態</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="if-else"><span class="section-index">01</span><div>
+        <h2>最基本的 if / else</h2>
+        <pre><code>int hp = 100;
+
+if (hp > 0)
+{
+    Debug.Log("角色還活著");
+}
+else
+{
+    Debug.Log("角色死亡");
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>if (...)</code></dt><dd>小括號內放條件；條件成立時執行大括號內的程式。</dd></div>
+          <div><dt><code>else</code></dt><dd>當前面的條件不成立時，改執行這個區塊。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>if 問「是不是？」；成立走 if，不成立走 else。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="else-if"><span class="section-index">02</span><div>
+        <h2>條件不只兩種：else if</h2>
+        <p>如果狀態有多個區間，可以在 <code>if</code> 和最後的 <code>else</code> 之間加入多個 <code>else if</code>。</p>
+        <pre><code>if (/* 條件 A */)
+{
+    // A 成立時執行
+}
+else if (/* 條件 B */)
+{
+    // B 成立時執行
+}
+else
+{
+    // 前面條件都不符合
+}</code></pre>
+        <p>老師用角色 HP 分級示範：不同血量區間可以觸發不同攻擊或狀態。</p>
+      </div></section>
+
+      <section class="note-section" id="range"><span class="section-index">03</span><div>
+        <h2>用比較運算與 && 判斷數值區間</h2>
+        <p>要判斷 HP 是否落在某個範圍，需要同時滿足上下界，因此會把上一堂的比較運算與 <code>&&</code> 組合起來。</p>
+        <pre><code>if (hp <= 100 && hp >= 70)
+{
+    Debug.Log("一般攻擊");
+}
+else if (hp <= 69 && hp >= 40)
+{
+    Debug.Log("強力攻擊");
+}
+else if (hp <= 39 && hp >= 1)
+{
+    Debug.Log("可以放大招");
+}
+else
+{
+    Debug.Log("無效");
+}</code></pre>
+        <dl class="term-list">
+          <div><dt>70 ～ 100</dt><dd>一般攻擊。</dd></div>
+          <div><dt>40 ～ 69</dt><dd>強力攻擊。</dd></div>
+          <div><dt>1 ～ 39</dt><dd>可以放大招。</dd></div>
+          <div><dt>其他</dt><dd>落到最後的 <code>else</code>，老師示範為無效狀態。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="game-use"><span class="section-index">04</span><div>
+        <h2>遊戲裡很常拿條件分支控制狀態</h2>
+        <p>老師舉的例子包括：角色是否還活著、低血量時改變可用攻擊、觸發動畫或事件，以及進入下一個關卡等。</p>
+        <p>如果只是簡單的兩種狀態，<code>if / else</code> 就足夠；如果需要判斷多個條件或數值區間，就可以加入 <code>else if</code>。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>比較運算產生條件，if / else if / else 則根據條件決定程式要走哪一條路。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-16-if"> 看得懂基本的 <code>if / else</code></label>
+        <label><input type="checkbox" data-check="lesson-16-elseif"> 知道多個條件可以使用 <code>else if</code></label>
+        <label><input type="checkbox" data-check="lesson-16-range"> 能用比較運算與 <code>&&</code> 表示數值區間</label>
+        <label><input type="checkbox" data-check="lesson-16-game-use"> 能理解 HP、角色狀態如何對應不同分支</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-3.html"><small>上一堂</small><strong>← ch2_3 比較</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
