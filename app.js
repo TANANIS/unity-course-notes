@@ -6,11 +6,46 @@ const chapterKey = 'unity-notes-open-chapters';
 const appScriptUrl = new URL(document.currentScript?.src || 'app.js', window.location.href);
 const siteRootUrl = new URL('./', appScriptUrl);
 
-// 新增 notes/ch1-N.html 後，只要把這個數字改成最新的 N。
-// 課程目錄、首頁進度、搜尋入口與下一堂按鈕都會自動同步。
-const LATEST_NOTE = 9;
-const FIRST_COURSE_LESSON_NUMBER = 4;
+// 每完成一堂，只要更新對應章節的 latestNote。
+// 課程目錄、首頁進度、搜尋與筆記下一堂按鈕都會一起同步。
+const COURSE_SECTIONS = [
+  {
+    id: 'ch1',
+    sectionNumber: 2,
+    firstCourseLessonNumber: 4,
+    latestNote: 9,
+    totalSectionLessons: 9
+  },
+  {
+    id: 'ch2',
+    sectionNumber: 3,
+    firstCourseLessonNumber: 13,
+    latestNote: 1,
+    totalSectionLessons: 17,
+    plan: [
+      ['變數宣告', '10:44'],
+      ['變數計算', '11:30'],
+      ['比較', '5:05'],
+      ['邏輯判斷式', '9:29'],
+      ['for 迴圈', '3:29'],
+      ['while 迴圈', '4:24'],
+      ['陣列', '6:29'],
+      ['方法', '13:27'],
+      ['call_by_ref', '6:24'],
+      ['類別', '3:49'],
+      ['物件', '8:16'],
+      ['封裝', '6:49'],
+      ['封裝 get 與 set', '8:11'],
+      ['建構子（constructor）', '4:40'],
+      ['結構（struct）', '14:31'],
+      ['命名空間（namespace）', '4:54'],
+      ['靜態與非靜態', '時長未提供']
+    ]
+  }
+];
 const TOTAL_COURSE_LESSONS = 200;
+const TOTAL_NOTE_COUNT = COURSE_SECTIONS.reduce((sum, section) => sum + section.latestNote, 0);
+const latestSection = [...COURSE_SECTIONS].reverse().find((section) => section.latestNote > 0);
 
 let lessonMetadataPromise;
 
@@ -67,55 +102,64 @@ if (chapters.length) {
   });
 }
 
+async function readLessonMetadata(section, noteNumber) {
+  const url = new URL(`notes/${section.id}-${noteNumber}.html`, siteRootUrl);
+
+  try {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const html = await response.text();
+    const documentFragment = new DOMParser().parseFromString(html, 'text/html');
+    const courseLessonNumber = section.firstCourseLessonNumber + noteNumber - 1;
+    const title = documentFragment.querySelector('h1')?.textContent?.trim() || `${section.id}_${noteNumber}`;
+    const description = documentFragment.querySelector('meta[name="description"]')?.content?.trim() || '';
+    const lessonLabel = documentFragment.querySelector('.lesson-kicker span')?.textContent?.trim()
+      || `LESSON ${courseLessonNumber}`;
+
+    return {
+      sectionId: section.id,
+      sectionNumber: section.sectionNumber,
+      noteNumber,
+      courseLessonNumber,
+      title,
+      description,
+      lessonLabel,
+      url: `notes/${section.id}-${noteNumber}.html`
+    };
+  } catch (error) {
+    console.error(`無法讀取 ${section.id}_${noteNumber}：`, error);
+    return null;
+  }
+}
+
 function getLessonMetadata() {
   if (lessonMetadataPromise) return lessonMetadataPromise;
 
-  const noteNumbers = Array.from({ length: LATEST_NOTE }, (_, index) => index + 1);
-  lessonMetadataPromise = Promise.all(noteNumbers.map(async (noteNumber) => {
-    const url = new URL(`notes/ch1-${noteNumber}.html`, siteRootUrl);
+  const requests = COURSE_SECTIONS.flatMap((section) =>
+    Array.from({ length: section.latestNote }, (_, index) => readLessonMetadata(section, index + 1))
+  );
 
-    try {
-      const response = await fetch(url, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const html = await response.text();
-      const documentFragment = new DOMParser().parseFromString(html, 'text/html');
-      const title = documentFragment.querySelector('h1')?.textContent?.trim() || `ch1_${noteNumber}`;
-      const description = documentFragment.querySelector('meta[name="description"]')?.content?.trim() || '';
-      const lessonLabel = documentFragment.querySelector('.lesson-kicker span')?.textContent?.trim()
-        || `LESSON ${FIRST_COURSE_LESSON_NUMBER + noteNumber - 1}`;
-
-      return {
-        noteNumber,
-        courseLessonNumber: FIRST_COURSE_LESSON_NUMBER + noteNumber - 1,
-        title,
-        description,
-        lessonLabel,
-        url: `notes/ch1-${noteNumber}.html`
-      };
-    } catch (error) {
-      console.error(`無法讀取 ch1_${noteNumber}：`, error);
-      return null;
-    }
-  })).then((items) => items.filter(Boolean));
-
+  lessonMetadataPromise = Promise.all(requests).then((items) => items.filter(Boolean));
   return lessonMetadataPromise;
 }
 
 function syncStaticCourseStats() {
-  const progressPercent = Math.min(100, (LATEST_NOTE / TOTAL_COURSE_LESSONS) * 100);
-  const latestCourseLesson = FIRST_COURSE_LESSON_NUMBER + LATEST_NOTE - 1;
+  const progressPercent = Math.min(100, (TOTAL_NOTE_COUNT / TOTAL_COURSE_LESSONS) * 100);
+  const latestCourseLesson = latestSection
+    ? latestSection.firstCourseLessonNumber + latestSection.latestNote - 1
+    : 0;
 
   document.querySelectorAll('[data-note-count]').forEach((element) => {
-    element.textContent = String(LATEST_NOTE);
+    element.textContent = String(TOTAL_NOTE_COUNT);
   });
 
   document.querySelectorAll('[data-note-count-label]').forEach((element) => {
-    element.textContent = `${LATEST_NOTE} 堂筆記`;
+    element.textContent = `${TOTAL_NOTE_COUNT} 堂筆記`;
   });
 
   document.querySelectorAll('[data-note-progress-text]').forEach((element) => {
-    element.textContent = `${LATEST_NOTE} / ${TOTAL_COURSE_LESSONS}`;
+    element.textContent = `${TOTAL_NOTE_COUNT} / ${TOTAL_COURSE_LESSONS}`;
   });
 
   document.querySelectorAll('[data-note-progress-track]').forEach((element) => {
@@ -123,15 +167,27 @@ function syncStaticCourseStats() {
   });
 
   document.querySelectorAll('[data-note-progress]').forEach((element) => {
-    element.setAttribute('aria-label', `課程筆記進度 ${LATEST_NOTE} 之 ${TOTAL_COURSE_LESSONS}`);
+    element.setAttribute('aria-label', `課程筆記進度 ${TOTAL_NOTE_COUNT} 之 ${TOTAL_COURSE_LESSONS}`);
   });
 
   document.querySelectorAll('[data-note-section-progress]').forEach((element) => {
-    element.textContent = `已整理 ${LATEST_NOTE} 堂｜至第 ${latestCourseLesson} 堂`;
+    const section = COURSE_SECTIONS.find((item) => item.id === element.dataset.noteSectionProgress);
+    if (!section) return;
+
+    if (section.latestNote >= section.totalSectionLessons) {
+      element.textContent = `已整理 ${section.latestNote} / ${section.totalSectionLessons}｜本節完成`;
+    } else if (section.latestNote > 0) {
+      const courseLesson = section.firstCourseLessonNumber + section.latestNote - 1;
+      element.textContent = `已整理 ${section.latestNote} / ${section.totalSectionLessons}｜至第 ${courseLesson} 堂`;
+    } else {
+      element.textContent = `0 / ${section.totalSectionLessons}｜尚未開始`;
+    }
   });
 
   document.querySelectorAll('[data-latest-note]').forEach((element) => {
-    element.textContent = `目前整理至：第 2 節，第 ${latestCourseLesson} 堂。`;
+    element.textContent = latestSection
+      ? `目前整理至：第 ${latestSection.sectionNumber} 節，第 ${latestCourseLesson} 堂。`
+      : '目前尚未建立課程筆記。';
   });
 }
 
@@ -159,19 +215,56 @@ function createLessonRow(lesson) {
   return link;
 }
 
-function syncCourseLessonList() {
-  const lessonList = document.querySelector('[data-auto-lesson-list]');
-  if (!lessonList) return;
+function createPlannedLessonRow(section, noteNumber) {
+  const row = document.createElement('div');
+  row.className = 'lesson-row disabled';
+
+  const state = document.createElement('span');
+  state.className = 'lesson-state';
+  state.textContent = '○';
+
+  const copy = document.createElement('span');
+  const title = document.createElement('strong');
+  const meta = document.createElement('small');
+  const [planTitle = `第 ${noteNumber} 堂`, duration = ''] = section.plan?.[noteNumber - 1] || [];
+  title.textContent = `${section.id}_${noteNumber} ${planTitle}`;
+  meta.textContent = duration;
+  copy.append(title, meta);
+
+  row.append(state, copy);
+  return row;
+}
+
+function syncCourseLessonLists() {
+  const containers = [...document.querySelectorAll('[data-auto-lesson-list]')];
+  if (!containers.length) return;
 
   getLessonMetadata().then((lessons) => {
-    lessonList.replaceChildren(...lessons.map(createLessonRow));
+    containers.forEach((lessonList) => {
+      const section = COURSE_SECTIONS.find((item) => item.id === lessonList.dataset.autoLessonList);
+      if (!section) return;
 
-    if (!lessons.length) {
-      const empty = document.createElement('div');
-      empty.className = 'lesson-row disabled';
-      empty.textContent = '目前讀不到任何筆記頁面。這次不是你漏看，是網站真的沒抓到。';
-      lessonList.append(empty);
-    }
+      const availableLessons = lessons
+        .filter((lesson) => lesson.sectionId === section.id)
+        .sort((a, b) => a.noteNumber - b.noteNumber);
+      const availableByNumber = new Map(availableLessons.map((lesson) => [lesson.noteNumber, lesson]));
+      const rows = [];
+
+      for (let noteNumber = 1; noteNumber <= section.totalSectionLessons; noteNumber += 1) {
+        const lesson = availableByNumber.get(noteNumber);
+        if (lesson) rows.push(createLessonRow(lesson));
+        else if (section.plan) rows.push(createPlannedLessonRow(section, noteNumber));
+      }
+
+      lessonList.replaceChildren(...rows);
+
+      if (!rows.length) {
+        const empty = document.createElement('div');
+        empty.className = 'lesson-row disabled';
+        empty.textContent = '目前讀不到任何筆記頁面。這次不是你漏看，是網站真的沒抓到。';
+        lessonList.append(empty);
+      }
+    });
   });
 }
 
@@ -226,7 +319,12 @@ async function loadSearchEntries() {
       section: lesson.lessonLabel,
       description: lesson.description,
       url: lesson.url,
-      keywords: [`ch1_${lesson.noteNumber}`, `ch1-${lesson.noteNumber}`, 'Unity 課程筆記']
+      keywords: [
+        `${lesson.sectionId}_${lesson.noteNumber}`,
+        `${lesson.sectionId}-${lesson.noteNumber}`,
+        'Unity 課程筆記',
+        'C#'
+      ]
     });
   });
 
@@ -245,7 +343,7 @@ function createSearchNavigation() {
     <label class="visually-hidden" for="site-search-input">搜尋課程筆記</label>
     <span class="site-search-icon" aria-hidden="true">⌕</span>
     <input id="site-search-input" class="site-search-input" type="search" inputmode="search" autocomplete="off"
-      placeholder="搜尋筆記，例如：父子物件、Collider" aria-autocomplete="list"
+      placeholder="搜尋筆記，例如：變數、Collider" aria-autocomplete="list"
       aria-controls="site-search-results" aria-expanded="false">
     <span class="site-search-shortcut" aria-hidden="true">Ctrl K</span>
     <div id="site-search-results" class="site-search-results" role="listbox" hidden></div>`;
@@ -383,13 +481,23 @@ function configureLessonPagination() {
   const nextButton = pagination?.querySelector('.next');
   if (!pagination || !nextButton) return;
 
-  const match = location.pathname.match(/\/notes\/ch1-(\d+)\.html$/);
+  const match = location.pathname.match(/\/notes\/(ch\d+)-(\d+)\.html$/);
   if (!match) return;
 
-  const currentNumber = Number(match[1]);
-  const nextNumber = currentNumber + 1;
+  const currentSectionIndex = COURSE_SECTIONS.findIndex((section) => section.id === match[1]);
+  if (currentSectionIndex < 0) return;
 
-  if (nextNumber > LATEST_NOTE) {
+  const currentSection = COURSE_SECTIONS[currentSectionIndex];
+  const currentNumber = Number(match[2]);
+  let targetSection = currentSection;
+  let targetNumber = currentNumber + 1;
+
+  if (targetNumber > currentSection.latestNote) {
+    targetSection = COURSE_SECTIONS.slice(currentSectionIndex + 1).find((section) => section.latestNote > 0);
+    targetNumber = 1;
+  }
+
+  if (!targetSection || targetNumber > targetSection.latestNote) {
     nextButton.href = new URL('course.html', siteRootUrl).href;
     nextButton.querySelector('small').textContent = '完成';
     nextButton.querySelector('strong').textContent = '返回課程目錄';
@@ -397,15 +505,17 @@ function configureLessonPagination() {
   }
 
   getLessonMetadata().then((lessons) => {
-    const nextLesson = lessons.find((lesson) => lesson.noteNumber === nextNumber);
-    nextButton.href = new URL(`notes/ch1-${nextNumber}.html`, siteRootUrl).href;
+    const nextLesson = lessons.find((lesson) =>
+      lesson.sectionId === targetSection.id && lesson.noteNumber === targetNumber
+    );
+    nextButton.href = new URL(`notes/${targetSection.id}-${targetNumber}.html`, siteRootUrl).href;
     nextButton.querySelector('small').textContent = '下一堂';
-    nextButton.querySelector('strong').textContent = `${nextLesson?.title || `ch1_${nextNumber}`} →`;
+    nextButton.querySelector('strong').textContent = `${nextLesson?.title || `${targetSection.id}_${targetNumber}`} →`;
   });
 }
 
 syncStaticCourseStats();
-syncCourseLessonList();
+syncCourseLessonLists();
 createSearchNavigation();
 repairKnownImageSources();
 configureLessonPagination();
