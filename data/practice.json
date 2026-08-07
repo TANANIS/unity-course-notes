@@ -1,5 +1,14 @@
 {
   "title": "自主練習",
   "description": "不跟著課程章節走，記錄自己設計、實作與驗證的 Unity / C# 練習。",
-  "items": []
+  "items": [
+    {
+      "id": "practice-01",
+      "title": "建立基礎空間與地板",
+      "category": "Unity 基礎空間",
+      "status": "探索中",
+      "description": "從空白專案中角色需要一個可以站立的地面出發，整理 Plane、Cube、ProBuilder、Terrain 與 Modular Assets 的用途與選擇時機。",
+      "url": "practice/ground-and-space.html"
+    }
+  ]
 }
