@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_3 比較筆記，整理 C# ==、!=、>、<、>=、<= 與 bool 比較結果。">
+  <title>ch2_3 比較｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_3</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 15</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_3 比較</h1>
+        <p>比較運算會拿兩個值進行判斷，最後得到 <code>true</code> 或 <code>false</code>。之後寫條件分支時，這些結果就是決定程式要不要執行某段邏輯的基礎。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">COMPARISON OPERATORS</span><h2 id="lesson-map-title">比較的結果是 bool</h2><p>不論是判斷兩個值是否相等，還是誰大誰小，比較運算最後都會產生布林值。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#equal"><strong>01</strong><span>相等與不等<small>== / !=</small></span></a>
+          <a href="#size"><strong>02</strong><span>大小比較<small>> / <</small></span></a>
+          <a href="#inclusive"><strong>03</strong><span>包含等於<small>>= / <=</small></span></a>
+          <a href="#game-use"><strong>04</strong><span>遊戲中的用途<small>狀態與條件判斷</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="equal"><span class="section-index">01</span><div>
+        <h2>相等與不相等</h2>
+        <pre><code>int value1 = 10;
+int value2 = 30;
+
+bool isEqual = value1 == value2;      // false
+bool isNotEqual = value1 != value2;   // true</code></pre>
+        <dl class="term-list">
+          <div><dt><code>==</code></dt><dd>判斷左右兩邊是否相等。</dd></div>
+          <div><dt><code>!=</code></dt><dd>判斷左右兩邊是否不相等。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">別和賦值混在一起</span><p><code>=</code> 是把值指定給變數；<code>==</code> 才是比較兩邊是否相等。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="size"><span class="section-index">02</span><div>
+        <h2>大於與小於</h2>
+        <pre><code>bool isGreater = value1 > value2;   // false
+bool isLess = value1 < value2;      // true</code></pre>
+        <dl class="term-list">
+          <div><dt><code>></code></dt><dd>左邊是否大於右邊。</dd></div>
+          <div><dt><code><</code></dt><dd>左邊是否小於右邊。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="inclusive"><span class="section-index">03</span><div>
+        <h2>大於等於與小於等於</h2>
+        <pre><code>bool atLeast = value1 >= value2;
+bool atMost = value1 <= value2;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>>=</code></dt><dd>只要「大於」或「等於」其中一種成立，結果就是 <code>true</code>。</dd></div>
+          <div><dt><code><=</code></dt><dd>只要「小於」或「等於」其中一種成立，結果就是 <code>true</code>。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong><code>></code>、<code><</code> 不包含相等；<code>>=</code>、<code><=</code> 把相等也算進去。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="game-use"><span class="section-index">04</span><div>
+        <h2>比較通常用來建立條件</h2>
+        <p>老師提到，遊戲裡常會需要判斷角色目前的數值或狀態是否達到某個條件，再決定接下來要做什麼。</p>
+        <pre><code>bool isLowHp = hp <= 20;
+bool canLevelUp = exp >= requiredExp;
+bool isDead = hp == 0;</code></pre>
+        <p>這一堂先只處理「比較得到 bool」。下一堂會把這些比較結果放進條件分支，真正決定程式執行哪一段。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>比較運算不是算出新的數字，而是在回答一個問題：這個條件成立嗎？</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-15-equal"> 能區分 <code>=</code> 與 <code>==</code></label>
+        <label><input type="checkbox" data-check="lesson-15-not-equal"> 看得懂 <code>!=</code></label>
+        <label><input type="checkbox" data-check="lesson-15-size"> 能使用 <code>></code>、<code><</code>、<code>>=</code>、<code><=</code></label>
+        <label><input type="checkbox" data-check="lesson-15-bool-result"> 知道比較運算的結果是 <code>bool</code></label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-2.html"><small>上一堂</small><strong>← ch2_2 變數計算</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
