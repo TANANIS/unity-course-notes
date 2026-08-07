@@ -2,52 +2,12 @@ const root = document.documentElement;
 const themeToggle = document.querySelector('#theme-toggle');
 const themeKey = 'unity-notes-theme';
 const checklistKey = 'unity-notes-checklist';
-const chapterKey = 'unity-notes-open-chapters';
+const chapterKey = 'unity-notes-open-chapters-v2';
 const appScriptUrl = new URL(document.currentScript?.src || 'app.js', window.location.href);
 const siteRootUrl = new URL('./', appScriptUrl);
+const courseDataUrl = new URL('data/course.json', siteRootUrl);
 
-// 每完成一堂，只要更新對應章節的 latestNote。
-// 課程目錄、首頁進度、搜尋與筆記下一堂按鈕都會一起同步。
-const COURSE_SECTIONS = [
-  {
-    id: 'ch1',
-    sectionNumber: 2,
-    firstCourseLessonNumber: 4,
-    latestNote: 9,
-    totalSectionLessons: 9
-  },
-  {
-    id: 'ch2',
-    sectionNumber: 3,
-    firstCourseLessonNumber: 13,
-    latestNote: 1,
-    totalSectionLessons: 17,
-    plan: [
-      ['變數宣告', '10:44'],
-      ['變數計算', '11:30'],
-      ['比較', '5:05'],
-      ['邏輯判斷式', '9:29'],
-      ['for 迴圈', '3:29'],
-      ['while 迴圈', '4:24'],
-      ['陣列', '6:29'],
-      ['方法', '13:27'],
-      ['call_by_ref', '6:24'],
-      ['類別', '3:49'],
-      ['物件', '8:16'],
-      ['封裝', '6:49'],
-      ['封裝 get 與 set', '8:11'],
-      ['建構子（constructor）', '4:40'],
-      ['結構（struct）', '14:31'],
-      ['命名空間（namespace）', '4:54'],
-      ['靜態與非靜態', '時長未提供']
-    ]
-  }
-];
-const TOTAL_COURSE_LESSONS = 200;
-const TOTAL_NOTE_COUNT = COURSE_SECTIONS.reduce((sum, section) => sum + section.latestNote, 0);
-const latestSection = [...COURSE_SECTIONS].reverse().find((section) => section.latestNote > 0);
-
-let lessonMetadataPromise;
+let courseDataPromise;
 
 function applyTheme(theme) {
   root.dataset.theme = theme;
@@ -84,187 +44,165 @@ document.querySelectorAll('input[data-check]').forEach((checkbox) => {
   });
 });
 
-const chapters = [...document.querySelectorAll('details.chapter')];
-if (chapters.length) {
-  const savedChapters = readJson(chapterKey, []);
-  if (savedChapters.length) {
-    chapters.forEach((chapter, index) => {
-      chapter.open = savedChapters.includes(index);
+function getCourseData() {
+  if (courseDataPromise) return courseDataPromise;
+
+  courseDataPromise = fetch(courseDataUrl, { cache: 'no-store' })
+    .then((response) => {
+      if (!response.ok) throw new Error(`Course data request failed: ${response.status}`);
+      return response.json();
+    })
+    .catch((error) => {
+      console.error('無法載入課程資料：', error);
+      throw error;
     });
-  }
-  chapters.forEach((chapter) => {
-    chapter.addEventListener('toggle', () => {
-      const openIndexes = chapters
-        .map((item, index) => item.open ? index : null)
-        .filter((index) => index !== null);
-      localStorage.setItem(chapterKey, JSON.stringify(openIndexes));
-    });
-  });
+
+  return courseDataPromise;
 }
 
-async function readLessonMetadata(section, noteNumber) {
-  const url = new URL(`notes/${section.id}-${noteNumber}.html`, siteRootUrl);
-
-  try {
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const html = await response.text();
-    const documentFragment = new DOMParser().parseFromString(html, 'text/html');
-    const courseLessonNumber = section.firstCourseLessonNumber + noteNumber - 1;
-    const title = documentFragment.querySelector('h1')?.textContent?.trim() || `${section.id}_${noteNumber}`;
-    const description = documentFragment.querySelector('meta[name="description"]')?.content?.trim() || '';
-    const lessonLabel = documentFragment.querySelector('.lesson-kicker span')?.textContent?.trim()
-      || `LESSON ${courseLessonNumber}`;
-
-    return {
-      sectionId: section.id,
-      sectionNumber: section.sectionNumber,
-      noteNumber,
-      courseLessonNumber,
-      title,
-      description,
-      lessonLabel,
-      url: `notes/${section.id}-${noteNumber}.html`
-    };
-  } catch (error) {
-    console.error(`無法讀取 ${section.id}_${noteNumber}：`, error);
-    return null;
-  }
-}
-
-function getLessonMetadata() {
-  if (lessonMetadataPromise) return lessonMetadataPromise;
-
-  const requests = COURSE_SECTIONS.flatMap((section) =>
-    Array.from({ length: section.latestNote }, (_, index) => readLessonMetadata(section, index + 1))
+function getAllLessons(data) {
+  return (data.sections || []).flatMap((section) =>
+    (section.lessons || []).map((lesson) => ({ ...lesson, section }))
   );
-
-  lessonMetadataPromise = Promise.all(requests).then((items) => items.filter(Boolean));
-  return lessonMetadataPromise;
 }
 
-function syncStaticCourseStats() {
-  const progressPercent = Math.min(100, (TOTAL_NOTE_COUNT / TOTAL_COURSE_LESSONS) * 100);
-  const latestCourseLesson = latestSection
-    ? latestSection.firstCourseLessonNumber + latestSection.latestNote - 1
-    : 0;
+function getCompletedLessons(data) {
+  return getAllLessons(data)
+    .filter((lesson) => Boolean(lesson.url))
+    .sort((a, b) => a.courseLessonNumber - b.courseLessonNumber);
+}
 
-  document.querySelectorAll('[data-note-count]').forEach((element) => {
-    element.textContent = String(TOTAL_NOTE_COUNT);
-  });
+function getSectionProgress(section) {
+  const lessons = section.lessons || [];
+  const completed = lessons.filter((lesson) => lesson.url).length;
 
-  document.querySelectorAll('[data-note-count-label]').forEach((element) => {
-    element.textContent = `${TOTAL_NOTE_COUNT} 堂筆記`;
-  });
-
-  document.querySelectorAll('[data-note-progress-text]').forEach((element) => {
-    element.textContent = `${TOTAL_NOTE_COUNT} / ${TOTAL_COURSE_LESSONS}`;
-  });
-
-  document.querySelectorAll('[data-note-progress-track]').forEach((element) => {
-    element.style.width = `${progressPercent}%`;
-  });
-
-  document.querySelectorAll('[data-note-progress]').forEach((element) => {
-    element.setAttribute('aria-label', `課程筆記進度 ${TOTAL_NOTE_COUNT} 之 ${TOTAL_COURSE_LESSONS}`);
-  });
-
-  document.querySelectorAll('[data-note-section-progress]').forEach((element) => {
-    const section = COURSE_SECTIONS.find((item) => item.id === element.dataset.noteSectionProgress);
-    if (!section) return;
-
-    if (section.latestNote >= section.totalSectionLessons) {
-      element.textContent = `已整理 ${section.latestNote} / ${section.totalSectionLessons}｜本節完成`;
-    } else if (section.latestNote > 0) {
-      const courseLesson = section.firstCourseLessonNumber + section.latestNote - 1;
-      element.textContent = `已整理 ${section.latestNote} / ${section.totalSectionLessons}｜至第 ${courseLesson} 堂`;
-    } else {
-      element.textContent = `0 / ${section.totalSectionLessons}｜尚未開始`;
-    }
-  });
-
-  document.querySelectorAll('[data-latest-note]').forEach((element) => {
-    element.textContent = latestSection
-      ? `目前整理至：第 ${latestSection.sectionNumber} 節，第 ${latestCourseLesson} 堂。`
-      : '目前尚未建立課程筆記。';
-  });
+  if (section.notePolicy === 'none') return section.summary || `${section.lessonCount} 堂`;
+  if (!lessons.length) return `0 / ${section.lessonCount}｜${section.duration || '尚未開始'}`;
+  if (completed >= section.lessonCount) return `已整理 ${completed} / ${section.lessonCount}｜本節完成`;
+  if (completed > 0) {
+    const latest = [...lessons].filter((lesson) => lesson.url).sort((a, b) => b.courseLessonNumber - a.courseLessonNumber)[0];
+    return `已整理 ${completed} / ${section.lessonCount}｜至第 ${latest.courseLessonNumber} 堂`;
+  }
+  return `0 / ${section.lessonCount}｜尚未開始`;
 }
 
 function createLessonRow(lesson) {
+  if (!lesson.url) {
+    const row = document.createElement('div');
+    row.className = 'lesson-row disabled';
+    row.innerHTML = '<span class="lesson-state">○</span><span><strong></strong><small></small></span>';
+    row.querySelector('strong').textContent = `${lesson.id.replace('-', '_')} ${lesson.title}`;
+    row.querySelector('small').textContent = lesson.duration || '待整理';
+    return row;
+  }
+
   const link = document.createElement('a');
   link.className = 'lesson-row available';
   link.href = new URL(lesson.url, siteRootUrl).href;
-
-  const state = document.createElement('span');
-  state.className = 'lesson-state';
-  state.textContent = '✓';
-
-  const copy = document.createElement('span');
-  const title = document.createElement('strong');
-  title.textContent = `${lesson.courseLessonNumber}. ${lesson.title}`;
-  const meta = document.createElement('small');
-  meta.textContent = '已有筆記';
-  copy.append(title, meta);
-
-  const enter = document.createElement('span');
-  enter.className = 'lesson-enter';
-  enter.textContent = '閱讀 →';
-
-  link.append(state, copy, enter);
+  link.innerHTML = '<span class="lesson-state">✓</span><span><strong></strong><small>已有筆記</small></span><span class="lesson-enter">閱讀 →</span>';
+  link.querySelector('strong').textContent = `${lesson.courseLessonNumber}. ${lesson.id.replace('-', '_')} ${lesson.title}`;
   return link;
 }
 
-function createPlannedLessonRow(section, noteNumber) {
-  const row = document.createElement('div');
-  row.className = 'lesson-row disabled';
+function createChapter(section, latestSectionId) {
+  const details = document.createElement('details');
+  details.className = 'chapter';
+  details.dataset.sectionKey = section.id;
+  details.open = section.id === latestSectionId;
 
-  const state = document.createElement('span');
-  state.className = 'lesson-state';
-  state.textContent = '○';
+  const summary = document.createElement('summary');
+  summary.innerHTML = '<span class="chapter-index"></span><span class="chapter-title"><strong></strong><small></small></span><span class="chapter-arrow" aria-hidden="true">⌄</span>';
+  summary.querySelector('.chapter-index').textContent = String(section.number).padStart(2, '0');
+  summary.querySelector('strong').textContent = `第 ${section.number} 節：${section.title}`;
+  summary.querySelector('small').textContent = getSectionProgress(section);
+  details.append(summary);
 
-  const copy = document.createElement('span');
-  const title = document.createElement('strong');
-  const meta = document.createElement('small');
-  const [planTitle = `第 ${noteNumber} 堂`, duration = ''] = section.plan?.[noteNumber - 1] || [];
-  title.textContent = `${section.id}_${noteNumber} ${planTitle}`;
-  meta.textContent = duration;
-  copy.append(title, meta);
+  const list = document.createElement('div');
+  list.className = 'lesson-list';
 
-  row.append(state, copy);
-  return row;
+  if (section.notePolicy === 'none') {
+    list.classList.add('muted-lessons');
+    const row = document.createElement('div');
+    row.className = 'lesson-row disabled';
+    row.innerHTML = '<span class="lesson-state">–</span><span><strong>本節不建立筆記</strong><small></small></span>';
+    row.querySelector('small').textContent = section.noteMessage || '保留課程位置即可。';
+    list.append(row);
+  } else if (section.lessons?.length) {
+    section.lessons.forEach((lesson) => list.append(createLessonRow(lesson)));
+  } else {
+    list.classList.add('muted-lessons');
+    const row = document.createElement('div');
+    row.className = 'lesson-row disabled';
+    row.innerHTML = '<span class="lesson-state">○</span><span><strong>本章尚未開始</strong><small></small></span>';
+    row.querySelector('small').textContent = `${section.lessonCount} 堂課${section.duration ? `｜${section.duration}` : ''}`;
+    list.append(row);
+  }
+
+  details.append(list);
+  return details;
 }
 
-function syncCourseLessonLists() {
-  const containers = [...document.querySelectorAll('[data-auto-lesson-list]')];
-  if (!containers.length) return;
+function configureChapterState() {
+  const chapters = [...document.querySelectorAll('details.chapter')];
+  if (!chapters.length) return;
 
-  getLessonMetadata().then((lessons) => {
-    containers.forEach((lessonList) => {
-      const section = COURSE_SECTIONS.find((item) => item.id === lessonList.dataset.autoLessonList);
-      if (!section) return;
-
-      const availableLessons = lessons
-        .filter((lesson) => lesson.sectionId === section.id)
-        .sort((a, b) => a.noteNumber - b.noteNumber);
-      const availableByNumber = new Map(availableLessons.map((lesson) => [lesson.noteNumber, lesson]));
-      const rows = [];
-
-      for (let noteNumber = 1; noteNumber <= section.totalSectionLessons; noteNumber += 1) {
-        const lesson = availableByNumber.get(noteNumber);
-        if (lesson) rows.push(createLessonRow(lesson));
-        else if (section.plan) rows.push(createPlannedLessonRow(section, noteNumber));
-      }
-
-      lessonList.replaceChildren(...rows);
-
-      if (!rows.length) {
-        const empty = document.createElement('div');
-        empty.className = 'lesson-row disabled';
-        empty.textContent = '目前讀不到任何筆記頁面。這次不是你漏看，是網站真的沒抓到。';
-        lessonList.append(empty);
-      }
+  const savedChapters = readJson(chapterKey, []);
+  if (savedChapters.length) {
+    chapters.forEach((chapter) => {
+      chapter.open = savedChapters.includes(chapter.dataset.sectionKey);
     });
+  }
+
+  chapters.forEach((chapter) => {
+    chapter.addEventListener('toggle', () => {
+      const openKeys = chapters.filter((item) => item.open).map((item) => item.dataset.sectionKey);
+      localStorage.setItem(chapterKey, JSON.stringify(openKeys));
+    });
+  });
+}
+
+function renderCourseCurriculum(data) {
+  const curriculum = document.querySelector('[data-course-curriculum]');
+  if (!curriculum) return;
+
+  const completed = getCompletedLessons(data);
+  const latestSectionId = completed.at(-1)?.section.id || data.sections?.[0]?.id;
+  curriculum.replaceChildren(...(data.sections || []).map((section) => createChapter(section, latestSectionId)));
+  configureChapterState();
+}
+
+function syncStaticCourseStats(data) {
+  const completed = getCompletedLessons(data);
+  const totalCourseLessons = data.course?.lessonCount || 0;
+  const totalNoteCount = completed.length;
+  const progressPercent = totalCourseLessons ? Math.min(100, (totalNoteCount / totalCourseLessons) * 100) : 0;
+  const latest = completed.at(-1);
+
+  document.querySelectorAll('[data-note-count]').forEach((element) => {
+    element.textContent = String(totalNoteCount);
+  });
+  document.querySelectorAll('[data-note-count-label]').forEach((element) => {
+    element.textContent = `${totalNoteCount} 堂筆記`;
+  });
+  document.querySelectorAll('[data-note-progress-text]').forEach((element) => {
+    element.textContent = `${totalNoteCount} / ${totalCourseLessons}`;
+  });
+  document.querySelectorAll('[data-note-progress-track]').forEach((element) => {
+    element.style.width = `${progressPercent}%`;
+  });
+  document.querySelectorAll('[data-note-progress]').forEach((element) => {
+    element.setAttribute('aria-label', `課程筆記進度 ${totalNoteCount} 之 ${totalCourseLessons}`);
+  });
+  document.querySelectorAll('[data-course-section-count]').forEach((element) => {
+    element.textContent = String(data.sections?.length || 0);
+  });
+  document.querySelectorAll('[data-course-lesson-count]').forEach((element) => {
+    element.textContent = String(totalCourseLessons);
+  });
+  document.querySelectorAll('[data-latest-note]').forEach((element) => {
+    element.textContent = latest
+      ? `目前整理至：第 ${latest.section.number} 節，第 ${latest.courseLessonNumber} 堂。`
+      : '目前尚未建立課程筆記。';
   });
 }
 
@@ -301,37 +239,29 @@ function getSearchScore(entry, tokens) {
   }, 0);
 }
 
-async function loadSearchEntries() {
-  const [indexResponse, lessons] = await Promise.all([
-    fetch(new URL('search-index.json', siteRootUrl)),
-    getLessonMetadata()
-  ]);
+async function loadSearchEntries(data) {
+  const response = await fetch(new URL('search-index.json', siteRootUrl), { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Search index request failed: ${response.status}`);
 
-  if (!indexResponse.ok) throw new Error(`Search index request failed: ${indexResponse.status}`);
-  const manualEntries = await indexResponse.json();
-  const entries = Array.isArray(manualEntries) ? manualEntries : [];
+  const manualEntries = await response.json();
+  const entries = Array.isArray(manualEntries) ? [...manualEntries] : [];
   const knownUrls = new Set(entries.map((entry) => entry.url));
 
-  lessons.forEach((lesson) => {
+  getCompletedLessons(data).forEach((lesson) => {
     if (knownUrls.has(lesson.url)) return;
     entries.push({
-      title: lesson.title,
-      section: lesson.lessonLabel,
-      description: lesson.description,
+      title: `${lesson.id.replace('-', '_')} ${lesson.title}`,
+      section: `LESSON ${lesson.courseLessonNumber}`,
+      description: lesson.description || '',
       url: lesson.url,
-      keywords: [
-        `${lesson.sectionId}_${lesson.noteNumber}`,
-        `${lesson.sectionId}-${lesson.noteNumber}`,
-        'Unity 課程筆記',
-        'C#'
-      ]
+      keywords: [lesson.id, lesson.id.replace('-', '_'), ...(lesson.keywords || []), 'Unity 課程筆記', 'C#']
     });
   });
 
   return entries;
 }
 
-function createSearchNavigation() {
+function createSearchNavigation(data) {
   const topbar = document.querySelector('.topbar');
   const topActions = topbar?.querySelector('.top-actions');
   if (!topbar || !topActions || topbar.querySelector('.site-search')) return;
@@ -403,7 +333,7 @@ function createSearchNavigation() {
         option.href = new URL(entry.url, siteRootUrl).href;
         option.setAttribute('role', 'option');
         option.setAttribute('aria-selected', 'false');
-        option.innerHTML = `<span class="site-search-section"></span><strong></strong><small></small>`;
+        option.innerHTML = '<span class="site-search-section"></span><strong></strong><small></small>';
         option.querySelector('.site-search-section').textContent = entry.section || '課程筆記';
         option.querySelector('strong').textContent = entry.title;
         option.querySelector('small').textContent = entry.description || '';
@@ -415,9 +345,9 @@ function createSearchNavigation() {
     input.setAttribute('aria-expanded', 'true');
   }
 
-  loadSearchEntries()
-    .then((data) => {
-      entries = data;
+  loadSearchEntries(data)
+    .then((loadedEntries) => {
+      entries = loadedEntries;
       if (input.value.trim()) renderResults();
     })
     .catch((error) => console.error('無法載入搜尋索引：', error));
@@ -476,46 +406,58 @@ function repairKnownImageSources() {
   });
 }
 
-function configureLessonPagination() {
+function configureLessonPagination(data) {
   const pagination = document.querySelector('.note-pagination');
-  const nextButton = pagination?.querySelector('.next');
-  if (!pagination || !nextButton) return;
+  if (!pagination) return;
 
   const match = location.pathname.match(/\/notes\/(ch\d+)-(\d+)\.html$/);
   if (!match) return;
 
-  const currentSectionIndex = COURSE_SECTIONS.findIndex((section) => section.id === match[1]);
-  if (currentSectionIndex < 0) return;
+  const currentId = `${match[1]}-${Number(match[2])}`;
+  const completed = getCompletedLessons(data);
+  const currentIndex = completed.findIndex((lesson) => lesson.id === currentId);
+  if (currentIndex < 0) return;
 
-  const currentSection = COURSE_SECTIONS[currentSectionIndex];
-  const currentNumber = Number(match[2]);
-  let targetSection = currentSection;
-  let targetNumber = currentNumber + 1;
+  const previousButton = pagination.querySelector('a:not(.next)');
+  const nextButton = pagination.querySelector('.next');
+  const previousLesson = completed[currentIndex - 1];
+  const nextLesson = completed[currentIndex + 1];
 
-  if (targetNumber > currentSection.latestNote) {
-    targetSection = COURSE_SECTIONS.slice(currentSectionIndex + 1).find((section) => section.latestNote > 0);
-    targetNumber = 1;
+  if (previousButton) {
+    previousButton.href = previousLesson
+      ? new URL(previousLesson.url, siteRootUrl).href
+      : new URL('course.html', siteRootUrl).href;
+    previousButton.querySelector('small').textContent = previousLesson ? '上一堂' : '返回';
+    previousButton.querySelector('strong').textContent = previousLesson
+      ? `← ${previousLesson.id.replace('-', '_')} ${previousLesson.title}`
+      : '← 課程目錄';
   }
 
-  if (!targetSection || targetNumber > targetSection.latestNote) {
-    nextButton.href = new URL('course.html', siteRootUrl).href;
-    nextButton.querySelector('small').textContent = '完成';
-    nextButton.querySelector('strong').textContent = '返回課程目錄';
-    return;
+  if (nextButton) {
+    nextButton.href = nextLesson
+      ? new URL(nextLesson.url, siteRootUrl).href
+      : new URL('course.html', siteRootUrl).href;
+    nextButton.querySelector('small').textContent = nextLesson ? '下一堂' : '完成';
+    nextButton.querySelector('strong').textContent = nextLesson
+      ? `${nextLesson.id.replace('-', '_')} ${nextLesson.title} →`
+      : '返回課程目錄';
   }
-
-  getLessonMetadata().then((lessons) => {
-    const nextLesson = lessons.find((lesson) =>
-      lesson.sectionId === targetSection.id && lesson.noteNumber === targetNumber
-    );
-    nextButton.href = new URL(`notes/${targetSection.id}-${targetNumber}.html`, siteRootUrl).href;
-    nextButton.querySelector('small').textContent = '下一堂';
-    nextButton.querySelector('strong').textContent = `${nextLesson?.title || `${targetSection.id}_${targetNumber}`} →`;
-  });
 }
 
-syncStaticCourseStats();
-syncCourseLessonLists();
-createSearchNavigation();
+async function bootstrapCourseDataFeatures() {
+  try {
+    const data = await getCourseData();
+    syncStaticCourseStats(data);
+    renderCourseCurriculum(data);
+    createSearchNavigation(data);
+    configureLessonPagination(data);
+  } catch {
+    const curriculum = document.querySelector('[data-course-curriculum]');
+    if (curriculum) {
+      curriculum.innerHTML = '<div class="lesson-row disabled">課程資料載入失敗。頁面內容仍可直接閱讀。</div>';
+    }
+  }
+}
+
 repairKnownImageSources();
-configureLessonPagination();
+bootstrapCourseDataFeatures();
