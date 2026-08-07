@@ -1,0 +1,282 @@
+.note-shell { padding: 1.7rem 0 5rem; }
+
+.lesson-note {
+  max-width: 900px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+}
+.note-header {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2rem, 5vw, 3.8rem);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 38%),
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, var(--accent-soft)), var(--surface));
+}
+.note-header::after {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -65px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  border-radius: 40px;
+  transform: rotate(28deg);
+}
+.lesson-kicker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .09em;
+}
+.note-header h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+.note-header > p {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: .9rem 0 0;
+  color: var(--muted);
+}
+
+.lesson-intro,
+.note-section,
+.checklist,
+.note-pagination {
+  padding: clamp(1.4rem, 4vw, 2.5rem);
+}
+.lesson-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, .72fr);
+  gap: 2rem;
+  border-bottom: 1px solid var(--line);
+}
+.lesson-intro h2 {
+  margin: .45rem 0 .65rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+.lesson-intro p {
+  margin: 0;
+  color: var(--muted);
+}
+.lesson-outline {
+  display: grid;
+  gap: .45rem;
+}
+.lesson-outline a {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: .7rem;
+  align-items: center;
+  padding: .7rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  text-decoration: none;
+}
+.lesson-outline a:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.lesson-outline strong {
+  color: var(--accent);
+  font-size: .72rem;
+}
+.lesson-outline span,
+.lesson-outline small { display: block; }
+.lesson-outline span {
+  font-size: .84rem;
+  font-weight: 800;
+}
+.lesson-outline small {
+  margin-top: .08rem;
+  color: var(--muted);
+  font-size: .7rem;
+  font-weight: 500;
+}
+
+.note-section {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.section-index {
+  color: var(--accent);
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+.note-section h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.5rem;
+}
+.note-section p { margin: .4rem 0; }
+.note-section code,
+.note-section pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.note-section code {
+  padding: .08rem .35rem;
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-size: .9em;
+}
+.note-section pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #11141b;
+  color: #eaf0ff;
+  line-height: 1.55;
+}
+.note-section pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.term-list {
+  display: grid;
+  gap: .6rem;
+  margin: .9rem 0 0;
+}
+.term-list > div {
+  display: grid;
+  grid-template-columns: minmax(120px, .36fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: .8rem 0;
+  border-top: 1px solid var(--line);
+}
+.term-list dt { font-weight: 850; }
+.term-list dd {
+  margin: 0;
+  color: var(--muted);
+}
+.memory-line {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+}
+.memory-line span,
+.memory-line strong { display: block; }
+.memory-line span {
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+.memory-line strong { margin-top: .18rem; }
+.callout {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.callout.warning {
+  border-left-color: var(--warning);
+  background: var(--warning-soft);
+}
+.callout.danger {
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+}
+.callout-label {
+  display: block;
+  margin-bottom: .3rem;
+  font-size: .76rem;
+  font-weight: 900;
+}
+.callout p { margin: 0; }
+
+.step-list {
+  display: grid;
+  gap: .65rem;
+  padding: 0;
+  margin: .9rem 0 0;
+  list-style: none;
+}
+.step-list li {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: .8rem;
+  padding: .9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.step-list li > span {
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 900;
+}
+.step-list p {
+  margin: .15rem 0 0;
+  color: var(--muted);
+}
+
+.checklist {
+  display: grid;
+  gap: .55rem;
+  border-bottom: 1px solid var(--line);
+}
+.checklist h2 { margin: 0 0 .3rem; }
+.checklist label {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .75rem .85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.checklist input { accent-color: var(--accent); }
+
+.note-pagination {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .7rem;
+}
+.note-pagination a {
+  padding: .9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+.note-pagination a:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.note-pagination small,
+.note-pagination strong { display: block; }
+.note-pagination small {
+  color: var(--muted);
+  font-size: .7rem;
+}
+.note-pagination strong {
+  margin-top: .1rem;
+  font-size: .9rem;
+}
+.note-pagination .next { text-align: right; }
