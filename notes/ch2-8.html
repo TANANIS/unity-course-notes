@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unity 課程 ch2_8 方法筆記，整理 C# 方法、參數、回傳值、return、this，以及 Unity Inspector 欄位設定。">
+  <meta name="description" content="Unity 課程 ch2_8 方法筆記，整理 C# 方法、參數、回傳值、return、this，以及 Unity Inspector 序列化欄位與 Runtime 值。">
   <title>ch2_8 方法｜Unity 課程筆記</title>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../lesson-layout.css">
@@ -33,7 +33,7 @@
           <a href="#return"><strong>03</strong><span>回傳值<small>return</small></span></a>
           <a href="#parameter"><strong>04</strong><span>傳入參數<small>SetHP</small></span></a>
           <a href="#this"><strong>05</strong><span>同名變數與 this<small>this.hp</small></span></a>
-          <a href="#unity-field"><strong>06</strong><span>Unity Inspector 補充<small>public / private / HideInInspector</small></span></a>
+          <a href="#unity-field"><strong>06</strong><span>Unity Inspector 補充<small>序列化值 / Runtime 值</small></span></a>
         </nav>
       </section>
 
@@ -122,19 +122,50 @@ void SetHP(float hp)
       </div></section>
 
       <section class="note-section" id="unity-field"><span class="section-index">06</span><div>
-        <h2>Unity Inspector 欄位的課堂補充</h2>
-        <p>老師在示範 HP 時順帶提醒：如果欄位是 <code>public</code> 且 Script 已掛在 GameObject 上，Inspector 中可能已經保存了一個值，因此執行時看到的值可能不是你剛在程式碼裡修改的預設值。</p>
+        <h2>Unity Inspector：Script 初始值、序列化值與 Runtime 值</h2>
+        <p>老師在示範 HP 時碰到一個很重要的 Unity 特性：Inspector 顯示的欄位不只是把 Script 裡的數字照抄出來。當欄位被 Unity 序列化後，Scene 或 Prefab 可以保存這個 Component 自己的數值。</p>
+
+        <h3>Inspector 可以保存與 Script 不同的值</h3>
         <pre><code>public float hp = 500f;</code></pre>
-        <p>如果 Inspector 先前已經把它設成 20，課堂示範中 Unity 仍會使用 Inspector 保存的 20。這也是老師遇到「明明程式寫 500，執行卻不是 500」的原因。</p>
+        <p>第一次加入 Component 時，Inspector 可能從 Script 的初始值取得 <code>500</code>。但如果之後在 Inspector 手動改成 <code>20</code>，這個 <code>20</code> 會成為該 Component 保存的序列化資料。</p>
+        <p>因此之後即使把程式碼改成：</p>
+        <pre><code>public float hp = 999f;</code></pre>
+        <p>已經存在於 Scene / Prefab 裡的 Component 仍可能保持 Inspector 原本保存的 <code>20</code>，而不是自動跟著變成 <code>999</code>。</p>
+
+        <aside class="callout warning"><span class="callout-label">不要記成「執行時一定以 Script 為主」</span><p>比較精確的理解是：Inspector 的序列化資料會決定 Component 載入時的欄位值；遊戲開始後，如果程式又對欄位重新賦值，就以最新的 Runtime 值為準。</p></aside>
+
+        <h3>執行期間誰最後賦值，現在的值就是誰</h3>
+        <pre><code>public int hp = 500;
+
+void Start()
+{
+    hp = 100;
+}</code></pre>
+        <p>假設 Inspector 保存的是 <code>20</code>，遊戲開始載入時 <code>hp</code> 先會是 <code>20</code>；接著 <code>Start()</code> 執行 <code>hp = 100;</code>，Runtime 中的值就變成 <code>100</code>，Inspector 在 Play Mode 也會反映目前這個執行中數值。</p>
+
+        <pre><code>void Update()
+{
+    hp = 100;
+}</code></pre>
+        <p>如果程式每幀都把 <code>hp</code> 設回 100，就算 Play Mode 中手動在 Inspector 改成 50，下一幀仍會再次被程式改回 100。這不是 Script 有某種永遠較高的「優先權」，而是程式又執行了一次賦值。</p>
+
+        <dl class="term-list">
+          <div><dt>Script 初始值</dt><dd>例如 <code>public int hp = 500;</code> 裡的 500，是欄位建立時的初始設定，不代表所有既存 Component 永遠跟著這個數字。</dd></div>
+          <div><dt>Inspector 序列化值</dt><dd>Scene / Prefab 可以替某個 Component 保存自己的欄位資料，例如 HP = 20。</dd></div>
+          <div><dt>Runtime 值</dt><dd>Play 後目前記憶體裡真正的值；程式執行期間再次賦值時，它會繼續改變。</dd></div>
+        </dl>
+
+        <h3>HideInInspector 與 private</h3>
         <pre><code>[HideInInspector]
 public float hp;
 
 private float _hp;</code></pre>
         <dl class="term-list">
-          <div><dt><code>[HideInInspector]</code></dt><dd>老師用它示範把欄位從 Inspector 隱藏；隱藏不代表原本保存的值自動消失。</dd></div>
-          <div><dt><code>private</code></dt><dd>老師接著把示範欄位改成 private，使它不再直接出現在一般 Inspector 欄位中。</dd></div>
+          <div><dt><code>[HideInInspector]</code></dt><dd>老師用它示範把欄位從 Inspector 隱藏。只是隱藏顯示，不代表之前保存的序列化值因此被清除。</dd></div>
+          <div><dt><code>private</code></dt><dd>一般情況下不會直接出現在 Inspector；老師後續把示範欄位改成 private，避免直接從 Inspector 修改。</dd></div>
         </dl>
-        <aside class="callout"><span class="callout-label">這是順帶補充</span><p>這段主要是在提醒 Unity Inspector 可能影響欄位看到的值；public、private、序列化與物件欄位本身，老師表示後面的類別與物件章節還會再談。</p></aside>
+
+        <div class="memory-line"><span>Unity 重點</span><strong>Inspector 保存的是 Component 的序列化資料，不是單純觀看 Script 初始值；進入 Runtime 後，欄位再由實際執行的程式持續讀寫。</strong></div>
         <div class="memory-line"><span>本堂結論</span><strong>方法把工作包成可呼叫的區塊；參數把資料送進去，return 把結果送回來。</strong></div>
       </div></section>
 
@@ -144,6 +175,7 @@ private float _hp;</code></pre>
         <label><input type="checkbox" data-check="lesson-20-return"> 能區分 <code>void</code> 與有回傳值的方法</label>
         <label><input type="checkbox" data-check="lesson-20-parameter"> 知道參數如何把資料傳入方法</label>
         <label><input type="checkbox" data-check="lesson-20-this"> 看得懂 <code>this.hp = hp;</code> 的左右兩邊差異</label>
+        <label><input type="checkbox" data-check="lesson-20-inspector"> 能區分 Script 初始值、Inspector 序列化值與 Runtime 值</label>
       </section>
 
       <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-7.html"><small>上一堂</small><strong>← ch2_7 陣列</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
