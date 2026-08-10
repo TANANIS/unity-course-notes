@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_7 陣列筆記，整理 C# 一維陣列、索引、Length、for 與 foreach 走訪。">
+  <title>ch2_7 陣列｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_7</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 19</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_7 陣列</h1>
+        <p>陣列可以用同一個變數名稱保存多筆相同型別的資料，再透過索引指定要讀取哪一個元素。這堂只介紹最基本的一維陣列。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">ARRAY</span><h2 id="lesson-map-title">像一排有編號的抽屜</h2><p>老師用抽屜比喻陣列：每一格都能放資料，而且每格都有編號。最重要的是，C# 陣列的索引從 <code>0</code> 開始。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#index"><strong>01</strong><span>索引<small>從 0 開始</small></span></a>
+          <a href="#create"><strong>02</strong><span>建立陣列<small>string[]</small></span></a>
+          <a href="#for"><strong>03</strong><span>for 走訪<small>Length</small></span></a>
+          <a href="#foreach"><strong>04</strong><span>foreach<small>逐筆取得元素</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="index"><span class="section-index">01</span><div>
+        <h2>索引從 0 開始</h2>
+        <p>如果陣列有 3 個元素，它的索引不是 1～3，而是：</p>
+        <pre><code>0  1  2</code></pre>
+        <p>因此有 6 個元素時，最後一個索引會是 <code>5</code>。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>陣列長度是 N，最後一個索引就是 N - 1。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="create"><span class="section-index">02</span><div>
+        <h2>建立與存取一維陣列</h2>
+        <pre><code>string[] names = new string[3];
+
+names[0] = "Karen";
+names[1] = "Howard";
+names[2] = "Linda";</code></pre>
+        <dl class="term-list">
+          <div><dt><code>string[]</code></dt><dd>代表這是一個用來存放 <code>string</code> 的陣列。</dd></div>
+          <div><dt><code>new string[3]</code></dt><dd>建立一個長度為 3 的字串陣列。</dd></div>
+          <div><dt><code>names[2]</code></dt><dd>取得索引 2，也就是第三個元素。</dd></div>
+        </dl>
+        <pre><code>Debug.Log(names[2]);   // Linda</code></pre>
+      </div></section>
+
+      <section class="note-section" id="for"><span class="section-index">03</span><div>
+        <h2>用 for 從頭走過整個陣列</h2>
+        <pre><code>for (int i = 0; i < names.Length; i++)
+{
+    Debug.Log(names[i]);
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>i = 0</code></dt><dd>因為陣列索引從 0 開始，所以走訪也從 0 開始。</dd></div>
+          <div><dt><code>names.Length</code></dt><dd>取得陣列目前的元素數量。這個例子會得到 3。</dd></div>
+          <div><dt><code>i < names.Length</code></dt><dd>只跑到最後一個有效索引，避免超出陣列範圍。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="foreach"><span class="section-index">04</span><div>
+        <h2>只想逐筆讀取時，可以使用 foreach</h2>
+        <pre><code>foreach (string name in names)
+{
+    Debug.Log(name);
+}</code></pre>
+        <p><code>foreach</code> 會依序把陣列中的每個元素取出，放進這裡的 <code>name</code>，直到全部走完。</p>
+        <p>老師認為這種寫法在單純逐筆讀取時可讀性比完整的 <code>for</code> 高；同時也提醒，不能因此直接認定 <code>foreach</code> 的效能一定比 <code>for</code> 快。</p>
+        <aside class="callout"><span class="callout-label">本堂範圍</span><p>C# 還有多維陣列，但老師這堂只先建立一維陣列的基本概念。</p></aside>
+        <div class="memory-line"><span>本堂結論</span><strong>陣列用索引管理同型別的多筆資料；索引從 0 開始，整批讀取時可以搭配 for 或 foreach。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-19-index"> 知道陣列索引從 <code>0</code> 開始</label>
+        <label><input type="checkbox" data-check="lesson-19-create"> 看得懂 <code>string[] names = new string[3];</code></label>
+        <label><input type="checkbox" data-check="lesson-19-length"> 能用 <code>Length</code> 搭配 <code>for</code> 走訪陣列</label>
+        <label><input type="checkbox" data-check="lesson-19-foreach"> 看得懂 <code>foreach</code> 如何逐筆取得陣列元素</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-6.html"><small>上一堂</small><strong>← ch2_6 while 迴圈</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
