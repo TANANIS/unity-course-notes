@@ -46,7 +46,7 @@
         {"id":"ch2-5","courseLessonNumber":17,"title":"for 迴圈","duration":"3:29","url":"notes/ch2-5.html","keywords":["for","迴圈","loop","重複執行","i++","作用域"]},
         {"id":"ch2-6","courseLessonNumber":18,"title":"while 迴圈","duration":"4:24","url":"notes/ch2-6.html","keywords":["while","迴圈","loop","無限迴圈","Random.Range","HP"]},
         {"id":"ch2-7","courseLessonNumber":19,"title":"陣列","duration":"6:29","url":"notes/ch2-7.html","keywords":["陣列","array","索引","index","Length","for","foreach"]},
-        {"id":"ch2-8","courseLessonNumber":20,"title":"方法","duration":"13:27"},
+        {"id":"ch2-8","courseLessonNumber":20,"title":"方法","duration":"13:27","url":"notes/ch2-8.html","keywords":["方法","Method","參數","parameter","回傳值","return","void","this","Inspector","HideInInspector"]},
         {"id":"ch2-9","courseLessonNumber":21,"title":"call_by_ref","duration":"6:24"},
         {"id":"ch2-10","courseLessonNumber":22,"title":"類別","duration":"3:49"},
         {"id":"ch2-11","courseLessonNumber":23,"title":"物件","duration":"8:16"},
