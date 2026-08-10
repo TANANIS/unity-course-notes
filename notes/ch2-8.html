@@ -10,3 +10,144 @@
   <script src="../app.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_8</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 20</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_8 方法</h1>
+        <p>方法（Method）可以把一段工作包成可重複呼叫的程式區塊。這堂重點是理解方法名稱、參數、回傳值，以及呼叫方法時資料如何進出。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">METHOD</span><h2 id="lesson-map-title">把一段工作取名字，之後再呼叫它</h2><p>方法可以把較長的程式拆成有意義的小區塊，提升可讀性與重複利用。方法不會因為「寫好了」就自動執行，還需要被呼叫。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#structure"><strong>01</strong><span>方法結構<small>回傳型別 / 名稱 / 參數</small></span></a>
+          <a href="#call"><strong>02</strong><span>呼叫方法<small>寫了還要呼叫</small></span></a>
+          <a href="#return"><strong>03</strong><span>回傳值<small>return</small></span></a>
+          <a href="#parameter"><strong>04</strong><span>傳入參數<small>SetHP</small></span></a>
+          <a href="#this"><strong>05</strong><span>同名變數與 this<small>this.hp</small></span></a>
+          <a href="#unity-field"><strong>06</strong><span>Unity Inspector 補充<small>public / private / HideInInspector</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="structure"><span class="section-index">01</span><div>
+        <h2>方法的基本結構</h2>
+        <pre><code>void Jump()
+{
+    Debug.Log("跳跳跳");
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>void</code></dt><dd>表示這個方法沒有回傳值。</dd></div>
+          <div><dt><code>Jump</code></dt><dd>方法名稱，用來描述這段程式負責做什麼。</dd></div>
+          <div><dt><code>()</code></dt><dd>參數列表；空的小括號代表這個方法目前不需要傳入資料。</dd></div>
+          <div><dt><code>{ ... }</code></dt><dd>方法實際執行的內容。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">方法放在哪裡？</span><p>課堂提醒：方法要宣告在 class 裡，但不會再宣告在另一個方法裡。像 <code>Start()</code> 與自訂的 <code>Jump()</code> 都是同一層級的方法。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="call"><span class="section-index">02</span><div>
+        <h2>方法要被呼叫才會執行</h2>
+        <pre><code>void Start()
+{
+    Jump();
+}
+
+void Jump()
+{
+    Debug.Log("跳跳跳");
+}</code></pre>
+        <p>只宣告 <code>Jump()</code> 並不會自己發生事情。必須在 <code>Start()</code> 或其他地方使用 <code>Jump();</code> 呼叫它。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>宣告方法是在定義「可以做什麼」；呼叫方法才是真的「去做」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="return"><span class="section-index">03</span><div>
+        <h2>有回傳值的方法</h2>
+        <pre><code>private float _hp = 100f;
+
+float GetHP()
+{
+    return _hp;
+}</code></pre>
+        <p>如果方法需要把資料送回呼叫端，就不能使用 <code>void</code>，而要宣告實際回傳的型別。</p>
+        <pre><code>float myHp = GetHP();</code></pre>
+        <dl class="term-list">
+          <div><dt><code>float</code></dt><dd>這裡表示 <code>GetHP()</code> 會回傳一個浮點數。</dd></div>
+          <div><dt><code>return</code></dt><dd>把值傳回呼叫端，並離開目前方法。</dd></div>
+          <div><dt><code>float myHp = GetHP();</code></dt><dd>用同樣能承接回傳值的型別接住結果。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">return 之後</span><p>課堂提醒，執行到 <code>return</code> 後就會離開方法，因此同一路徑上寫在它後面的程式不會再被執行。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="parameter"><span class="section-index">04</span><div>
+        <h2>方法也可以接收參數</h2>
+        <pre><code>private float _hp = 100f;
+
+void SetHP(float hp)
+{
+    _hp = hp;
+}</code></pre>
+        <p>參數讓呼叫端可以把資料交給方法。呼叫時：</p>
+        <pre><code>SetHP(65f);</code></pre>
+        <p>方法裡的 <code>hp</code> 就會收到 <code>65f</code>，再把它指定給欄位 <code>_hp</code>。</p>
+        <p>「有參數」和「有回傳值」是兩件獨立的事情。方法可以沒有參數、有參數、沒有回傳值，或同時有參數和回傳值。</p>
+      </div></section>
+
+      <section class="note-section" id="this"><span class="section-index">05</span><div>
+        <h2>參數和欄位同名時，可以使用 this</h2>
+        <p>老師示範如果欄位與參數都叫 <code>hp</code>：</p>
+        <pre><code>private float hp = 100f;
+
+void SetHP(float hp)
+{
+    hp = hp;
+}</code></pre>
+        <p>這樣左右兩邊都指向方法參數，並沒有修改物件本身的欄位。</p>
+        <p>如果真的要同名，可以明確寫：</p>
+        <pre><code>void SetHP(float hp)
+{
+    this.hp = hp;
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>this.hp</code></dt><dd>代表目前這個物件自己的 <code>hp</code> 欄位。</dd></div>
+          <div><dt><code>hp</code></dt><dd>在這個方法裡優先指向參數 <code>hp</code>。</dd></div>
+        </dl>
+        <p>課堂也用底線命名欄位（例如 <code>_hp</code>）來避免名稱混淆。</p>
+      </div></section>
+
+      <section class="note-section" id="unity-field"><span class="section-index">06</span><div>
+        <h2>Unity Inspector 欄位的課堂補充</h2>
+        <p>老師在示範 HP 時順帶提醒：如果欄位是 <code>public</code> 且 Script 已掛在 GameObject 上，Inspector 中可能已經保存了一個值，因此執行時看到的值可能不是你剛在程式碼裡修改的預設值。</p>
+        <pre><code>public float hp = 500f;</code></pre>
+        <p>如果 Inspector 先前已經把它設成 20，課堂示範中 Unity 仍會使用 Inspector 保存的 20。這也是老師遇到「明明程式寫 500，執行卻不是 500」的原因。</p>
+        <pre><code>[HideInInspector]
+public float hp;
+
+private float _hp;</code></pre>
+        <dl class="term-list">
+          <div><dt><code>[HideInInspector]</code></dt><dd>老師用它示範把欄位從 Inspector 隱藏；隱藏不代表原本保存的值自動消失。</dd></div>
+          <div><dt><code>private</code></dt><dd>老師接著把示範欄位改成 private，使它不再直接出現在一般 Inspector 欄位中。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">這是順帶補充</span><p>這段主要是在提醒 Unity Inspector 可能影響欄位看到的值；public、private、序列化與物件欄位本身，老師表示後面的類別與物件章節還會再談。</p></aside>
+        <div class="memory-line"><span>本堂結論</span><strong>方法把工作包成可呼叫的區塊；參數把資料送進去，return 把結果送回來。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-20-method"> 能看懂方法的回傳型別、名稱、參數與方法內容</label>
+        <label><input type="checkbox" data-check="lesson-20-call"> 知道方法宣告後仍需要被呼叫</label>
+        <label><input type="checkbox" data-check="lesson-20-return"> 能區分 <code>void</code> 與有回傳值的方法</label>
+        <label><input type="checkbox" data-check="lesson-20-parameter"> 知道參數如何把資料傳入方法</label>
+        <label><input type="checkbox" data-check="lesson-20-this"> 看得懂 <code>this.hp = hp;</code> 的左右兩邊差異</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-7.html"><small>上一堂</small><strong>← ch2_7 陣列</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
