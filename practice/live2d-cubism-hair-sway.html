@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自主練習：整理 Live2D Cubism 從 PSD 拆圖、ArtMesh、Warp Deformer、參數 Keyform 到髮絲擺動與補圖的基礎流程。">
+  <title>Live2D Cubism：從拆圖到髮絲擺動｜自主練習｜Unity Notes</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>自主練習</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../practice.html">自主練習</a><a class="text-link" href="../course.html">目前課程</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">首頁</a><span>/</span><a href="../practice.html">自主練習</a><span>/</span><span>Live2D Cubism：從拆圖到髮絲擺動</span></nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>SELF PRACTICE 02</span><span class="complete-badge">實作中</span></div>
+        <h1>Live2D Cubism：從拆圖到髮絲擺動</h1>
+        <p>目標不是先做完整 VTuber 模型，而是把拆好的角色做成適合 Wallpaper Engine 的低幅度動態桌布。先用「頭髮左右輕擺」理解 Live2D 最核心的模型結構，再往呼吸、衣服與物理效果延伸。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="practice-map-title">
+        <div>
+          <span class="eyebrow">IMAGE → MOTION</span>
+          <h2 id="practice-map-title">先理解變形鏈，再開始做動畫</h2>
+          <p>Live2D 的重點不是把一張圖直接變成動畫，而是先把 PSD 圖層轉成可變形的 ArtMesh，再用 Deformer 與 Parameter 記錄不同 Keyform，最後才讓 Physics 或其他輸入驅動它。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本篇快速導覽">
+          <a href="#video"><strong>00</strong><span>參考影片<small>本次實作搭配影片</small></span></a>
+          <a href="#pipeline"><strong>01</strong><span>核心流程<small>Image → Mesh → Deformer → Parameter</small></span></a>
+          <a href="#mesh"><strong>02</strong><span>ArtMesh<small>先讓圖片能被變形</small></span></a>
+          <a href="#warp"><strong>03</strong><span>Warp Deformer<small>柔軟控制頭髮</small></span></a>
+          <a href="#keyform"><strong>04</strong><span>Keyform<small>-1 / 0 / +1 三個狀態</small></span></a>
+          <a href="#repair"><strong>05</strong><span>補圖<small>透明露出要回 PSD 修</small></span></a>
+          <a href="#sync"><strong>06</strong><span>PSD 更新<small>不要假設即時同步</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="video"><span class="section-index">00</span><div>
+        <h2>參考影片</h2>
+        <p>這次 Live2D Cubism 實作搭配的參考影片，直接留在筆記裡，避免之後又開始考古自己的瀏覽紀錄。</p>
+        <iframe width="100%" height="450" src="https://www.youtube.com/embed/czI662kJ_KI" title="Live2D Cubism 參考影片" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div></section>
+
+      <section class="note-section" id="pipeline"><span class="section-index">01</span><div>
+        <h2>Live2D 的核心流程</h2>
+        <pre><code>PSD 圖層
+→ ArtMesh
+→ Deformer
+→ Parameter / Keyform
+→ Physics / Animation
+→ Wallpaper Engine</code></pre>
+        <dl class="term-list">
+          <div><dt>PSD 圖層</dt><dd>素材來源。頭髮、臉、手、衣服等需要依預期動作拆成可獨立處理的部件。</dd></div>
+          <div><dt>ArtMesh</dt><dd>貼在圖像上的可變形網格。沒有合理的 Mesh，就沒有穩定的局部變形。</dd></div>
+          <div><dt>Deformer</dt><dd>用較高層級的控制框去帶動一個或多個 ArtMesh。柔軟形變通常先使用 Warp Deformer。</dd></div>
+          <div><dt>Parameter</dt><dd>描述一個可變化的數值，例如「髮擺動 X」。不同參數值可以保存不同 Keyform。</dd></div>
+          <div><dt>Physics</dt><dd>後續讓頭髮或衣服產生延遲與慣性，不需要一開始就碰。</dd></div>
+        </dl>
+        <div class="memory-line"><span>目標範圍</span><strong>Wallpaper Engine 桌布優先做「自然的小動作」，不需要先把完整 VTuber 臉部追蹤系統搬進來。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="mesh"><span class="section-index">02</span><div>
+        <h2>先讓部件成為可控制的 ArtMesh</h2>
+        <p>從單一部件開始，例如「髮」。選到實際的 ArtMesh 後產生自動 Mesh，先使用標準設定，再依變形需求調整。</p>
+        <dl class="term-list">
+          <div><dt>頭髮</dt><dd>需要彎曲，Mesh 可以使用中等到較細的密度。</dd></div>
+          <div><dt>衣服 / 手 / 臉</dt><dd>通常使用中等密度，再依實際變形程度修正。</dd></div>
+          <div><dt>椅子等硬物</dt><dd>若幾乎不變形，不需要為了「看起來專業」塞大量頂點。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">Mesh 越細不等於越好</span><p>網格密度要服務變形需求。過度細分只會增加編輯負擔與資料量，並不會自動讓動畫更自然。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="warp"><span class="section-index">03</span><div>
+        <h2>用 Warp Deformer 控制頭髮</h2>
+        <p>建立例如「髮_擺動」的 Warp Deformer，讓頭髮 ArtMesh 成為它的子物件。之後做大範圍柔軟形變時，優先調整 Deformer，而不是直接把 ArtMesh 頂點一個個拖爛。</p>
+        <div class="memory-line"><span>三種「點」不要混</span><strong>參數上的 Keyform、Warp Deformer 的控制點、ArtMesh 的頂點是不同層級的東西。</strong></div>
+        <ul class="step-list">
+          <li><span>01</span><div><strong>選取「髮_擺動」Warp Deformer</strong><p>確認目前選到的是 Deformer，不是資料夾或底下的 ArtMesh。</p></div></li>
+          <li><span>02</span><div><strong>讓框主要覆蓋需要變形的頭髮</strong><p>不要為了省事把臉、耳朵與大量衣服一起包進去，否則頭髮一晃，其他部件也會被牽連。</p></div></li>
+          <li><span>03</span><div><strong>動控制框，不是整顆平移</strong><p>Warp Deformer 的價值是讓形變有漸變，而不是把頭髮當成一張貼紙左右搬動。</p></div></li>
+        </ul>
+      </div></section>
+
+      <section class="note-section" id="keyform"><span class="section-index">04</span><div>
+        <h2>「髮擺動 X」參數與三個 Keyform</h2>
+        <p>建立一個例如 <code>髮擺動 X</code> 的參數，範圍先用 <code>-1 / 0 / +1</code>。每個位置建立 Keyform，保存同一個 Warp Deformer 在不同狀態下的形狀。</p>
+        <pre><code>髮擺動 X
+-1 -------- 0 -------- +1
+左           中          右</code></pre>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>0：建立原始 Keyform</strong><p>保持原本頭髮形狀，作為中立狀態。</p></div></li>
+          <li><span>02</span><div><strong>+1：建立右擺 Keyform</strong><p>新增關鍵點後，調整「髮_擺動」Warp Deformer，使髮絲輕微往右彎。</p></div></li>
+          <li><span>03</span><div><strong>-1：建立左擺 Keyform</strong><p>新增關鍵點後，往相反方向調整。</p></div></li>
+          <li><span>04</span><div><strong>來回拖參數檢查插值</strong><p>確認 -1 → 0 → +1 能平滑變化，而且 0 仍回到原始狀態。</p></div></li>
+        </ol>
+        <aside class="callout"><span class="callout-label">自然的髮擺動不是整片平移</span><p>頭頂與髮根最接近固定點，應該動得最少；中段稍微移動；髮尾與側髮可以移得更多。桌布的幅度應該小到不搶注意力，卻能讓畫面長時間觀看時仍有生命感。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="repair"><span class="section-index">05</span><div>
+        <h2>變形後露出透明，不是在 Cubism 裡「補顏色」</h2>
+        <p>如果髮絲一拉就露出透明，問題通常不是 Cubism 缺少畫筆，而是原始素材沒有畫出「原本被遮住、但動起來可能露出」的內容。</p>
+        <dl class="term-list">
+          <div><dt>邊界被拉出去</dt><dd>原圖層畫得太貼邊，需要回 PSD 把頭髮或衣服向外延伸，留下足夠出血。</dd></div>
+          <div><dt>前景移開後露空</dt><dd>例如瀏海移開後沒有額頭、側髮後沒有臉側或脖子。需要補的是後方結構，而不是隨便填一塊近似顏色。</dd></div>
+          <div><dt>補片</dt><dd>必要時可以在 PSD 新增額頭、後髮、衣領內側等補片，但新增圖層也代表 Cubism 端要重新確認 Mesh、層級與 Deformer。</dd></div>
+        </dl>
+        <div class="memory-line"><span>核心觀念</span><strong>Live2D 素材需要畫出「靜態圖看不到、動畫時可能看得到」的區域，並讓相鄰部件保持適度重疊。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="sync"><span class="section-index">06</span><div>
+        <h2>PSD 改完後，Cubism 不要當成會永遠即時同步</h2>
+        <p>Photoshop 是素材來源，Cubism 是建模端。修改 PSD 後先儲存，再回 Cubism 讓素材重新讀取或更新；不要把兩者理解成永久即時連線。</p>
+        <dl class="term-list">
+          <div><dt>最安全的修改</dt><dd>在原本已對應的圖層上補像素內容，例如延伸髮尾、補額頭或補邊界。</dd></div>
+          <div><dt>較高風險的修改</dt><dd>改圖層名稱、刪圖層、合併圖層、改群組層級或大量新增圖層，可能讓既有 ArtMesh、Deformer 與參數對應需要重新整理。</dd></div>
+          <div><dt>Mesh 仍需檢查</dt><dd>即使新像素已經更新進來，原本的 Mesh 分布也不一定自動變得合理；補大的區域後仍要確認 ArtMesh 是否涵蓋並適合變形。</dd></div>
+        </dl>
+        <pre><code>Cubism 找出露空位置
+→ 回 PSD 原圖層補畫
+→ 儲存 PSD
+→ 回 Cubism 更新 / 重新讀取素材
+→ 檢查 Mesh、Deformer 與參數是否正常</code></pre>
+      </div></section>
+
+      <section class="note-section" id="scope"><span class="section-index">07</span><div>
+        <h2>目前素材能做什麼，以及先不要做什麼</h2>
+        <p>如果臉目前仍是一整片，而沒有把左右眼、瞳孔、睫毛、嘴與臉皮進一步拆開，就不適合直接要求完整眨眼、視線追蹤或嘴型。</p>
+        <p>但對 Wallpaper Engine 來說並不是問題。先完成頭髮微飄、身體呼吸、衣服延遲、手臂極小幅移動與整體重心晃動，已經足以讓靜態桌布自然很多。</p>
+        <div class="memory-line"><span>下一階段</span><strong>先把髮擺動做乾淨，再加入 Physics；不要同時開五個系統，最後只知道「它在動」，卻不知道是誰把誰弄歪。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>這次自主練習想確認的事</h2>
+        <label><input type="checkbox" data-check="practice-live2d-pipeline"> 能說明 ArtMesh、Deformer、Parameter 與 Keyform 的關係</label>
+        <label><input type="checkbox" data-check="practice-live2d-mesh"> 能替頭髮產生並檢查適合變形的 Mesh</label>
+        <label><input type="checkbox" data-check="practice-live2d-warp"> 能建立「髮_擺動」Warp Deformer</label>
+        <label><input type="checkbox" data-check="practice-live2d-keyform"> 能建立 -1 / 0 / +1 三個髮擺動 Keyform</label>
+        <label><input type="checkbox" data-check="practice-live2d-natural"> 能做出髮根少動、髮尾多動的低幅度擺動</label>
+        <label><input type="checkbox" data-check="practice-live2d-repair"> 遇到透明露空時，知道應回 PSD 補素材而不是在 Cubism 硬補色</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="自主練習導覽"><a href="ground-and-space.html"><small>上一個</small><strong>← 建立基礎空間與地板</strong></a><a class="next" href="../practice.html"><small>返回</small><strong>自主練習 →</strong></a></nav>
+    </article>
+  </main>
+
+  <footer class="global-footer"><p>先把素材、變形與參數的責任拆清楚，再讓畫面動起來。</p></footer>
+</body>
+</html>
