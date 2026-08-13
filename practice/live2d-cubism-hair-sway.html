@@ -34,6 +34,7 @@
           <p>Live2D 的重點不是把一張圖直接變成動畫，而是先把 PSD 圖層轉成可變形的 ArtMesh，再用 Deformer 與 Parameter 記錄不同 Keyform，最後才讓 Physics 或其他輸入驅動它。</p>
         </div>
         <nav class="lesson-outline" aria-label="本篇快速導覽">
+          <a href="#video"><strong>00</strong><span>參考影片<small>本次實作搭配影片</small></span></a>
           <a href="#pipeline"><strong>01</strong><span>核心流程<small>Image → Mesh → Deformer → Parameter</small></span></a>
           <a href="#mesh"><strong>02</strong><span>ArtMesh<small>先讓圖片能被變形</small></span></a>
           <a href="#warp"><strong>03</strong><span>Warp Deformer<small>柔軟控制頭髮</small></span></a>
@@ -42,6 +43,12 @@
           <a href="#sync"><strong>06</strong><span>PSD 更新<small>不要假設即時同步</small></span></a>
         </nav>
       </section>
+
+      <section class="note-section" id="video"><span class="section-index">00</span><div>
+        <h2>參考影片</h2>
+        <p>這次 Live2D Cubism 實作搭配的參考影片，直接留在筆記裡，避免之後又開始考古自己的瀏覽紀錄。</p>
+        <iframe width="100%" height="450" src="https://www.youtube.com/embed/czI662kJ_KI" title="Live2D Cubism 參考影片" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div></section>
 
       <section class="note-section" id="pipeline"><span class="section-index">01</span><div>
         <h2>Live2D 的核心流程</h2>
@@ -95,7 +102,6 @@
           <li><span>03</span><div><strong>-1：建立左擺 Keyform</strong><p>新增關鍵點後，往相反方向調整。</p></div></li>
           <li><span>04</span><div><strong>來回拖參數檢查插值</strong><p>確認 -1 → 0 → +1 能平滑變化，而且 0 仍回到原始狀態。</p></div></li>
         </ol>
-
         <aside class="callout"><span class="callout-label">自然的髮擺動不是整片平移</span><p>頭頂與髮根最接近固定點，應該動得最少；中段稍微移動；髮尾與側髮可以移得更多。桌布的幅度應該小到不搶注意力，卻能讓畫面長時間觀看時仍有生命感。</p></aside>
       </div></section>
 
