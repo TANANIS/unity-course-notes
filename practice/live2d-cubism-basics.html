@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自主練習：整理 Live2D Cubism 基礎動態實作，包含 PSD 拆圖、ArtMesh、Warp Deformer、Parameter、Keyform、頭髮擺動與素材補圖。">
+  <title>Live2D Cubism 基礎動態實作｜自主練習｜Unity Notes</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>自主練習</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../practice.html">自主練習</a><a class="text-link" href="../course.html">目前課程</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">首頁</a><span>/</span><a href="../practice.html">自主練習</a><span>/</span><span>Live2D Cubism 基礎動態實作</span></nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>SELF PRACTICE 02</span><span class="complete-badge">實作紀錄</span></div>
+        <h1>Live2D Cubism 基礎動態實作</h1>
+        <p>這次的目標不是製作完整 VTuber 模型，而是把既有插圖拆成可變形部件，先用 Live2D Cubism 做出適合 Wallpaper Engine 的輕微動態效果。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="practice-map-title">
+        <div>
+          <span class="eyebrow">PSD → DEFORMER → PARAMETER</span>
+          <h2 id="practice-map-title">先讓一個部件真的動起來，再擴張模型</h2>
+          <p>這次實作刻意縮小範圍，先從頭髮開始。重點是理解 Cubism 中素材、變形器、參數與 Keyform 的關係，而不是一次把所有功能都塞進模型。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本篇快速導覽">
+          <a href="#goal"><strong>01</strong><span>練習目標<small>Wallpaper Engine 輕動態</small></span></a>
+          <a href="#prepare"><strong>02</strong><span>素材準備<small>PSD 拆圖與補圖</small></span></a>
+          <a href="#structure"><strong>03</strong><span>Cubism 結構<small>ArtMesh / Deformer / Parameter</small></span></a>
+          <a href="#hair"><strong>04</strong><span>頭髮擺動<small>-1 / 0 / +1</small></span></a>
+          <a href="#holes"><strong>05</strong><span>透明露洞<small>回 PSD 補素材</small></span></a>
+          <a href="#update-psd"><strong>06</strong><span>PSD 更新<small>不是即時同步</small></span></a>
+          <a href="#scope"><strong>07</strong><span>這次先不做<small>控制練習範圍</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="goal"><span class="section-index">01</span><div>
+        <h2>這次練習要做到什麼？</h2>
+        <p>原始需求是把一張插圖做成 Wallpaper Engine 可使用的 Live2D 輕微動態，因此不追求完整臉部捕捉或 VTuber Rig。</p>
+        <div class="memory-line"><span>目標</span><strong>先拆出可獨立變形的部件 → 在 Cubism 裡建立基本結構 → 先讓頭髮自然擺動。</strong></div>
+        <p>當時曾整理或測試的素材包含頭髮、身體／皮膚、眼睛、嘴巴、手、衣服、腿、椅子等部件；實際練習時則先把範圍縮到頭髮。</p>
+      </div></section>
+
+      <section class="note-section" id="prepare"><span class="section-index">02</span><div>
+        <h2>素材準備：拆圖不是只把可見部分切開</h2>
+        <p>Live2D 會讓原本靜止的部件移動，所以被遮住的區域可能突然露出來。拆圖時需要預先考慮「移動後會看到什麼」。</p>
+        <dl class="term-list">
+          <div><dt>頭髮</dt><dd>獨立成可以變形的素材，方便建立擺動。</dd></div>
+          <div><dt>臉／皮膚</dt><dd>如果原本被頭髮遮住，仍應把可能露出的後腦、皮膚或輪廓補完整。</dd></div>
+          <div><dt>其他可動部件</dt><dd>手、衣服、眼睛、嘴巴等可依之後需要逐步拆分，不必第一次就全部完成。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">實作策略</span><p>第一次不要追求「整張圖全部 Live2D 化」。先選一個最明顯、最容易驗證的部件，例如頭髮，確認流程真的走通。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="structure"><span class="section-index">03</span><div>
+        <h2>Cubism 中這幾個東西怎麼串起來？</h2>
+        <div class="memory-line"><span>基本流程</span><strong>PSD 圖層 → ArtMesh → Warp Deformer → Parameter → Keyform</strong></div>
+        <dl class="term-list">
+          <div><dt>ArtMesh</dt><dd>匯入 Cubism 後真正承載圖像並可被變形的網格。</dd></div>
+          <div><dt>Warp Deformer</dt><dd>用一個變形器包住部件，透過拉動 Deformer 來帶動底下的 ArtMesh，比直接亂拉 Mesh 更容易管理。</dd></div>
+          <div><dt>Parameter</dt><dd>控制變化的軸。例如這次建立「髮擺動 X」。</dd></div>
+          <div><dt>Keyform</dt><dd>記錄某個 Parameter 值下，物件應該變形成什麼樣子。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="hair"><span class="section-index">04</span><div>
+        <h2>第一次實作：頭髮擺動</h2>
+        <p>這次先建立一個「髮擺動 X」參數，使用三個基本 Keyform：</p>
+        <pre><code>-1    0    +1</code></pre>
+        <dl class="term-list">
+          <div><dt><code>-1</code></dt><dd>頭髮往左偏移的狀態。</dd></div>
+          <div><dt><code>0</code></dt><dd>原始中立狀態。</dd></div>
+          <div><dt><code>+1</code></dt><dd>頭髮往右偏移的狀態。</dd></div>
+        </dl>
+        <p>實作時主要選取的是頭髮所屬的 <strong>Warp Deformer</strong>，在各個 Keyform 上調整變形，而不是把參數本身當成可以拖動的圖像。</p>
+        <div class="memory-line"><span>自然感</span><strong>髮根少動、中段適量、髮尾最多。</strong></div>
+        <p>因為目標是桌布的輕微動態，所以幅度不需要很大。頭髮只要有柔和的偏移，就已經能讓靜態插圖產生活感。</p>
+      </div></section>
+
+      <section class="note-section" id="holes"><span class="section-index">05</span><div>
+        <h2>頭髮移動後露出透明洞怎麼辦？</h2>
+        <p>實作時遇到的問題是：頭髮原本遮住的區域沒有內容，一旦把頭髮往旁邊拉，就會看到透明缺口。</p>
+        <p>正式處理方式不是在 Cubism 裡「補色」，而是回到原始 PSD，在 Photoshop、CSP、Krita 等繪圖軟體把底下可能露出的素材補完整。</p>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>確認是哪個區域露洞</strong><p>例如後腦、皮膚、脖子或背景。</p></div></li>
+          <li><span>02</span><div><strong>回原始 PSD 補內容</strong><p>把原本被遮住、但變形後會看到的部分補出來。</p></div></li>
+          <li><span>03</span><div><strong>重新更新 Cubism 素材</strong><p>讓修正後的圖層重新進入目前模型。</p></div></li>
+        </ol>
+        <aside class="callout warning"><span class="callout-label">臨時權宜方法</span><p>也可以先減少變形幅度或增加素材重疊來避免露洞，但這只是限制症狀；如果真的需要那個動作範圍，還是應該把底圖補完整。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="update-psd"><span class="section-index">06</span><div>
+        <h2>修改 PSD 後，Cubism 不是即時同步</h2>
+        <p>當時特別確認過：修改原始 PSD 並不代表 Cubism 畫面會在同一瞬間自動跟著改。</p>
+        <pre><code>修改 PSD
+→ 儲存 PSD
+→ 回到 Cubism
+→ 更新／重新載入來源 PSD
+→ 確認部件是否正確更新</code></pre>
+        <p>實際操作時可先注意 Cubism 是否出現素材更新提示；若沒有，就需要手動執行重新載入或更新來源素材。必要時重新開啟專案再確認。</p>
+      </div></section>
+
+      <section class="note-section" id="scope"><span class="section-index">07</span><div>
+        <h2>這次刻意先不做的內容</h2>
+        <p>第一次練習時先把範圍壓小，以下項目並不是不重要，而是當時決定等基本頭髮變形跑通後再處理：</p>
+        <ul>
+          <li>Physics 物理演算</li>
+          <li>呼吸</li>
+          <li>眼睛與眨眼</li>
+          <li>Angle X / Angle Y</li>
+          <li>Texture Atlas</li>
+          <li>moc3 匯出</li>
+          <li>Wallpaper Engine 最終匯入</li>
+        </ul>
+        <aside class="callout"><span class="callout-label">當時使用的教學影片</span><p><a href="https://youtu.be/czI662kJ_KI" target="_blank" rel="noopener noreferrer">Live2D Cubism 教學影片</a></p></aside>
+        <div class="memory-line"><span>這次真正學到的事</span><strong>先把素材拆對，再建立 Deformer 與 Parameter；動態露出來的問題，很多時候其實是原始素材準備不足，而不是 Cubism 本身壞掉。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>這次自主練習已確認的觀念</h2>
+        <label><input type="checkbox" data-check="practice-live2d-parts"> 知道可動素材需要先從 PSD 拆成適合的部件</label>
+        <label><input type="checkbox" data-check="practice-live2d-structure"> 能說明 ArtMesh、Warp Deformer、Parameter、Keyform 的基本關係</label>
+        <label><input type="checkbox" data-check="practice-live2d-hair"> 知道如何用 -1 / 0 / +1 建立基本髮擺動</label>
+        <label><input type="checkbox" data-check="practice-live2d-hole"> 知道移動後露透明時應回原始 PSD 補素材</label>
+        <label><input type="checkbox" data-check="practice-live2d-psd"> 知道 PSD 修改後需要在 Cubism 更新／重新載入，而不是假設即時同步</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="自主練習導覽"><a href="ground-and-space.html"><small>上一篇</small><strong>← 建立基礎空間與地板</strong></a><a class="next" href="../practice.html"><small>返回</small><strong>自主練習 →</strong></a></nav>
+    </article>
+  </main>
+
+  <footer class="global-footer"><p>從真正做過的實作，把之後還會忘掉的坑留下來。</p></footer>
+</body>
+</html>
