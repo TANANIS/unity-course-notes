@@ -9,6 +9,14 @@
       "status": "探索中",
       "description": "從空白專案中角色需要一個可以站立的地面出發，整理 Plane、Cube、ProBuilder、Terrain 與 Modular Assets 的用途與選擇時機。",
       "url": "practice/ground-and-space.html"
+    },
+    {
+      "id": "practice-02",
+      "title": "Live2D Cubism 基礎動態實作",
+      "category": "Live2D / 動態桌布",
+      "status": "實作紀錄",
+      "description": "從 Wallpaper Engine 輕微動態需求出發，整理 PSD 拆圖、ArtMesh、Warp Deformer、Parameter、Keyform、頭髮擺動、透明露洞與 PSD 更新流程。",
+      "url": "practice/live2d-cubism-basics.html"
     }
   ]
 }
