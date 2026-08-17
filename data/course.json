@@ -48,7 +48,7 @@
         {"id":"ch2-7","courseLessonNumber":19,"title":"陣列","duration":"6:29","url":"notes/ch2-7.html","keywords":["陣列","array","索引","index","Length","for","foreach"]},
         {"id":"ch2-8","courseLessonNumber":20,"title":"方法","duration":"13:27","url":"notes/ch2-8.html","keywords":["方法","Method","參數","parameter","回傳值","return","void","this","Inspector","HideInInspector"]},
         {"id":"ch2-9","courseLessonNumber":21,"title":"call_by_ref","duration":"6:24","url":"notes/ch2-9.html","keywords":["Call by Value","Call by Reference","ref","out","參數傳遞","傳值","參考","RaycastHit"]},
-        {"id":"ch2-10","courseLessonNumber":22,"title":"類別","duration":"3:49"},
+        {"id":"ch2-10","courseLessonNumber":22,"title":"類別","duration":"3:49","url":"notes/ch2-10.html","keywords":["類別","class","Weapon","特性","繼承","MonoBehaviour","Component","Start","Update"]},
         {"id":"ch2-11","courseLessonNumber":23,"title":"物件","duration":"8:16"},
         {"id":"ch2-12","courseLessonNumber":24,"title":"封裝","duration":"6:49"},
         {"id":"ch2-13","courseLessonNumber":25,"title":"封裝 get 與 set","duration":"8:11"},
