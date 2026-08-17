@@ -32,7 +32,7 @@
           <a href="#private"><strong>02</strong><span>把資料藏起來<small>private 欄位</small></span></a>
           <a href="#methods"><strong>03</strong><span>公開讀寫入口<small>Get / Set 方法</small></span></a>
           <a href="#validation"><strong>04</strong><span>寫入時驗證<small>攻擊力不可小於 0</small></span></a>
-          <a href="#remember"><strong>05</strong><span>直覺理解<small>資料前面加一道門</small></span></a>
+          <a href="#remember"><strong>05</strong><span>五歲版理解<small>寶箱 / 管理員 / 門</small></span></a>
         </nav>
       </section>
 
@@ -110,21 +110,53 @@ Debug.Log(kingSword.GetAttackPower());</code></pre>
       </div></section>
 
       <section class="note-section" id="remember"><span class="section-index">05</span><div>
-        <h2>直覺版：不要把金庫直接丟在路邊</h2>
-        <pre><code>全部 public：
+        <h2>五歲版：把攻擊力想成鎖在寶箱裡的東西</h2>
+        <p>這一節是理解用比喻，不是老師字幕原話。正式規則仍以前面的 private、Get / Set 與資料驗證為準。</p>
 
-外部程式 ─────────────→ attackPower
-                     想塞多少就塞多少
+        <h3>全部 public：寶箱完全打開</h3>
+        <pre><code>寶箱
+└── attackPower = 100
 
-封裝後：
+任何人都能直接伸手進去：
+weapon.attackPower = 100;
+weapon.attackPower = -9000;</code></pre>
+        <p>只要欄位是 <code>public</code>，外面就可以直接改它。你想規定「攻擊力不能小於 0」，也沒有一個固定入口可以替你把關。</p>
+        <div class="memory-line"><span>public 直覺版</span><strong>寶箱沒上鎖，別人想放什麼就放什麼。</strong></div>
 
-外部程式 → SetAttackPower() → 檢查規則 → _attackPower
-                         ↑
-                    先通過這道門
+        <h3>private：先把寶箱鎖起來</h3>
+        <pre><code>寶箱 🔒
+└── _attackPower</code></pre>
+        <p><code>private</code> 的意思可以先想成：「真正的資料不准外面直接碰。」但如果只鎖起來，外面也沒辦法正常使用，所以還需要管理員。</p>
 
-外部程式 ← GetAttackPower() ← _attackPower</code></pre>
-        <p>所以 <code>private</code> 像把資料放進房間裡；公開方法則像門口。別人不是完全不能進出，而是必須從你設計好的門走。</p>
-        <aside class="callout"><span class="callout-label">下一堂會再簡化寫法</span><p>老師最後預告，下一堂會用另一種方式實作 Get / Set。也就是目前先理解「為什麼需要控制讀寫」，下一堂再看 C# 提供的 get / set 語法。</p></aside>
+        <h3>Get / Set：在寶箱前面放管理員</h3>
+        <pre><code>想放東西
+   ↓
+SetAttackPower()
+   ↓
+檢查規則
+   ↓
+_attackPower 🔒
+
+想拿資料
+   ↑
+GetAttackPower()
+   ↑
+_attackPower 🔒</code></pre>
+        <p><code>SetAttackPower()</code> 像管理員說：「你想改攻擊力？先交給我，我檢查完再放進去。」</p>
+        <p><code>GetAttackPower()</code> 則像管理員說：「你想知道裡面是多少？我拿給你看。」</p>
+
+        <h3>所以封裝到底是什麼？</h3>
+        <pre><code>不是：
+把資料藏起來，誰都不准碰
+
+而是：
+把資料藏起來
+      +
+提供自己設計好的入口
+      +
+所有人都必須經過入口的規則</code></pre>
+        <div class="memory-line"><span>五歲版結論</span><strong>封裝 = 我的東西不准你直接碰；你要讀或改，都先經過我設計的門。</strong></div>
+        <aside class="callout"><span class="callout-label">下一堂會發生什麼？</span><p>現在的門叫 <code>GetAttackPower()</code> / <code>SetAttackPower()</code>，可以用，但寫久了很囉嗦。下一堂 C# Property 會把同一套封裝概念改成更像一般欄位的 <code>get</code> / <code>set</code> 語法。</p></aside>
         <div class="memory-line"><span>本堂結論</span><strong>封裝 = 把資料設為 private，再提供受控制的公開入口，避免外部直接把物件改成不合法狀態。</strong></div>
       </div></section>
 
@@ -134,9 +166,10 @@ Debug.Log(kingSword.GetAttackPower());</code></pre>
         <label><input type="checkbox" data-check="lesson-24-get"> 知道公開 Get 方法負責讀取私有欄位</label>
         <label><input type="checkbox" data-check="lesson-24-set"> 知道公開 Set 方法負責設定私有欄位</label>
         <label><input type="checkbox" data-check="lesson-24-validation"> 知道 Set 方法可以在寫入前加入規則與驗證</label>
+        <label><input type="checkbox" data-check="lesson-24-intuitive"> 能用「寶箱 / 管理員 / 門」解釋封裝</label>
       </section>
 
-      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-11.html"><small>上一堂</small><strong>← ch2_11 物件</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-11.html"><small>上一堂</small><strong>← ch2_11 物件</strong></a><a class="next" href="ch2-13.html"><small>下一堂</small><strong>ch2_13 封裝 get 與 set →</strong></a></nav>
     </article>
   </main>
 </body>
