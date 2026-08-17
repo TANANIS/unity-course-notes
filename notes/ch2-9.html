@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_9 call_by_ref 筆記，整理 C# Call by Value、ref、out，以及參數傳遞時外部變數是否會被修改。">
+  <title>ch2_9 call_by_ref｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_9</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 21</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_9 call_by_ref</h1>
+        <p>這堂在處理一個核心問題：把變數傳進方法時，方法拿到的是「值的副本」，還是可以直接改到呼叫端原本的變數？重點是 Call by Value、<code>ref</code> 與 <code>out</code>。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">PARAMETER PASSING</span><h2 id="lesson-map-title">副本、原本變數，以及輸出結果</h2><p>先從普通參數開始，再看 <code>ref</code> 如何讓方法修改原本變數，最後理解 <code>out</code> 為什麼可以不先給初始值。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#value"><strong>01</strong><span>Call by Value<small>傳入值的副本</small></span></a>
+          <a href="#ref"><strong>02</strong><span>ref<small>修改原本變數</small></span></a>
+          <a href="#out"><strong>03</strong><span>out<small>由方法輸出結果</small></span></a>
+          <a href="#compare"><strong>04</strong><span>三者比較<small>普通 / ref / out</small></span></a>
+          <a href="#raycast"><strong>05</strong><span>Unity 後續用途<small>Raycast Hit</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="value"><span class="section-index">01</span><div>
+        <h2>Call by Value：方法拿到的是值的副本</h2>
+        <pre><code>void Start()
+{
+    int a = 80;
+    SetA(a);
+    Debug.Log(a); // 80
+}
+
+void SetA(int a)
+{
+    a = 20;
+}</code></pre>
+        <p>雖然 <code>SetA()</code> 裡把參數 <code>a</code> 改成 20，但 <code>Start()</code> 裡原本的 <code>a</code> 仍然是 80。</p>
+        <p>課堂的重點是：普通參數只是把「80 這個值」放進方法，而不是把外面那個變數 <code>a</code> 本身的位置交給方法。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Call by Value = 給方法一份值的副本；方法改副本，不會改到外面的原變數。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="ref"><span class="section-index">02</span><div>
+        <h2>ref：讓方法直接修改呼叫端的變數</h2>
+        <pre><code>void Start()
+{
+    int a = 80;
+    SetA(ref a);
+    Debug.Log(a); // 20
+}
+
+void SetA(ref int a)
+{
+    a = 20;
+}</code></pre>
+        <p>改成 <code>ref</code> 後，方法裡修改 <code>a</code>，外面的 <code>a</code> 也會一起改變。</p>
+        <dl class="term-list">
+          <div><dt>呼叫方法</dt><dd><code>SetA(ref a);</code>，呼叫端要寫 <code>ref</code>。</dd></div>
+          <div><dt>宣告方法</dt><dd><code>void SetA(ref int a)</code>，參數宣告也要寫 <code>ref</code>。</dd></div>
+          <div><dt>呼叫前</dt><dd>傳給 <code>ref</code> 的變數必須先有值，例如 <code>int a = 80;</code>。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">為什麼兩邊都要寫 ref？</span><p>方法宣告是在說「我會用參考方式接這個參數」；呼叫端也必須明確表示「我要把這個變數用 ref 傳進去」。</p></aside>
+        <div class="memory-line"><span>五歲版</span><strong>普通參數是給影本；ref 是把原本那張紙交給方法直接改。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="out"><span class="section-index">03</span><div>
+        <h2>out：這個值就是準備讓方法產生的</h2>
+        <p>老師接著提出一個問題：如果 <code>a</code> 放進方法後一定會被重新設定，那為什麼還要先寫一個初始值？因此引出 <code>out</code>。</p>
+        <pre><code>void Start()
+{
+    int a;
+    SetA(out a);
+    Debug.Log(a); // 20
+}
+
+void SetA(out int a)
+{
+    a = 20;
+}</code></pre>
+        <dl class="term-list">
+          <div><dt>呼叫前不用初始化</dt><dd><code>int a;</code> 就可以傳進 <code>out</code>，不必先寫成 <code>int a = 80;</code>。</dd></div>
+          <div><dt>方法內一定要賦值</dt><dd><code>out</code> 代表這個參數要由方法輸出，因此方法結束前必須替它設定值。</dd></div>
+          <div><dt>兩邊都要寫 out</dt><dd>呼叫時寫 <code>SetA(out a)</code>，方法參數也寫 <code>out int a</code>。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">和 return 的關係</span><p>如果方法只需要帶回一個結果，直接使用 <code>return</code> 通常更直觀。<code>out</code> 的價值在於方法還可以透過自己的回傳值表達其他資訊，同時再把額外結果放進 <code>out</code> 參數。</p></aside>
+        <pre><code>bool TryGetNumber(string text, out int number)
+{
+    // bool 可以表示成功或失敗
+    // number 則透過 out 帶出結果
+}</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>out = 這個變數不用先有答案，但方法離開前一定要把答案寫進去。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="compare"><span class="section-index">04</span><div>
+        <h2>普通參數、ref、out 放在一起比較</h2>
+        <dl class="term-list">
+          <div><dt>普通參數</dt><dd>傳入值的副本；方法內重新指定參數，不會改到外面的變數。記法：<strong>給影本</strong>。</dd></div>
+          <div><dt><code>ref</code></dt><dd>讓方法可以讀取並修改外面的原變數；呼叫前必須先有值。記法：<strong>給本人</strong>。</dd></div>
+          <div><dt><code>out</code></dt><dd>主要用來由方法產生並輸出一個值；呼叫前不用初始化，但方法內必須賦值。記法：<strong>請你寫答案回來</strong>。</dd></div>
+        </dl>
+        <pre><code>// 普通參數
+SetA(a);
+
+// ref
+SetA(ref a);
+
+// out
+SetA(out a);</code></pre>
+        <aside class="callout warning"><span class="callout-label">不要混成同一件事</span><p>這堂談的是「參數如何傳入方法」。現在先掌握普通、<code>ref</code>、<code>out</code> 的差異即可，不必把後面類別與 Reference Type 的概念提前攪進來。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="raycast"><span class="section-index">05</span><div>
+        <h2>Unity 後面會在哪裡看到 out？</h2>
+        <p>老師預告之後講射線碰撞（Raycast）時會再次使用 <code>out</code>。射線撞到物件後，可以把碰撞結果輸出成 Hit 資料，再從中取得碰撞物件、位置 Point 等資訊。</p>
+        <pre><code>RaycastHit hit;
+
+// 後續 Raycast 章節會看到類似概念：
+// Physics.Raycast(..., out hit)</code></pre>
+        <p>這裡目前只需要記住用途：<code>out hit</code> 讓方法把「碰撞後得到的資料」交回呼叫端。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>普通參數傳副本；ref 讓方法修改原變數；out 讓方法負責產生並輸出結果。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-21-value"> 知道普通參數傳入的是值的副本</label>
+        <label><input type="checkbox" data-check="lesson-21-ref"> 知道 <code>ref</code> 會讓方法修改呼叫端原本的變數</label>
+        <label><input type="checkbox" data-check="lesson-21-ref-init"> 知道 <code>ref</code> 變數在呼叫前必須先有值</label>
+        <label><input type="checkbox" data-check="lesson-21-out"> 知道 <code>out</code> 呼叫前不用初始化，但方法內必須賦值</label>
+        <label><input type="checkbox" data-check="lesson-21-compare"> 能用「影本 / 本人 / 寫答案回來」區分普通、ref、out</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-8.html"><small>上一堂</small><strong>← ch2_8 方法</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
