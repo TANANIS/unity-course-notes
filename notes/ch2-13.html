@@ -33,7 +33,7 @@
           <a href="#value"><strong>03</strong><span>value 是什麼<small>外部傳入的新值</small></span></a>
           <a href="#validation"><strong>04</strong><span>set 裡做驗證<small>等級不可小於 0</small></span></a>
           <a href="#usage"><strong>05</strong><span>外部怎麼使用<small>像變數一樣讀寫</small></span></a>
-          <a href="#remember"><strong>06</strong><span>直覺理解<small>看起來像欄位的門</small></span></a>
+          <a href="#remember"><strong>06</strong><span>五歲版理解<small>同一扇門，門把更漂亮</small></span></a>
         </nav>
       </section>
 
@@ -128,22 +128,76 @@ Debug.Log(kingSword.LevelLimit);</code></pre>
       </div></section>
 
       <section class="note-section" id="remember"><span class="section-index">06</span><div>
-        <h2>直覺版：Property 是一扇看起來像牆面的門</h2>
+        <h2>五歲版：門還是同一扇，只是門把變漂亮了</h2>
+        <p>上一堂已經把真正資料鎖進寶箱，再用 Get / Set 方法當管理員。這堂沒有推翻那一套，只是把管理員的操作方式改得更像普通變數。</p>
+
+        <h3>上一堂：你要明確叫管理員</h3>
+        <pre><code>weapon.SetAttackPower(90);
+weapon.GetAttackPower();</code></pre>
+        <p>可以想成：「管理員，我要放 90 進去。」以及「管理員，幫我拿目前的攻擊力出來。」</p>
+
+        <h3>這一堂：Property 讓外面看起來像直接用變數</h3>
+        <pre><code>kingSword.LevelLimit = 50;
+Debug.Log(kingSword.LevelLimit);</code></pre>
+        <p>表面上看起來好像又能直接碰資料，但其實真正的 <code>_levelLimit</code> 仍然鎖在裡面。</p>
         <pre><code>外面看起來：
 
-kingSword.LevelLimit = 50;
+LevelLimit = 50
 
-好像只是普通賦值
-        ↓
-實際上：
+        ↓ 實際上
 
-50 → set → 驗證 → _levelLimit
+50 → set → 檢查 → _levelLimit 🔒
 
-讀取時：
+讀取 LevelLimit
 
-_levelLimit → get → kingSword.LevelLimit</code></pre>
-        <p>所以 Property 最迷惑也最方便的地方，就是語法看起來像直接碰變數，但實際上背後可以執行一整段邏輯。</p>
+        ↓ 實際上
+
+_levelLimit 🔒 → get → 把值交出去</code></pre>
+
+        <h3>get：你想看？我拿給你</h3>
+        <pre><code>get
+{
+    return _levelLimit;
+}</code></pre>
+        <div class="memory-line"><span>get 直覺版</span><strong>你想知道寶箱裡是多少？我幫你拿出來看。</strong></div>
+
+        <h3>set：你想改？先交給我</h3>
+        <pre><code>set
+{
+    _levelLimit = value;
+}</code></pre>
+        <p><code>set</code> 就是寫入入口。外面並沒有直接碰到 <code>_levelLimit</code>，而是把新值交給 <code>set</code>。</p>
+        <div class="memory-line"><span>set 直覺版</span><strong>你想改寶箱裡的東西？先交給我，我決定怎麼放。</strong></div>
+
+        <h3>value：你這次拿來想塞進去的東西</h3>
+        <pre><code>kingSword.LevelLimit = 50;
+                         ↑
+                       value
+
+kingSword.LevelLimit = 100;
+                         ↑
+                       value</code></pre>
+        <p>所以看到 <code>value</code> 不需要把它想成什麼神祕變數。它就是這一次外面等號右邊送進來的新值。</p>
+        <div class="memory-line"><span>value 直覺版</span><strong>value = 你這次拿來想放進寶箱的東西。</strong></div>
+
+        <h3>兩堂課合起來</h3>
+        <pre><code>封裝：
+我的資料不准你直接碰，你要經過我。
+
+private：
+把真正的資料鎖起來。
+
+Get 方法 / get：
+你想知道裡面是什麼？我拿給你看。
+
+Set 方法 / set：
+你想改？先交給我，我檢查完再放。
+
+value：
+你這次拿來想塞進去的新值。</code></pre>
+        <aside class="callout"><span class="callout-label">第一堂與第二堂的差別</span><p>第一堂使用 <code>GetLevel()</code> / <code>SetLevel(50)</code> 這類公開方法；第二堂改用 <code>Level</code> / <code>Level = 50</code>。門還是同一扇門，封裝目的也沒變，只是 Property 把門把做得更好用。</p></aside>
         <aside class="callout warning"><span class="callout-label">關於 Inspector</span><p>老師在這堂把這種 get / set 寫法與 Unity Inspector 的設定情境連在一起說明；但目前字幕不足以完整還原其具體顯示條件，因此這裡先只保留「可在讀寫時加入額外處理」這個核心觀念，不把 Property 是否顯示在 Inspector 寫成固定規則。</p></aside>
+        <div class="memory-line"><span>五歲版結論</span><strong>外面看起來像在操作變數，但讀的時候其實走 get，寫的時候其實走 set；真正資料仍然藏在 private 裡。</strong></div>
         <div class="memory-line"><span>本堂結論</span><strong>Property = 用 get 控制讀取、用 set 控制寫入；set 裡的 value 就是外部傳進來的新值。</strong></div>
       </div></section>
 
@@ -153,6 +207,7 @@ _levelLimit → get → kingSword.LevelLimit</code></pre>
         <label><input type="checkbox" data-check="lesson-25-set"> 知道對 Property 賦值時會進入 <code>set</code></label>
         <label><input type="checkbox" data-check="lesson-25-value"> 知道 <code>value</code> 是外部傳進來的新值</label>
         <label><input type="checkbox" data-check="lesson-25-validation"> 知道 <code>set</code> 中仍然可以做條件判斷與資料驗證</label>
+        <label><input type="checkbox" data-check="lesson-25-intuitive"> 能用「寶箱 / get / set / value」解釋 Property</label>
       </section>
 
       <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-12.html"><small>上一堂</small><strong>← ch2_12 封裝</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
