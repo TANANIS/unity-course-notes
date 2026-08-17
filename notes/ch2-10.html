@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_10 類別筆記，整理 C# class 的分類概念、Weapon 特性、繼承語法，以及 MonoBehaviour 與一般 C# 類別的差異。">
+  <title>ch2_10 類別｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_10</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 22</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_10 類別</h1>
+        <p>這堂開始進入物件導向的基本概念。老師先從人類如何依共同特性分類，帶到 C# 如何把一組相關特性集合成一個 <code>class</code>。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">CLASS</span><h2 id="lesson-map-title">把共同特性集合起來，定義一種新的型別</h2><p>人會用共同特徵區分哺乳類、鳥類等類別；程式裡也可以用相同思路，把某種東西擁有的資料與特性集中在一個類別裡。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#concept"><strong>01</strong><span>類別概念<small>依共同特性分類</small></span></a>
+          <a href="#weapon"><strong>02</strong><span>Weapon 範例<small>攻擊力 / 磨損 / 等級</small></span></a>
+          <a href="#inheritance"><strong>03</strong><span>冒號與繼承<small>: MonoBehaviour</small></span></a>
+          <a href="#monobehaviour"><strong>04</strong><span>MonoBehaviour 補充<small>Unity Component 類別</small></span></a>
+          <a href="#remember"><strong>05</strong><span>直覺記憶<small>類別像規格書</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="concept"><span class="section-index">01</span><div>
+        <h2>類別：把共同特性集合在一起</h2>
+        <p>老師先用現實世界的分類說明：人會依照物體或生物的共同特性，把它們分成不同類別。程式設計裡也可以使用相同思路。</p>
+        <p>當一組資料都在描述同一種東西時，可以把這些特性集中起來，建立一個新的 <code>class</code>。</p>
+        <pre><code>public class Weapon
+{
+    // Weapon 相關的特性放在這裡
+}</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>class = 把「這一類東西共同擁有什麼」集中定義起來。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="weapon"><span class="section-index">02</span><div>
+        <h2>課堂範例：Weapon 有哪些特性？</h2>
+        <p>老師用「武器」做例子。建立 Weapon 類別前，先思考武器通常需要描述哪些特性，例如：</p>
+        <dl class="term-list">
+          <div><dt>攻擊力</dt><dd>描述武器能造成多少傷害。</dd></div>
+          <div><dt>磨損程度</dt><dd>描述武器目前的損耗狀態。</dd></div>
+          <div><dt>等級限制</dt><dd>描述使用這把武器需要的等級條件。</dd></div>
+        </dl>
+        <p>以下程式只是在整理老師的概念；字幕沒有完整保留每個欄位的實際名稱與型別，因此欄位型別先當作示意：</p>
+        <pre><code>public class Weapon
+{
+    public float attackPower;
+    public float wear;
+    public int levelLimit;
+}</code></pre>
+        <aside class="callout"><span class="callout-label">先想「它有什麼」</span><p>老師這堂的重點不是欄位名稱本身，而是寫物件導向程式前，先思考這個類別應該包含哪些共同特性，再把它們集中到 class 裡。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="inheritance"><span class="section-index">03</span><div>
+        <h2><code>:</code> 代表繼承</h2>
+        <p>Unity 建立 C# Script 時常會看到：</p>
+        <pre><code>public class Weapon : MonoBehaviour
+{
+    void Start()
+    {
+    }
+
+    void Update()
+    {
+    }
+}</code></pre>
+        <p>老師這堂要求先把 <code>: MonoBehaviour</code>、<code>Start()</code> 與 <code>Update()</code> 移除，因為目前只是練習建立一般 C# 類別，不需要 Unity 的 Component 行為。</p>
+        <pre><code>public class Weapon
+{
+    public float attackPower;
+    public float wear;
+    public int levelLimit;
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>:</code></dt><dd>在這裡表示「繼承」。</dd></div>
+          <div><dt><code>: MonoBehaviour</code></dt><dd>表示這個類別繼承 Unity 的 <code>MonoBehaviour</code>。</dd></div>
+          <div><dt>這堂先刪除</dt><dd>因為目前要觀察最單純的 class，而不是 Unity Component 的生命週期。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="monobehaviour"><span class="section-index">04</span><div>
+        <h2>補充：MonoBehaviour 到底是什麼？</h2>
+        <p>這一節是理解補充，不是老師這段字幕已經完整講授的內容。老師目前只先指出 <code>:</code> 是繼承，並要求這個範例暫時不要繼承 <code>MonoBehaviour</code>。</p>
+        <p><code>MonoBehaviour</code> 可以先理解成 Unity 提供給腳本的基底類別。你的 class 繼承它之後，就能以 Unity Component 的方式掛在 GameObject 上，並由 Unity 管理其生命週期。</p>
+        <pre><code>public class Player : MonoBehaviour
+{
+    void Start()
+    {
+        // Unity 在適當時機呼叫
+    }
+
+    void Update()
+    {
+        // Unity 每幀執行
+    }
+}</code></pre>
+        <p>相反地，這堂的 Weapon：</p>
+        <pre><code>public class Weapon
+{
+}
+</code></pre>
+        <p>就是一般 C# 類別，不因為寫在 Unity 專案裡就自動變成可以掛到 GameObject 上的 Component。</p>
+
+        <h3>直覺版</h3>
+        <pre><code>普通 C# class
+    ↓
+只是你自己定義的資料與功能
+
+class Player : MonoBehaviour
+    ↓
+成為 Unity 可以當作 Component 管理的腳本類別
+    ↓
+可以掛到 GameObject
+    ↓
+可以參與 Start / Update / Awake 等 Unity 生命週期</code></pre>
+        <aside class="callout warning"><span class="callout-label">不要把兩件事混在一起</span><p><code>class</code> 是 C# 的類別概念；<code>MonoBehaviour</code> 是 Unity 提供的一個特定基底類別。不是「class 一定要繼承 MonoBehaviour」，而是需要成為 Unity Component 腳本時才常會繼承它。</p></aside>
+        <div class="memory-line"><span>一句話記憶</span><strong>MonoBehaviour = 讓你的 class 接上 Unity GameObject / Component 與生命週期系統的基底類別。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="remember"><span class="section-index">05</span><div>
+        <h2>直覺記憶：Class 像一張規格書</h2>
+        <p>現在先不要急著把 class 與下一堂的 object 混在一起。這堂只需要把 class 想成：「我先定義這一種東西應該有哪些特性。」</p>
+        <pre><code>Weapon 規格書
+├── 攻擊力
+├── 磨損程度
+└── 等級限制</code></pre>
+        <p>下一堂「物件」才會開始處理：有了 Weapon 這種型別之後，怎麼實際建立與使用某一個 Weapon。</p>
+        <div class="memory-line"><span>本堂結論</span><strong>類別先定義一種東西共同擁有的特性；冒號代表繼承；一般 class 不必繼承 MonoBehaviour。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-22-class"> 能說出 class 是把一組共同特性集合成新的型別</label>
+        <label><input type="checkbox" data-check="lesson-22-weapon"> 能用 Weapon 說出至少三個可被整理進類別的特性</label>
+        <label><input type="checkbox" data-check="lesson-22-inheritance"> 知道 <code>:</code> 在這裡表示繼承</label>
+        <label><input type="checkbox" data-check="lesson-22-mono"> 知道一般 C# class 不一定要繼承 <code>MonoBehaviour</code></label>
+        <label><input type="checkbox" data-check="lesson-22-component"> 知道繼承 <code>MonoBehaviour</code> 後，腳本可作為 Unity Component 並參與生命週期</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-9.html"><small>上一堂</small><strong>← ch2_9 call_by_ref</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
