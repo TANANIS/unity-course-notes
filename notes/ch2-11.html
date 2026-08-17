@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_11 物件筆記，整理 C# class 與 object 的關係、new 建立物件、public 成員存取，以及同類別物件各自保存不同狀態。">
+  <title>ch2_11 物件｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_11</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 23</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_11 物件</h1>
+        <p>上一堂先定義了類別（class）；這堂開始真的用類別建立物件（object）。同一個類別可以建立很多個物件，而每個物件都能保存自己的攻擊力、血量、等級等狀態。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">OBJECT</span><h2 id="lesson-map-title">Class 是規格；Object 是照規格建立出的實體</h2><p>先有類別，才能用它建立物件。同一類別建立出的不同物件共享相同的結構，但各自保存不同的資料。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#class-object"><strong>01</strong><span>Class 與 Object<small>先有類別才有物件</small></span></a>
+          <a href="#create"><strong>02</strong><span>建立物件<small>Weapon / new</small></span></a>
+          <a href="#public"><strong>03</strong><span>跨類別存取<small>public 成員</small></span></a>
+          <a href="#independent"><strong>04</strong><span>不同物件不同狀態<small>王者之劍 / 戰斧</small></span></a>
+          <a href="#remember"><strong>05</strong><span>直覺記憶<small>藍圖與成品</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="class-object"><span class="section-index">01</span><div>
+        <h2>先有類別，才會有物件</h2>
+        <p>老師先把上一堂與這堂接起來：物件和類別息息相關，必須透過類別去建立物件。</p>
+        <p>為什麼不能只有一個「怪物」類別就結束？因為遊戲裡每一隻怪物雖然都屬於怪物這個類別，但實際狀態不一定相同。</p>
+        <dl class="term-list">
+          <div><dt>同一類別</dt><dd>怪物都可以擁有攻擊力、血量、技能等共同結構。</dd></div>
+          <div><dt>不同物件</dt><dd>每隻怪物目前的血量、攻擊力或技能內容可以不同。</dd></div>
+          <div><dt>原因</dt><dd>例如其中一隻怪物已經被玩家攻擊，另一隻還是滿血；它們仍然都屬於「怪物」這個類別。</dd></div>
+        </dl>
+        <div class="memory-line"><span>一句話記憶</span><strong>Class 定義共同結構；Object 保存某一個實體自己的狀態。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="create"><span class="section-index">02</span><div>
+        <h2>用類別建立一個物件</h2>
+        <p>課堂延續上一堂的 Weapon 類別，再到另一個繼承 <code>MonoBehaviour</code> 的測試腳本裡建立武器物件。</p>
+        <p>字幕中的程式名稱有辨識缺漏，下面用等價寫法整理課堂操作：</p>
+        <pre><code>Weapon kingSword = new Weapon();</code></pre>
+        <dl class="term-list">
+          <div><dt><code>Weapon</code></dt><dd>型別，也就是上一堂建立的類別。</dd></div>
+          <div><dt><code>kingSword</code></dt><dd>變數名稱，用來指向這個建立出來的 Weapon 物件。</dd></div>
+          <div><dt><code>new Weapon()</code></dt><dd>依照 Weapon 類別建立一個新的物件。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">和 int 的宣告很像，但右邊不一樣</span><p>可以把 <code>Weapon kingSword</code> 類比成 <code>int hp</code>：左邊先說明型別與變數名稱。不同的是 Weapon 需要的是一個 Weapon 物件，所以右側用 <code>new Weapon()</code> 建立實體。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="public"><span class="section-index">03</span><div>
+        <h2>要從其他類別存取成員，課堂先使用 public</h2>
+        <p>老師建立 Weapon 後，嘗試從另一個測試類別設定武器資料，發現原本的成員無法直接存取，因此把它們加上 <code>public</code>。</p>
+        <pre><code>public class Weapon
+{
+    public float attackPower;
+    public float wear;
+    public int levelLimit;
+}</code></pre>
+        <p>接著就可以透過「物件名稱 + <code>.</code> + 成員」設定資料：</p>
+        <pre><code>kingSword.attackPower = 100;
+kingSword.wear = 10;
+kingSword.levelLimit = 50;</code></pre>
+        <aside class="callout warning"><span class="callout-label">老師自己也提醒：先別把 public 當最佳做法</span><p>這堂為了說明跨類別存取，暫時直接把資料成員設成 <code>public</code>。老師隨即提醒，實務上通常不希望資料欄位毫無限制地公開；後面的「封裝」會再解釋原因與做法。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="independent"><span class="section-index">04</span><div>
+        <h2>同一個 Weapon 類別，可以有很多把不同的武器</h2>
+        <p>老師接著建立第二把武器。兩把都屬於 Weapon，但各自保存自己的資料。</p>
+        <pre><code>Weapon kingSword = new Weapon();
+kingSword.attackPower = 100;
+kingSword.wear = 10;
+kingSword.levelLimit = 50;
+
+Weapon battleAxe = new Weapon();
+battleAxe.attackPower = 600;
+battleAxe.wear = 2;
+battleAxe.levelLimit = 90;</code></pre>
+        <p>執行時分別印出兩把武器的攻擊力，就會得到不同結果：</p>
+        <pre><code>Debug.Log(kingSword.attackPower); // 100
+Debug.Log(battleAxe.attackPower); // 600</code></pre>
+        <p>這正是物件存在的理由：結構由 Weapon 類別統一定義，但每一個 Weapon 物件可以保存不同的攻擊力、磨損程度與等級限制。</p>
+        <div class="memory-line"><span>核心觀念</span><strong>同一類別 ≠ 所有資料都一樣。類別決定「有哪些欄位」；物件決定「這一個實體的欄位目前是多少」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="remember"><span class="section-index">05</span><div>
+        <h2>直覺版：Class 是藍圖，Object 是照藍圖做出的成品</h2>
+        <pre><code>Weapon 類別（藍圖）
+├── attackPower
+├── wear
+└── levelLimit
+
+        ↓ new Weapon()
+
+王者之劍（物件）
+├── attackPower = 100
+├── wear = 10
+└── levelLimit = 50
+
+戰斧（物件）
+├── attackPower = 600
+├── wear = 2
+└── levelLimit = 90</code></pre>
+        <p>藍圖只有一份也沒關係，可以照同一份藍圖做出很多成品。成品的結構相同，但每一個成品的實際數值可以不同。</p>
+        <aside class="callout"><span class="callout-label">遊戲為什麼特別需要物件導向？</span><p>老師最後用遊戲中的大量裝備、怪物與角色作為例子。這些東西通常有共同的資料結構，但每一個實體又有自己的狀態，因此很適合用類別與物件來表示。</p></aside>
+        <div class="memory-line"><span>本堂結論</span><strong>class 是規格；new 建立 object；同一類別建立出的每個物件，都可以保存自己獨立的資料。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-23-class-object"> 能說明 class 與 object 的差別</label>
+        <label><input type="checkbox" data-check="lesson-23-new"> 看得懂 <code>Weapon weapon = new Weapon();</code></label>
+        <label><input type="checkbox" data-check="lesson-23-dot"> 知道可以用 <code>weapon.attackPower</code> 存取物件成員</label>
+        <label><input type="checkbox" data-check="lesson-23-public"> 知道老師這堂為何暫時把欄位設成 <code>public</code></label>
+        <label><input type="checkbox" data-check="lesson-23-independent"> 知道同一類別的不同物件可以保存不同資料</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-10.html"><small>上一堂</small><strong>← ch2_10 類別</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
