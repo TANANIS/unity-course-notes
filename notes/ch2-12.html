@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_12 封裝筆記，整理 C# private 欄位、公開 Get/Set 方法、資料驗證，以及避免外部直接寫入無效數值。">
+  <title>ch2_12 封裝｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_12</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 24</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_12 封裝</h1>
+        <p>上一堂為了方便示範，把 Weapon 的資料欄位設成 <code>public</code>；這堂開始處理它帶來的問題：外部程式可以任意塞入無效資料。老師用「攻擊力不應小於 0」說明封裝的目的。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">ENCAPSULATION</span><h2 id="lesson-map-title">不要讓外部直接碰資料，改由類別自己把關</h2><p>先把真正保存資料的欄位改成 <code>private</code>，再提供公開方法讀取與設定。如此一來，所有寫入都必須經過同一個入口，也就能加入檢查規則。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#problem"><strong>01</strong><span>public 的問題<small>-90 也能直接塞進去</small></span></a>
+          <a href="#private"><strong>02</strong><span>把資料藏起來<small>private 欄位</small></span></a>
+          <a href="#methods"><strong>03</strong><span>公開讀寫入口<small>Get / Set 方法</small></span></a>
+          <a href="#validation"><strong>04</strong><span>寫入時驗證<small>攻擊力不可小於 0</small></span></a>
+          <a href="#remember"><strong>05</strong><span>直覺理解<small>資料前面加一道門</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="problem"><span class="section-index">01</span><div>
+        <h2>為什麼欄位全部 public 不是好事？</h2>
+        <p>上一堂外部類別可以直接寫：</p>
+        <pre><code>kingSword.attackPower = 100;</code></pre>
+        <p>方便歸方便，但同樣也能寫出：</p>
+        <pre><code>kingSword.attackPower = -90;</code></pre>
+        <p>如果遊戲規則要求攻擊力不能是負數，公開欄位本身沒有任何入口可以統一阻止這種寫入。老師實際測試後，數值確實會保持 <code>-90</code>。</p>
+        <div class="memory-line"><span>問題核心</span><strong>public 欄位讓外部可以直接改資料，也就繞過了類別本身原本可能想維持的規則。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="private"><span class="section-index">02</span><div>
+        <h2>第一步：把真正的資料改成 private</h2>
+        <p>老師的封裝做法第一步，就是把攻擊力欄位改成私有，讓其他類別不能再直接碰它。</p>
+        <pre><code>public class Weapon
+{
+    private float _attackPower;
+}</code></pre>
+        <p>改成 <code>private</code> 後，外部原本這種寫法就不能用了：</p>
+        <pre><code>// 外部類別不能再直接存取
+// kingSword._attackPower = -90;</code></pre>
+        <aside class="callout"><span class="callout-label">封裝不是單純「藏起來」</span><p>老師接下來沒有停在 private，而是另外提供公開方法。重點不是讓資料永遠碰不到，而是讓存取必須走指定入口。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="methods"><span class="section-index">03</span><div>
+        <h2>第二步：用公開方法取得與設定私有欄位</h2>
+        <p>字幕中的方法名稱辨識不完整，以下用等價命名整理老師的做法：</p>
+        <pre><code>public class Weapon
+{
+    private float _attackPower;
+
+    public float GetAttackPower()
+    {
+        return _attackPower;
+    }
+
+    public void SetAttackPower(float attackPower)
+    {
+        _attackPower = attackPower;
+    }
+}</code></pre>
+        <dl class="term-list">
+          <div><dt><code>private _attackPower</code></dt><dd>真正保存攻擊力的資料，外部不能直接修改。</dd></div>
+          <div><dt><code>GetAttackPower()</code></dt><dd>公開的讀取入口，把目前攻擊力回傳給外部。</dd></div>
+          <div><dt><code>SetAttackPower(...)</code></dt><dd>公開的設定入口，外部想改攻擊力時必須透過這裡。</dd></div>
+        </dl>
+        <p>於是外部使用方式從直接碰欄位：</p>
+        <pre><code>kingSword.attackPower = 90;</code></pre>
+        <p>改成呼叫方法：</p>
+        <pre><code>kingSword.SetAttackPower(90);
+Debug.Log(kingSword.GetAttackPower());</code></pre>
+      </div></section>
+
+      <section class="note-section" id="validation"><span class="section-index">04</span><div>
+        <h2>真正的價值：所有寫入都能先經過檢查</h2>
+        <p>有了統一的設定入口，老師就在設定方法裡加入「攻擊力不可小於 0」的判斷。字幕中的完整程式沒有乾淨保留下來，以下保留其邏輯：</p>
+        <pre><code>public void SetAttackPower(float attackPower)
+{
+    if (attackPower &lt; 0)
+    {
+        Debug.Log("攻擊力不可小於 0");
+        _attackPower = 0;
+        return;
+    }
+
+    _attackPower = attackPower;
+}</code></pre>
+        <p>這樣外部即使嘗試：</p>
+        <pre><code>kingSword.SetAttackPower(-90);</code></pre>
+        <p>也不會再讓真正保存資料的 <code>_attackPower</code> 留在不合理的負數狀態；老師的示範會印出錯誤訊息，並讓攻擊力落在允許的值。</p>
+        <p>而傳入正常數值，例如 <code>90</code>，就會正常設定並讀回。</p>
+        <div class="memory-line"><span>封裝的價值</span><strong>不是為了多寫兩個方法，而是讓「讀寫資料」有一個可以統一檢查、限制與控制的入口。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="remember"><span class="section-index">05</span><div>
+        <h2>直覺版：不要把金庫直接丟在路邊</h2>
+        <pre><code>全部 public：
+
+外部程式 ─────────────→ attackPower
+                     想塞多少就塞多少
+
+封裝後：
+
+外部程式 → SetAttackPower() → 檢查規則 → _attackPower
+                         ↑
+                    先通過這道門
+
+外部程式 ← GetAttackPower() ← _attackPower</code></pre>
+        <p>所以 <code>private</code> 像把資料放進房間裡；公開方法則像門口。別人不是完全不能進出，而是必須從你設計好的門走。</p>
+        <aside class="callout"><span class="callout-label">下一堂會再簡化寫法</span><p>老師最後預告，下一堂會用另一種方式實作 Get / Set。也就是目前先理解「為什麼需要控制讀寫」，下一堂再看 C# 提供的 get / set 語法。</p></aside>
+        <div class="memory-line"><span>本堂結論</span><strong>封裝 = 把資料設為 private，再提供受控制的公開入口，避免外部直接把物件改成不合法狀態。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-24-public-problem"> 知道為什麼資料欄位全部設成 <code>public</code> 會難以限制無效數值</label>
+        <label><input type="checkbox" data-check="lesson-24-private"> 知道封裝會先把真正保存資料的欄位改成 <code>private</code></label>
+        <label><input type="checkbox" data-check="lesson-24-get"> 知道公開 Get 方法負責讀取私有欄位</label>
+        <label><input type="checkbox" data-check="lesson-24-set"> 知道公開 Set 方法負責設定私有欄位</label>
+        <label><input type="checkbox" data-check="lesson-24-validation"> 知道 Set 方法可以在寫入前加入規則與驗證</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-11.html"><small>上一堂</small><strong>← ch2_11 物件</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
