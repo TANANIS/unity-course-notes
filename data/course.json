@@ -50,7 +50,7 @@
         {"id":"ch2-9","courseLessonNumber":21,"title":"call_by_ref","duration":"6:24","url":"notes/ch2-9.html","keywords":["Call by Value","Call by Reference","ref","out","參數傳遞","傳值","參考","RaycastHit"]},
         {"id":"ch2-10","courseLessonNumber":22,"title":"類別","duration":"3:49","url":"notes/ch2-10.html","keywords":["類別","class","Weapon","特性","繼承","MonoBehaviour","Component","Start","Update"]},
         {"id":"ch2-11","courseLessonNumber":23,"title":"物件","duration":"8:16","url":"notes/ch2-11.html","keywords":["物件","object","class","new","Weapon","public","成員存取","王者之劍","戰斧","物件導向"]},
-        {"id":"ch2-12","courseLessonNumber":24,"title":"封裝","duration":"6:49"},
+        {"id":"ch2-12","courseLessonNumber":24,"title":"封裝","duration":"6:49","url":"notes/ch2-12.html","keywords":["封裝","encapsulation","private","public","Get","Set","getter","setter","資料驗證","攻擊力"]},
         {"id":"ch2-13","courseLessonNumber":25,"title":"封裝 get 與 set","duration":"8:11"},
         {"id":"ch2-14","courseLessonNumber":26,"title":"建構子（constructor）","duration":"4:40"},
         {"id":"ch2-15","courseLessonNumber":27,"title":"結構（struct）","duration":"14:31"},
