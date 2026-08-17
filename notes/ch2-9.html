@@ -31,8 +31,9 @@
           <a href="#value"><strong>01</strong><span>Call by Value<small>傳入值的副本</small></span></a>
           <a href="#ref"><strong>02</strong><span>ref<small>修改原本變數</small></span></a>
           <a href="#out"><strong>03</strong><span>out<small>由方法輸出結果</small></span></a>
-          <a href="#compare"><strong>04</strong><span>三者比較<small>普通 / ref / out</small></span></a>
-          <a href="#raycast"><strong>05</strong><span>Unity 後續用途<small>Raycast Hit</small></span></a>
+          <a href="#intuitive"><strong>04</strong><span>直覺理解<small>影本 / 本人 / 寫答案</small></span></a>
+          <a href="#compare"><strong>05</strong><span>三者比較<small>普通 / ref / out</small></span></a>
+          <a href="#raycast"><strong>06</strong><span>Unity 後續用途<small>Raycast Hit</small></span></a>
         </nav>
       </section>
 
@@ -74,7 +75,6 @@ void SetA(ref int a)
           <div><dt>呼叫前</dt><dd>傳給 <code>ref</code> 的變數必須先有值，例如 <code>int a = 80;</code>。</dd></div>
         </dl>
         <aside class="callout warning"><span class="callout-label">為什麼兩邊都要寫 ref？</span><p>方法宣告是在說「我會用參考方式接這個參數」；呼叫端也必須明確表示「我要把這個變數用 ref 傳進去」。</p></aside>
-        <div class="memory-line"><span>五歲版</span><strong>普通參數是給影本；ref 是把原本那張紙交給方法直接改。</strong></div>
       </div></section>
 
       <section class="note-section" id="out"><span class="section-index">03</span><div>
@@ -102,10 +102,53 @@ void SetA(out int a)
     // bool 可以表示成功或失敗
     // number 則透過 out 帶出結果
 }</code></pre>
-        <div class="memory-line"><span>一句話記憶</span><strong>out = 這個變數不用先有答案，但方法離開前一定要把答案寫進去。</strong></div>
       </div></section>
 
-      <section class="note-section" id="compare"><span class="section-index">04</span><div>
+      <section class="note-section" id="intuitive"><span class="section-index">04</span><div>
+        <h2>直覺版理解：把變數想成一張紙</h2>
+        <p>下面不是老師字幕的原話，而是用來幫助理解的比喻。正式規則仍以前面三節為準。</p>
+
+        <h3>普通參數：影印一份給方法</h3>
+        <p>你手上有一張紙寫著 <code>10</code>。普通參數不是把原本那張紙交出去，而是影印一份給方法。</p>
+        <pre><code>你的紙：10
+方法的影本：10
+
+方法把影本改成 100
+
+你的紙：10
+方法的影本：100</code></pre>
+        <div class="memory-line"><span>Call by Value</span><strong>給影本。方法怎麼改自己的影本，都不會改到你手上的原本。</strong></div>
+
+        <h3>ref：把原本那張紙交給方法</h3>
+        <p><code>ref</code> 不再是影印一份，而是直接告訴方法：「原本那張紙就在這裡，你直接改它。」</p>
+        <pre><code>原本的紙：10
+     ↑
+外面的 a 與方法裡的參數都在操作這張紙
+
+方法改成 100
+
+原本的紙：100</code></pre>
+        <div class="memory-line"><span>ref</span><strong>給本人。方法改的就是外面原本那個變數。</strong></div>
+
+        <h3>out：給一張可以原本空白的紙，但一定要寫答案回來</h3>
+        <p><code>out</code> 的重點不是「唯一能把值帶出去」，而是這個變數可以一開始沒有答案，方法負責把答案寫進去。</p>
+        <pre><code>外面的紙：空白
+
+交給方法：請幫我寫答案
+
+方法結束前：一定要寫值
+
+帶回來：100</code></pre>
+        <div class="memory-line"><span>out</span><strong>請你寫答案回來。呼叫前可以沒有值，但方法離開前一定要給值。</strong></div>
+
+        <aside class="callout"><span class="callout-label">為什麼有 return 還需要 out？</span><p>如果只要一個結果，通常直接 <code>return</code> 就好。<code>out</code> 常見於方法還需要用 <code>return</code> 表示其他事情，例如成功或失敗，同時再把實際結果透過 <code>out</code> 帶出去。</p></aside>
+        <pre><code>bool success = int.TryParse("123", out int number);
+
+// success：有沒有成功
+// number：成功後得到的數字</code></pre>
+      </div></section>
+
+      <section class="note-section" id="compare"><span class="section-index">05</span><div>
         <h2>普通參數、ref、out 放在一起比較</h2>
         <dl class="term-list">
           <div><dt>普通參數</dt><dd>傳入值的副本；方法內重新指定參數，不會改到外面的變數。記法：<strong>給影本</strong>。</dd></div>
@@ -123,7 +166,7 @@ SetA(out a);</code></pre>
         <aside class="callout warning"><span class="callout-label">不要混成同一件事</span><p>這堂談的是「參數如何傳入方法」。現在先掌握普通、<code>ref</code>、<code>out</code> 的差異即可，不必把後面類別與 Reference Type 的概念提前攪進來。</p></aside>
       </div></section>
 
-      <section class="note-section" id="raycast"><span class="section-index">05</span><div>
+      <section class="note-section" id="raycast"><span class="section-index">06</span><div>
         <h2>Unity 後面會在哪裡看到 out？</h2>
         <p>老師預告之後講射線碰撞（Raycast）時會再次使用 <code>out</code>。射線撞到物件後，可以把碰撞結果輸出成 Hit 資料，再從中取得碰撞物件、位置 Point 等資訊。</p>
         <pre><code>RaycastHit hit;
