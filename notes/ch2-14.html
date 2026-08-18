@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_14 建構子筆記，整理 C# constructor 的用途、語法特性、參數初始化、new 建立物件，以及預設無參數建構子的規則。">
+  <title>ch2_14 建構子（constructor）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_14</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 26</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_14 建構子（constructor）</h1>
+        <p>前面建立 Weapon 物件後，攻擊力、磨損程度與等級限制都要一個一個設定。這堂用建構子把「建立物件」與「設定初始資料」合在一起，讓物件在 <code>new</code> 出來時就帶著需要的初始狀態。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">CONSTRUCTOR</span><h2 id="lesson-map-title">物件出生時，順便把初始資料設定好</h2><p>建構子會在建立物件時執行。它的名稱必須和類別相同，而且沒有回傳型別；也可以接收參數，把多個欄位一次初始化。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#why"><strong>01</strong><span>為什麼需要建構子<small>不用 new 完再逐項設定</small></span></a>
+          <a href="#syntax"><strong>02</strong><span>建構子語法<small>同名、沒有回傳型別</small></span></a>
+          <a href="#params"><strong>03</strong><span>用參數初始化<small>一次設定三個值</small></span></a>
+          <a href="#new"><strong>04</strong><span>建立物件時傳值<small>new Weapon(...)</small></span></a>
+          <a href="#default"><strong>05</strong><span>無參數建構子<small>為什麼原本的 new Weapon() 會報錯</small></span></a>
+          <a href="#remember"><strong>06</strong><span>五歲版理解<small>出生設定表</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="why"><span class="section-index">01</span><div>
+        <h2>為什麼需要建構子？</h2>
+        <p>老師先拿前面的 Weapon 當例子。假設一把武器有攻擊力、磨損程度、等級限制三個資料，如果每次建立物件後都要再逐項設定：</p>
+        <pre><code>Weapon kingSword = new Weapon();
+
+kingSword.AttackPower = 100;
+kingSword.Wear = 20;
+kingSword.LevelLimit = 90;</code></pre>
+        <p>每建立一個物件就得重複做一輪。建構子的目的，就是在建立物件的同一刻，把這些初始值一起交進去。</p>
+        <pre><code>Weapon kingSword = new Weapon(100, 20, 90);</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>建構子 = 建立物件時，自動執行的一段初始化程式。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="syntax"><span class="section-index">02</span><div>
+        <h2>建構子的兩個最重要特徵</h2>
+        <p>字幕明確強調兩件事：</p>
+        <pre><code>public class Weapon
+{
+    public Weapon()
+    {
+    }
+}</code></pre>
+        <dl class="term-list">
+          <div><dt>名稱和類別完全相同</dt><dd>類別叫 <code>Weapon</code>，建構子也必須叫 <code>Weapon</code>。</dd></div>
+          <div><dt>沒有回傳型別</dt><dd>前面不能寫 <code>void</code>、<code>int</code>、<code>float</code> 等回傳型別。</dd></div>
+        </dl>
+        <aside class="callout warning"><span class="callout-label">不要寫成 void Weapon()</span><p>如果寫成 <code>public void Weapon()</code>，那就不再是建構子，而是一個剛好和類別同名的普通方法。建構子的「沒有回傳型別」是真的什麼都不寫，不是寫 <code>void</code>。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="params"><span class="section-index">03</span><div>
+        <h2>建構子可以接收參數，一次初始化多個欄位</h2>
+        <p>老師接著把攻擊力、磨損程度、等級限制放進建構子的參數中。字幕中的實際變數命名有辨識誤差，以下保留其邏輯：</p>
+        <pre><code>public class Weapon
+{
+    private float _attackPower;
+    private float _wear;
+    private int _levelLimit;
+
+    public Weapon(float attackPower, float wear, int levelLimit)
+    {
+        _attackPower = attackPower;
+        _wear = wear;
+        _levelLimit = levelLimit;
+    }
+}</code></pre>
+        <p>多個參數和一般方法一樣，用逗號分開。傳進來的值會在建構子裡指定給物件自己的欄位。</p>
+        <pre><code>傳入 attackPower
+        ↓
+_attackPower = attackPower;
+
+傳入 wear
+        ↓
+_wear = wear;
+
+傳入 levelLimit
+        ↓
+_levelLimit = levelLimit;</code></pre>
+        <div class="memory-line"><span>初始化</span><strong>不是建立完物件之後再補資料，而是在物件建立的那一刻就把初始資料放進去。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="new"><span class="section-index">04</span><div>
+        <h2>new 的括號，就是把資料交給建構子</h2>
+        <p>當建構子定義成：</p>
+        <pre><code>public Weapon(float attackPower, float wear, int levelLimit)</code></pre>
+        <p>建立物件時就可以直接傳入三個值：</p>
+        <pre><code>Weapon kingSword = new Weapon(100, 20, 90);</code></pre>
+        <p>可以把執行流程想成：</p>
+        <pre><code>new Weapon(100, 20, 90)
+          ↓
+找到 Weapon(float, float, int)
+          ↓
+attackPower = 100
+wear        = 20
+levelLimit  = 90
+          ↓
+把值寫進這個新物件的欄位
+          ↓
+kingSword 建立完成</code></pre>
+        <p>老師最後用等級限制驗證，傳入 <code>90</code> 後，執行時讀出的等級限制就是 <code>90</code>。</p>
+        <div class="memory-line"><span>new 與建構子</span><strong><code>new Weapon(...)</code> 的括號不是裝飾品；裡面的參數會交給對應的建構子。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="default"><span class="section-index">05</span><div>
+        <h2>為什麼加了有參數建構子後，原本的 new Weapon() 會報錯？</h2>
+        <p>老師示範：原本程式可以直接寫：</p>
+        <pre><code>Weapon weapon = new Weapon();</code></pre>
+        <p>但加入有參數建構子後，原本這種沒有傳參數的寫法出現錯誤，因此又補上一個無參數建構子：</p>
+        <pre><code>public Weapon()
+{
+}
+
+public Weapon(float attackPower, float wear, int levelLimit)
+{
+    _attackPower = attackPower;
+    _wear = wear;
+    _levelLimit = levelLimit;
+}</code></pre>
+        <aside class="callout warning"><span class="callout-label">C# 規則校正</span><p>字幕說「所有類別預設會提供一個沒有參數的建構子」，這句要補完整：當你<strong>完全沒有自己宣告任何實例建構子</strong>時，C# 編譯器才會替類別產生預設的無參數建構子。一旦你自己宣告了 <code>Weapon(float, float, int)</code>，編譯器就不會再自動補 <code>Weapon()</code>；如果兩種建立方式都要保留，就必須自己把兩個建構子都寫出來。</p></aside>
+        <p>這種同一個類別有多個建構子的寫法，本質上是讓不同的參數組合對應不同的建立方式。</p>
+        <div class="memory-line"><span>容易踩雷</span><strong>自己寫了任何建構子之後，不要再假設 <code>new 類別()</code> 一定存在。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="remember"><span class="section-index">06</span><div>
+        <h2>五歲版：建構子就是「出生設定表」</h2>
+        <p>把 <code>class Weapon</code> 想成武器工廠的設計圖，而每次 <code>new Weapon(...)</code> 都是在做一把新的武器。</p>
+        <pre><code>Weapon 設計圖
+
+public Weapon(float attackPower, float wear, int levelLimit)
+{
+    ...
+}</code></pre>
+        <p>建構子就像工廠說：</p>
+        <pre><code>你要造一把新武器？
+
+那出生前先填：
+
+攻擊力：100
+磨損：20
+等級限制：90
+
+        ↓
+
+new Weapon(100, 20, 90)
+
+        ↓
+
+一出生就是：
+_attackPower = 100
+_wear = 20
+_levelLimit = 90</code></pre>
+        <p>沒有建構子的初始化思路，常常會變成：</p>
+        <pre><code>先出生
+↓
+再改攻擊力
+↓
+再改磨損
+↓
+再改等級限制</code></pre>
+        <p>有建構子後則是：</p>
+        <pre><code>出生時就把該有的初始資料帶好</code></pre>
+        <div class="memory-line"><span>五歲版結論</span><strong>建構子 = 物件出生時會自動執行的初始化函式。</strong></div>
+        <aside class="callout"><span class="callout-label">和剛才封裝接起來</span><p>封裝在控制「外部之後怎麼改我的資料」；建構子則處理「我剛出生時，資料一開始應該是什麼」。兩個概念正好接在一起：先建立合法的初始狀態，再控制之後的修改入口。</p></aside>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-26-purpose"> 知道建構子用來在建立物件時初始化資料</label>
+        <label><input type="checkbox" data-check="lesson-26-name"> 知道建構子名稱必須和類別名稱相同</label>
+        <label><input type="checkbox" data-check="lesson-26-return"> 知道建構子沒有回傳型別，連 <code>void</code> 都不能寫</label>
+        <label><input type="checkbox" data-check="lesson-26-params"> 能看懂建構子如何接收多個參數並指定給欄位</label>
+        <label><input type="checkbox" data-check="lesson-26-new"> 知道 <code>new Weapon(...)</code> 的參數會傳給對應建構子</label>
+        <label><input type="checkbox" data-check="lesson-26-default"> 知道自行宣告建構子後，編譯器不再自動提供預設無參數建構子</label>
+      </section>
+
+      <nav class="lesson-nav" aria-label="課程前後導覽">
+        <a href="ch2-13.html"><span>上一堂</span><strong>ch2_13 封裝 get 與 set</strong></a>
+        <a href="../course.html"><span>課程目錄</span><strong>回到 C# 語法基礎</strong></a>
+      </nav>
+    </article>
+  </main>
+</body>
+</html>
