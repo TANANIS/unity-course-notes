@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch2_15 結構 struct 筆記，整理 C# value type、reference type、struct 與 class 指派差異、複製行為，以及 Unity Vector3 範例。">
+  <title>ch2_15 結構（struct）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch2_15</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 27</span><span class="complete-badge">已整理</span></div>
+        <h1>ch2_15 結構（struct）</h1>
+        <p>這堂把 <code>struct</code> 和前面學過的 <code>class</code> 放在一起比較。兩者外觀很像，都能放欄位、建構子與其他成員；但最重要的差異，是變數指派時 <code>struct</code> 走「值的複製」，而 <code>class</code> 變數保存的是「參考」。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">STRUCT</span><h2 id="lesson-map-title">看起來像 class，但「=」之後發生的事不一樣</h2><p>老師用一個具有寬度、高度的結構，和前面已建立的 Weapon 類別做對照：struct 指派給另一個變數時會複製一份值；class 變數互相指派時，兩個變數會參考同一個物件。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#difference"><strong>01</strong><span>核心差異<small>Value vs Reference</small></span></a>
+          <a href="#syntax"><strong>02</strong><span>建立 struct<small>欄位與建構子</small></span></a>
+          <a href="#struct-copy"><strong>03</strong><span>struct 指派<small>複製一份值</small></span></a>
+          <a href="#class-reference"><strong>04</strong><span>class 指派<small>共享同一參考</small></span></a>
+          <a href="#analogy"><strong>05</strong><span>地址比喻<small>影印品 vs 同一地址</small></span></a>
+          <a href="#unity"><strong>06</strong><span>Unity 的例子<small>Vector3 是 struct</small></span></a>
+          <a href="#supplement"><strong>07</strong><span>補充理解<small>為什麼 struct 存在</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="difference"><span class="section-index">01</span><div>
+        <h2>struct 與 class 的核心差異</h2>
+        <p>老師一開始就把差異放在「變數裡保存的是什麼」：class 建立出的物件透過 reference（參考）存取；struct 則是 value（值）型別。因此使用等號把一個變數指定給另一個變數時，結果不同。</p>
+        <pre><code>// struct：複製值
+SizeInfo size2 = size1;
+
+// class：複製參考
+Weapon axe2 = axe1;</code></pre>
+        <dl class="term-list">
+          <div><dt>struct</dt><dd>值型別（value type）。指派給另一個變數時，會把目前的值複製過去。</dd></div>
+          <div><dt>class</dt><dd>參考型別（reference type）。指派給另一個變數時，兩個變數會指向同一個物件。</dd></div>
+        </dl>
+        <div class="memory-line"><span>這堂核心</span><strong>struct 的「=」通常得到另一份值；class 的「=」通常得到指向同一物件的另一個參考。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="syntax"><span class="section-index">02</span><div>
+        <h2>struct 的寫法和 class 很接近</h2>
+        <p>字幕中的型別名稱辨識較混亂，老師實際示範的是一個包含「寬度」與「高度」的結構。以下用等價的 <code>SizeInfo</code> 命名整理：</p>
+        <pre><code>public struct SizeInfo
+{
+    public float Width;
+    public float Height;
+
+    public SizeInfo(float width, float height)
+    {
+        Width = width;
+        Height = height;
+    }
+}</code></pre>
+        <p>可以看到，struct 一樣可以有欄位，也可以有建構子。建立時也能使用 <code>new</code> 並傳入參數：</p>
+        <pre><code>SizeInfo size1 = new SizeInfo(50, 60);</code></pre>
+        <aside class="callout"><span class="callout-label">先別被外觀騙了</span><p>struct 和 class 的語法表面非常接近；這堂真正要看的不是大括號長什麼樣，而是它們在「複製、傳遞、修改」時的語意不同。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="struct-copy"><span class="section-index">03</span><div>
+        <h2>struct 指派：size2 取得 size1 的一份複製</h2>
+        <p>老師先建立第一個結構，再用等號指定給第二個變數：</p>
+        <pre><code>SizeInfo size1 = new SizeInfo(50, 60);
+SizeInfo size2 = size1;</code></pre>
+        <p>接著只修改 <code>size2</code>：</p>
+        <pre><code>size2.Height = 9877;</code></pre>
+        <p>因為 <code>size2 = size1</code> 時複製的是值，所以修改 size2 不會回頭改掉 size1：</p>
+        <pre><code>size1.Height  // 仍然是 60
+size2.Height  // 9877</code></pre>
+        <pre><code>size1
+┌─────────────┐
+│ Width  = 50│
+│ Height = 60│
+└─────────────┘
+
+size2 = size1
+        ↓ 複製一份
+
+size2
+┌───────────────┐
+│ Width  = 50  │
+│ Height = 60  │
+└───────────────┘
+
+size2.Height = 9877
+
+size1.Height = 60      // 不受影響
+size2.Height = 9877</code></pre>
+        <div class="memory-line"><span>struct 指派</span><strong>拿到的是一份自己的值，所以之後改副本，不會因為這次指派而自動改到原本那份。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="class-reference"><span class="section-index">04</span><div>
+        <h2>class 指派：兩個變數參考同一個物件</h2>
+        <p>老師再用前面建立過的 Weapon 類別做相同測試。以下保留課堂邏輯，用較乾淨的命名表示：</p>
+        <pre><code>Weapon axe1 = new Weapon(100, 3, 52);
+Weapon axe2 = axe1;</code></pre>
+        <p>這次 <code>axe2 = axe1</code> 並沒有建立第二把獨立武器，而是把同一個物件的參考交給 axe2。於是：</p>
+        <pre><code>axe2.SetAttackPower(6512);</code></pre>
+        <p>再從 <code>axe1</code> 讀攻擊力時，也會看到已經變成 <code>6512</code>。原因不是 axe2 神祕地同步資料，而是兩個變數本來就在操作同一個 Weapon 物件。</p>
+        <pre><code>axe1 ─────┐
+          ├──→ 同一個 Weapon 物件
+axe2 ─────┘
+
+axe2 修改物件
+        ↓
+axe1 再去看同一個物件
+        ↓
+當然看到修改後的結果</code></pre>
+        <div class="memory-line"><span>class 指派</span><strong>複製的是「怎麼找到那個物件」的參考，不是另外複製一整個物件。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="analogy"><span class="section-index">05</span><div>
+        <h2>五歲版：struct 是影印一張，class 是抄同一個地址</h2>
+        <h3>struct：影印資料</h3>
+        <pre><code>size1 有一張紙：
+「寬 50、高 60」
+
+size2 = size1
+        ↓
+影印一張給 size2
+
+size1：寬 50、高 60
+size2：寬 50、高 60
+
+你在 size2 那張紙上把高度改成 9877，
+size1 手上的原稿不會自己跟著變。</code></pre>
+
+        <h3>class：兩個人拿到同一間房子的地址</h3>
+        <pre><code>axe1：地址 → 武器 A
+axe2 = axe1
+axe2：地址 → 武器 A
+
+兩張紙寫的是同一個地址。
+
+axe2 跑去把武器 A 的攻擊力改掉
+        ↓
+axe1 之後照自己的地址去找
+        ↓
+找到的還是同一把已被修改的武器 A</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>struct = 複製內容；class = 複製地址。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="unity"><span class="section-index">06</span><div>
+        <h2>Unity 裡很常見的 struct：Vector3</h2>
+        <p>老師最後提到 Unity 的 Vector 類型，指出像位置資料使用的是結構。這也正是你在 Unity 裡很常碰到的例子：</p>
+        <pre><code>Vector3 positionA = new Vector3(1, 2, 3);
+Vector3 positionB = positionA;
+
+positionB.x = 99;</code></pre>
+        <p>從這堂課的角度理解：positionB 拿到的是 positionA 當下值的一份複製，所以修改 positionB 的 x，不等於修改 positionA。</p>
+        <aside class="callout"><span class="callout-label">看到型別先確認</span><p>Unity API 裡 class 和 struct 都很多，使用方式又常常很像。老師這堂真正提醒你的，是不要只看「點號能不能用」，而要知道你現在拿到的是值型別還是參考型別。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="supplement"><span class="section-index">07</span><div>
+        <h2>補充理解：為什麼需要 struct？</h2>
+        <p>這一節是課後補充，不是老師字幕原話。老師最後把選擇方式簡化成：「不希望複製後互相影響就用 struct，希望修改能影響原物件就用 class。」這能幫助第一次理解值與參考，但<strong>不能直接當成完整的設計規則</strong>。</p>
+
+        <h3>真正要問的是：這個東西是「一個值」，還是「一個有身分的物件」？</h3>
+        <p>例如位置 <code>(10, 20, 30)</code>，我們通常關心的是這三個數字本身。兩份內容一樣的位置，可以自然地理解成同一個「值」。這種思考很適合 value semantics，也就是 struct 的世界。</p>
+        <p>但像一名玩家、一把正在被使用的武器、一個敵人，通常除了資料以外，還有「這是哪一個實體」的身分概念。多個地方拿到同一個玩家時，我們通常希望大家操作的真的是同一名玩家，而不是各自拿一份玩家副本。這比較符合 class 的 reference semantics。</p>
+
+        <pre><code>struct 比較像：
+「這個值是多少？」
+
+class 比較像：
+「這是哪一個東西？」</code></pre>
+
+        <h3>所以 struct 不是「防止原本被改」的特殊開關</h3>
+        <p>原本不受副本修改影響，是值型別複製語意帶來的結果；真正的設計理由通常是：這個型別本來就適合被當成一個獨立的值來使用。</p>
+        <div class="memory-line"><span>Why</span><strong>struct 存在，是為了表達「值本身」的語意；class 則更適合表達具有身分、可能被多處共同操作的物件。</strong></div>
+
+        <h3>一個重要的小陷阱：struct 的複製不等於萬物深度複製</h3>
+        <p>初學階段先記住「struct 指派會複製值」沒有問題，但更精確地說，是把 struct 裡的各欄位值複製過去。如果 struct 裡某個欄位本身是參考型別，那個欄位保存的參考也只是被複製，所以兩份 struct 仍可能透過該欄位指向同一個外部物件。</p>
+        <aside class="callout warning"><span class="callout-label">不要過度延伸</span><p>因此「struct = 完全獨立的深拷貝」是錯的。這堂先掌握 struct 是值型別、class 是參考型別即可；日後遇到巢狀型別與集合時再往下拆。</p></aside>
+
+        <h3>快速判斷</h3>
+        <pre><code>如果你比較自然地問：
+「這個值是多少？」
+→ struct 值語意可能很適合
+
+如果你比較自然地問：
+「這是哪一個實體？」
+→ class 參考語意通常更自然</code></pre>
+        <div class="memory-line"><span>補充結論</span><strong>不要背「想連動就 class、不想連動就 struct」；先想你設計的是一個值，還是一個有身分、會被共享操作的物件。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-27-value-type"> 知道 <code>struct</code> 是值型別，變數指派時會複製目前的值</label>
+        <label><input type="checkbox" data-check="lesson-27-reference-type"> 知道 <code>class</code> 是參考型別，變數指派後可共同指向同一物件</label>
+        <label><input type="checkbox" data-check="lesson-27-syntax"> 能看懂 struct 裡的欄位與建構子</label>
+        <label><input type="checkbox" data-check="lesson-27-copy-test"> 能解釋為什麼修改 size2 不會改到 size1</label>
+        <label><input type="checkbox" data-check="lesson-27-reference-test"> 能解釋為什麼透過 axe2 修改後，axe1 也會看到同一物件的新值</label>
+        <label><input type="checkbox" data-check="lesson-27-vector3"> 知道 Unity 的 Vector3 是常見 struct 範例</label>
+        <label><input type="checkbox" data-check="lesson-27-why"> 能用「值 vs 有身分的物件」理解 struct 與 class 的設計差異</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-14.html"><small>上一堂</small><strong>← ch2_14 建構子（constructor）</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
