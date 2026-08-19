@@ -55,7 +55,7 @@
         {"id":"ch2-14","courseLessonNumber":26,"title":"建構子（constructor）","duration":"4:40","url":"notes/ch2-14.html","keywords":["建構子","constructor","new","初始化","參數","Weapon","無參數建構子","預設建構子"]},
         {"id":"ch2-15","courseLessonNumber":27,"title":"結構（struct）","duration":"14:31","url":"notes/ch2-15.html","keywords":["結構","struct","value type","reference type","值型別","參考型別","複製","class","Vector3"]},
         {"id":"ch2-16","courseLessonNumber":28,"title":"命名空間（namespace）","duration":"4:54","url":"notes/ch2-16.html","keywords":["命名空間","namespace","using","同名類別","完整名稱","類別衝突"]},
-        {"id":"ch2-17","courseLessonNumber":29,"title":"靜態與非靜態"}
+        {"id":"ch2-17","courseLessonNumber":29,"title":"靜態與非靜態","url":"notes/ch2-17.html","keywords":["static","靜態","非靜態","類別成員","物件成員","靜態方法","場景資料"]}
       ]
     },
     {"id":"ch3","number":4,"title":"Unity 常用類別與特性","lessonCount":28,"duration":"2 小時 23 分鐘"},
