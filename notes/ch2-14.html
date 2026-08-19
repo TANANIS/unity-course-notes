@@ -34,6 +34,7 @@
           <a href="#new"><strong>04</strong><span>建立物件時傳值<small>new Weapon(...)</small></span></a>
           <a href="#default"><strong>05</strong><span>無參數建構子<small>為什麼原本的 new Weapon() 會報錯</small></span></a>
           <a href="#remember"><strong>06</strong><span>五歲版理解<small>出生設定表</small></span></a>
+          <a href="#supplement"><strong>07</strong><span>補充理解<small>必要資料與延後賦值</small></span></a>
         </nav>
       </section>
 
@@ -181,6 +182,52 @@ _levelLimit = 90</code></pre>
         <aside class="callout"><span class="callout-label">和剛才封裝接起來</span><p>封裝在控制「外部之後怎麼改我的資料」；建構子則處理「我剛出生時，資料一開始應該是什麼」。兩個概念正好接在一起：先建立合法的初始狀態，再控制之後的修改入口。</p></aside>
       </div></section>
 
+      <section class="note-section" id="supplement"><span class="section-index">07</span><div>
+        <h2>補充理解：為什麼一定要「出生時」就給值？</h2>
+        <p>這一節是課後補充理解，不是老師字幕原話。先把最重要的一點講清楚：<strong>不是所有資料都一定要在建構子裡給，也不是所有物件都必須使用有參數建構子。</strong></p>
+
+        <p>如果一個物件允許先建立，再慢慢設定資料，那這種做法完全可以：</p>
+        <pre><code>Weapon sword = new Weapon();
+
+sword.SetAttackPower(100);
+sword.SetWear(20);
+sword.SetLevelLimit(90);</code></pre>
+        <p>真正需要思考的是：在這些設定完成以前，<code>sword</code> 是否已經算是一個可以正常使用的 Weapon？</p>
+
+        <h3>建構子真正解決的是「必要資料不能被忘記」</h3>
+        <p>假設 Enemy 要正常存在，至少必須有 HP 與攻擊力。如果允許先建立再設定：</p>
+        <pre><code>Enemy slime = new Enemy();
+slime.SetHp(100);
+// 忘了設定 Damage</code></pre>
+        <p>程式可能仍然能執行，但這隻 Enemy 已經處在不完整或不合理的狀態。問題不是「工程師之後不會賦值」，而是這套設計把正確性建立在「希望所有人每次都記得做完所有步驟」上。</p>
+
+        <p>如果改成：</p>
+        <pre><code>Enemy slime = new Enemy(100, 20);</code></pre>
+        <p>那麼建立 Enemy 的人若漏掉必要資料，建立物件這一步就無法完成，而不是讓一個半成品物件先存在。</p>
+        <div class="memory-line"><span>核心價值</span><strong>建構子可以把「記得初始化必要資料」變成「建立物件時就必須提供必要資料」。</strong></div>
+
+        <h3>不是所有值都該塞進建構子</h3>
+        <p>可以先把資料粗分成兩類：</p>
+        <dl class="term-list">
+          <div><dt>必要的初始資料</dt><dd>沒有它，物件概念上就不完整。例如 Enemy 必須具備的初始生命值與攻擊力、帳號建立時必須有的識別資料。這類資料適合要求在建立物件時就提供。</dd></div>
+          <div><dt>可以之後才出現的狀態</dt><dd>物件出生後才會變動或新增的資料，例如角色目前的 Buff、是否中毒、武器後續磨損、最後登入時間。這些通常不需要全部塞進建構子。</dd></div>
+        </dl>
+
+        <p>因此建構子不是為了取代所有賦值，也不是規定「物件所有欄位一出生就必須有自訂值」。它比較像是在回答一個設計問題：</p>
+        <pre><code>建立這個物件之前，
+有哪些條件一定要先成立？</code></pre>
+
+        <p>可以用一個簡單問題判斷：</p>
+        <pre><code>Weapon sword = new Weapon();
+
+什麼都不再設定。
+這個 sword 現在能不能被正常使用？</code></pre>
+        <p>如果答案是「可以，預設狀態本來就合法」，那無參數建構子完全合理。如果答案是「不行，至少必須知道某些資料」，那就可以考慮把那些必要資料放進建構子。</p>
+
+        <aside class="callout"><span class="callout-label">Why，而不只是 How</span><p>語法只告訴你 <code>public Weapon(...)</code> 怎麼寫；真正的設計理由是：讓類別自己規定「什麼樣的初始狀態才允許成為一個可用物件」，而不是把正確性全部交給外部程式之後記得補齊。</p></aside>
+        <div class="memory-line"><span>補充結論</span><strong>建構子不是要求所有資料出生就給，而是可以用來保證「物件成立所必需的資料」在出生時就已經存在。</strong></div>
+      </div></section>
+
       <section class="checklist compact-checklist"><h2>完成檢查</h2>
         <label><input type="checkbox" data-check="lesson-26-purpose"> 知道建構子用來在建立物件時初始化資料</label>
         <label><input type="checkbox" data-check="lesson-26-name"> 知道建構子名稱必須和類別名稱相同</label>
@@ -188,6 +235,7 @@ _levelLimit = 90</code></pre>
         <label><input type="checkbox" data-check="lesson-26-params"> 能看懂建構子如何接收多個參數並指定給欄位</label>
         <label><input type="checkbox" data-check="lesson-26-new"> 知道 <code>new Weapon(...)</code> 的參數會傳給對應建構子</label>
         <label><input type="checkbox" data-check="lesson-26-default"> 知道自行宣告建構子後，編譯器不再自動提供預設無參數建構子</label>
+        <label><input type="checkbox" data-check="lesson-26-why"> 知道建構子不是要求所有欄位出生就賦值，而是可用來保證必要初始資料不會被漏掉</label>
       </section>
 
       <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-13.html"><small>上一堂</small><strong>← ch2_13 封裝 get 與 set</strong></a><a class="next" href="../course.html"><small>完成</small><strong>返回課程目錄</strong></a></nav>
