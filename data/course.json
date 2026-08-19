@@ -53,7 +53,7 @@
         {"id":"ch2-12","courseLessonNumber":24,"title":"封裝","duration":"6:49","url":"notes/ch2-12.html","keywords":["封裝","encapsulation","private","public","Get","Set","getter","setter","資料驗證","攻擊力"]},
         {"id":"ch2-13","courseLessonNumber":25,"title":"封裝 get 與 set","duration":"8:11","url":"notes/ch2-13.html","keywords":["封裝","Property","get","set","value","private","資料驗證","等級限制"]},
         {"id":"ch2-14","courseLessonNumber":26,"title":"建構子（constructor）","duration":"4:40","url":"notes/ch2-14.html","keywords":["建構子","constructor","new","初始化","參數","Weapon","無參數建構子","預設建構子"]},
-        {"id":"ch2-15","courseLessonNumber":27,"title":"結構（struct）","duration":"14:31"},
+        {"id":"ch2-15","courseLessonNumber":27,"title":"結構（struct）","duration":"14:31","url":"notes/ch2-15.html","keywords":["結構","struct","value type","reference type","值型別","參考型別","複製","class","Vector3"]},
         {"id":"ch2-16","courseLessonNumber":28,"title":"命名空間（namespace）","duration":"4:54"},
         {"id":"ch2-17","courseLessonNumber":29,"title":"靜態與非靜態"}
       ]
