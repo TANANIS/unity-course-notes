@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_2 生命週期程式說明筆記，使用 Debug.Log 實際觀察 Awake、OnEnable、Start、FixedUpdate、Update、OnDisable 與 OnDestroy 的呼叫時機。">
+  <title>ch3_2 Unity3D 生命週期程式說明｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_2</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 31</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_2 Unity3D 生命週期程式說明</h1>
+        <p>這堂沒有新增新的生命週期事件，而是用一個測試腳本搭配 <code>Debug.Log</code>，實際驗證上一堂的生命週期呼叫順序，以及 Component 被移除時會發生什麼事。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">LIFECYCLE · DEBUG.LOG</span><h2 id="lesson-map-title">把上一堂的流程圖真的跑一次</h2><p>將測試腳本掛到場景物件，按下 Play，再從 Console 觀察初始化、持續更新與銷毀階段的事件。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#test"><strong>01</strong><span>測試腳本<small>每個事件印出名稱</small></span></a>
+          <a href="#play"><strong>02</strong><span>按下 Play<small>觀察初始化與更新</small></span></a>
+          <a href="#destroy"><strong>03</strong><span>移除 Component<small>OnDisable → OnDestroy</small></span></a>
+          <a href="#correction"><strong>04</strong><span>新版 Unity 校正<small>DestroyObject → Destroy</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="test"><span class="section-index">01</span><div>
+        <h2>測試方式：每個生命週期事件都印到 Console</h2>
+        <p>老師建立 <code>TestLifeCycle</code>，讓各個生命週期方法只做一件事：用 <code>Debug.Log</code> 印出自己被呼叫了。</p>
+        <pre><code>public class TestLifeCycle : MonoBehaviour
+{
+    public bool isDestroy;
+
+    void Awake()
+    {
+        Debug.Log("Awake");
+    }
+
+    void OnEnable()
+    {
+        Debug.Log("OnEnable");
+    }
+
+    void Start()
+    {
+        Debug.Log("Start");
+    }
+
+    void Update()
+    {
+        Debug.Log("Update");
+
+        if (isDestroy)
+        {
+            DestroyObject(this);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        Debug.Log("FixedUpdate");
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("OnDisable");
+    }
+
+    void OnDestroy()
+    {
+        Debug.Log("OnDestroy");
+    }
+}</code></pre>
+        <div class="memory-line"><span>這堂的方法</span><strong>不是再背一次流程圖，而是用 Console 直接看 Unity 何時呼叫每個事件。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="play"><span class="section-index">02</span><div>
+        <h2>按下 Play：先初始化，再進入持續更新</h2>
+        <p>老師把腳本拖到場景物件上並按下 Play，Console 先看到初始化事件，之後才開始持續出現更新事件。</p>
+        <pre><code>Awake
+↓
+OnEnable
+↓
+Start
+↓
+FixedUpdate / Update 持續被呼叫</code></pre>
+        <aside class="callout"><span class="callout-label">不要過度解讀 Console 排列</span><p><code>FixedUpdate</code> 和 <code>Update</code> 並不是永遠一比一交替。前者跟固定物理時間步走，後者跟 frame 更新走；這堂只是在實際觀察兩者都會持續執行。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="destroy"><span class="section-index">03</span><div>
+        <h2>勾選 isDestroy：觀察 Component 結束生命週期</h2>
+        <p>腳本公開了一個 <code>isDestroy</code> 布林值。老師在 Inspector 勾選後，<code>Update()</code> 裡的條件成立並移除目前這個 Script Component。</p>
+        <pre><code>if (isDestroy)
+{
+    DestroyObject(this);
+}</code></pre>
+        <p>接著可以從 Console 看到：</p>
+        <pre><code>OnDisable
+↓
+OnDestroy</code></pre>
+        <p>這驗證了上一堂的概念：Component 離開啟用狀態時先進入 <code>OnDisable()</code>，真正銷毀時再進入 <code>OnDestroy()</code>。</p>
+        <div class="memory-line"><span>這堂真正看到的事</span><strong>生命週期方法不是我們自己排著呼叫，而是 Unity 在狀態改變時主動呼叫。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="correction"><span class="section-index">04</span><div>
+        <h2>新版 Unity 校正：不要再使用 DestroyObject</h2>
+        <p>課程使用的是舊寫法 <code>DestroyObject(this)</code>。現在直接使用 <code>Destroy</code>：</p>
+        <pre><code>Destroy(this);       // 只移除目前這個 Component
+Destroy(gameObject); // 銷毀整個 GameObject</code></pre>
+        <p>這裡的 <code>this</code> 指目前這個 <code>TestLifeCycle</code> Component，不是整個 GameObject。這個差異比舊 API 名稱本身更值得記。</p>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-31-log"> 知道可以用 Debug.Log 實際觀察生命週期事件</label>
+        <label><input type="checkbox" data-check="lesson-31-order"> 知道 Play 後會先初始化，再進入持續更新</label>
+        <label><input type="checkbox" data-check="lesson-31-destroy"> 知道 Component 被移除時會經過 OnDisable 與 OnDestroy</label>
+        <label><input type="checkbox" data-check="lesson-31-api"> 知道現代 Unity 使用 Destroy(this)，以及它與 Destroy(gameObject) 的差別</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-1.html"><small>上一堂</small><strong>← ch3_1 Unity3D 生命週期介紹</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_3 Vector_1（向量類介紹） →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
