@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_8 Time 程式說明2筆記，整理 FPS、Time.deltaTime、Application.targetFrameRate、VSync、Update 與 FixedUpdate 的時間差異。">
+  <title>ch3_8 Time_程式說明2｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_8</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 37</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_8 Time_程式說明2</h1>
+        <p>這堂把 <code>Time.deltaTime</code> 和 FPS 正式接起來，並比較 <code>Update()</code> 與 <code>FixedUpdate()</code> 的時間特性。重點不是背 0.033 或 0.02，而是理解「每幀執行」怎麼換算成「每秒多少」。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">FPS · DELTATIME · FIXEDUPDATE</span><h2 id="lesson-map-title">FPS 告訴你一秒幾幀，deltaTime 告訴你這一幀花幾秒</h2><p>FPS 越高，每一幀能分到的時間越短；FPS 越低，每一幀經過的時間越長。<code>Time.deltaTime</code> 就是把每幀程式換算成每秒速度的關鍵。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#fps"><strong>01</strong><span>FPS 與 deltaTime<small>互為時間尺度</small></span></a>
+          <a href="#target"><strong>02</strong><span>30 FPS 測試<small>targetFrameRate + VSync</small></span></a>
+          <a href="#update"><strong>03</strong><span>Update<small>每幀時間會波動</small></span></a>
+          <a href="#fixed"><strong>04</strong><span>FixedUpdate<small>固定時間步長</small></span></a>
+          <a href="#speed"><strong>05</strong><span>速度 × deltaTime<small>每秒轉成本幀</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="fps"><span class="section-index">01</span><div>
+        <h2>FPS 與 deltaTime：一秒幾幀 vs. 一幀幾秒</h2>
+        <p>老師先只輸出 <code>Update()</code> 裡的 <code>Time.deltaTime</code>，可以看到數值會上下波動；同時觀察 FPS，也會發現 FPS 本身並不是完全固定。</p>
+        <pre><code>FPS
+= 每秒跑幾個 Frame
+
+deltaTime
+= 上一幀到這一幀經過幾秒</code></pre>
+        <p>理想情況下可以用下面的關係建立直覺：</p>
+        <pre><code>30 FPS  → 1 / 30  ≈ 0.0333 秒 / 幀
+60 FPS  → 1 / 60  ≈ 0.0167 秒 / 幀
+120 FPS → 1 / 120 ≈ 0.0083 秒 / 幀</code></pre>
+        <div class="memory-line"><span>方向關係</span><strong>FPS 越高 → deltaTime 越小；FPS 越低 → deltaTime 越大。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="target"><span class="section-index">02</span><div>
+        <h2>老師的 30 FPS 測試設定：先關 VSync，再設 targetFrameRate</h2>
+        <p>為了讓 deltaTime 比較容易觀察，老師把目標 FPS 設為 30：</p>
+        <pre><code>void Awake()
+{
+    Application.targetFrameRate = 30;
+}</code></pre>
+        <p>講義另外要求先到 Quality 設定把 VSync 關掉：</p>
+        <pre><code>Edit
+→ Project Settings
+→ Quality
+→ Other
+→ VSync Count
+→ Don't Sync</code></pre>
+        <p>這樣測試時 FPS 才會比較接近程式指定的 30，<code>Time.deltaTime</code> 也比較容易看到約 <code>0.033</code> 的結果。</p>
+        <aside class="callout"><span class="callout-label">教學測試，不是硬保證</span><p><code>Application.targetFrameRate = 30</code> 是設定目標幀率，不代表每一幀都會精確等於 1/30 秒。實際 FPS 還是可能有些波動。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="update"><span class="section-index">03</span><div>
+        <h2>Update：跟著畫面 Frame 跑，所以 deltaTime 會波動</h2>
+        <p>即使目標 FPS 設成 30，實際每一幀仍可能略快或略慢，因此 Update 裡的 deltaTime 不會像數學題一樣永遠固定。</p>
+        <pre><code>void Update()
+{
+    Debug.Log("Update DeltaTime:" + Time.deltaTime);
+}</code></pre>
+        <pre><code>可能看到：
+0.031
+0.034
+0.033
+0.036
+...</code></pre>
+        <p>所以 <code>Update()</code> 的心智模型是：每個畫面更新一次，但每兩幀之間實際經過多久並不保證完全相同。</p>
+        <div class="memory-line"><span>Update</span><strong>Frame-based：每幀執行，但每幀時間可能不同。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="fixed"><span class="section-index">04</span><div>
+        <h2>FixedUpdate：固定時間步長，通常用於物理</h2>
+        <p>老師接著只觀察 <code>FixedUpdate()</code> 裡的時間，會看到數值相對固定。課程測試看到的重點是約 <code>0.02</code> 秒。</p>
+        <pre><code>void FixedUpdate()
+{
+    Debug.Log("FixedUpdate DeltaTime:" + Time.deltaTime);
+}</code></pre>
+        <pre><code>Update：
+0.031
+0.034
+0.033
+...
+
+FixedUpdate：
+0.02
+0.02
+0.02
+...</code></pre>
+        <p>因此可以接回前面的生命週期：</p>
+        <pre><code>Update
+→ 跟畫面 frame 走
+→ 時間間隔會波動
+
+FixedUpdate
+→ 跟固定物理時間步走
+→ 時間間隔固定</code></pre>
+        <div class="memory-line"><span>FixedUpdate</span><strong>不是「每一幀固定一次」，而是按照固定的物理時間節奏更新。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="speed"><span class="section-index">05</span><div>
+        <h2>speed × deltaTime：把「每秒多少」換成本幀該做多少</h2>
+        <p>這堂真正會一路用下去的公式不是 FPS，而是：</p>
+        <pre><code>本幀距離 = 每秒速度 × Time.deltaTime</code></pre>
+        <p>例如想讓物件每秒往前 20 個單位：</p>
+        <pre><code>transform.position +=
+    Vector3.forward * 20f * Time.deltaTime;</code></pre>
+        <p>30 FPS 時，每幀約走：</p>
+        <pre><code>20 × 0.0333 ≈ 0.666</code></pre>
+        <p>60 FPS 時，每幀約走：</p>
+        <pre><code>20 × 0.0167 ≈ 0.333</code></pre>
+        <p>雖然每幀走的距離不同，但一秒累積起來都大約是 20。這就是 deltaTime 的核心用途。</p>
+        <aside class="callout"><span class="callout-label">最重要的錯誤對照</span><p><code>position += 20;</code> 是「每幀加 20」；<code>position += 20 * Time.deltaTime;</code> 才是「每秒加 20」。不要讓玩家因為買了高刷新率螢幕就順便得到移速外掛。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>deltaTime 是「每秒」與「每幀」之間的換算器。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-37-fps"> 能說明 FPS 與 deltaTime 的關係</label>
+        <label><input type="checkbox" data-check="lesson-37-30fps"> 知道老師為何關 VSync 並設定 targetFrameRate = 30</label>
+        <label><input type="checkbox" data-check="lesson-37-update"> 知道 Update 的 deltaTime 會隨 frame 時間波動</label>
+        <label><input type="checkbox" data-check="lesson-37-fixed"> 知道 FixedUpdate 使用固定時間步長</label>
+        <label><input type="checkbox" data-check="lesson-37-speed"> 能解釋 speed × Time.deltaTime 為什麼代表本幀距離</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-7.html"><small>上一堂</small><strong>← ch3_7 Time_程式說明1</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_9 RigidbodyAnComponent_1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
