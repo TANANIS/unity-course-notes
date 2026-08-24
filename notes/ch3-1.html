@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_1 生命週期介紹筆記，整理 Awake、OnEnable、Start、FixedUpdate、Update、LateUpdate、OnDisable 與 OnDestroy 的用途、順序與新版 Unity 校正。">
+  <title>ch3_1 Unity3D 生命週期介紹｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_1</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 30</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_1 Unity3D 生命週期介紹</h1>
+        <p>Unity 不會把 <code>MonoBehaviour</code> 當成普通 C# 程式從第一行一路跑到底，而是在物件生命中的特定時機，自動呼叫對應的事件函式。這堂先建立「什麼時候該做什麼事」的時間軸。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">MONOBEHAVIOUR · LIFECYCLE</span><h2 id="lesson-map-title">重點不是背函式，而是把程式放到正確的時間點</h2><p>老師先把遊戲概括成「開始 → 持續運行 → 結束」，再對應到 Unity 腳本的初始化、每幀更新、物理更新，以及停用與銷毀。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#overview"><strong>01</strong><span>生命週期總覽<small>開始、運行、結束</small></span></a>
+          <a href="#startup"><strong>02</strong><span>初始化階段<small>Awake / OnEnable / Start</small></span></a>
+          <a href="#update-loop"><strong>03</strong><span>更新階段<small>Fixed / Update / Late</small></span></a>
+          <a href="#shutdown"><strong>04</strong><span>停用與銷毀<small>OnDisable / OnDestroy</small></span></a>
+          <a href="#correction"><strong>05</strong><span>新版 Unity 校正<small>別把流程圖背成死順序</small></span></a>
+          <a href="#remember"><strong>06</strong><span>一句話分類<small>哪段程式該放哪裡</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="overview"><span class="section-index">01</span><div>
+        <h2>生命週期：Unity 在不同階段自動呼叫不同函式</h2>
+        <p>老師用遊戲本身來比喻：先開始、在中間持續運作，最後結束。Unity 的腳本也有類似流程，因此我們可以把不同工作放進不同事件函式。</p>
+        <pre><code>建立 / 啟用
+Awake()
+   ↓
+OnEnable()
+   ↓
+Start()
+
+持續運行
+FixedUpdate()   // 物理時間步
+Update()        // 每個畫面的主要邏輯
+LateUpdate()    // Update 後的處理
+
+停用 / 結束
+OnDisable()
+   ↓
+OnDestroy()     // 物件真正被銷毀時</code></pre>
+        <div class="memory-line"><span>生命週期的用途</span><strong>不是 Unity 幫你「排序程式碼」，而是 Unity 在不同時間點主動通知你的腳本：現在該做這類事情了。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="startup"><span class="section-index">02</span><div>
+        <h2>初始化：Awake → OnEnable → Start</h2>
+        <dl class="term-list">
+          <div><dt>Awake()</dt><dd>物件實例建立後的早期初始化。老師的投影片把它用在初始化變數、取得需要的元件；同一個物件上會早於 Start。</dd></div>
+          <div><dt>OnEnable()</dt><dd>物件 / Component 進入啟用狀態時呼叫。和 OnDisable 成對看待，因此一個物件生命中可能反覆呼叫多次。</dd></div>
+          <div><dt>Start()</dt><dd>腳本處於啟用狀態後，在第一次 Update 之前呼叫一次。適合依賴其他初始化已完成後才開始的工作。</dd></div>
+        </dl>
+        <pre><code>void Awake()
+{
+    // 早期初始化、抓 Component
+}
+
+void OnEnable()
+{
+    // 每次啟用時要做的事
+}
+
+void Start()
+{
+    // 第一次正式開始前的初始化
+}</code></pre>
+        <div class="memory-line"><span>先這樣記</span><strong>Awake = 我出生了；OnEnable = 我上線了；Start = 我要開始工作了。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="update-loop"><span class="section-index">03</span><div>
+        <h2>持續運行：FixedUpdate、Update、LateUpdate 各有工作</h2>
+        <h3>FixedUpdate()：固定時間步，主要給物理</h3>
+        <p>老師將 Rigidbody 移動等物理相關工作放在 <code>FixedUpdate()</code>。它依照固定的物理時間間隔運作，不是單純「每個畫面跑一次」。</p>
+        <pre><code>void FixedUpdate()
+{
+    // Rigidbody、施力等物理處理
+}</code></pre>
+
+        <h3>Update()：每個 frame 的主要遊戲邏輯</h3>
+        <p><code>Update()</code> 是最常見的每幀更新入口，移動、輸入判斷、一般遊戲邏輯常在這裡處理。不同 frame 之間經過的時間可能不同，因此和速度有關的計算通常會搭配 <code>Time.deltaTime</code>。</p>
+        <pre><code>void Update()
+{
+    transform.position += Vector3.forward * speed * Time.deltaTime;
+}</code></pre>
+
+        <h3>LateUpdate()：等 Update 做完，再處理追隨</h3>
+        <p>老師舉的典型例子是攝影機跟隨：先讓角色在 <code>Update()</code> 完成移動，再由攝影機在 <code>LateUpdate()</code> 跟上，避免攝影機拿到角色移動前的位置。</p>
+        <pre><code>void LateUpdate()
+{
+    // 例如：攝影機追隨角色
+}</code></pre>
+        <div class="memory-line"><span>三個 Update</span><strong>FixedUpdate 看物理時鐘；Update 看畫面更新；LateUpdate 等 Update 做完再收尾。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="shutdown"><span class="section-index">04</span><div>
+        <h2>OnDisable 與 OnDestroy 不要混在一起</h2>
+        <p>老師投影片在 OnEnable 說明中提到它會和 <code>OnDisable()</code> 一起使用；課堂流程最後則介紹 <code>OnDestroy()</code>。這兩個代表的事情不同。</p>
+        <pre><code>gameObject.SetActive(false);
+// → 停用，不代表物件已被銷毀
+// → OnDisable()
+
+Destroy(gameObject);
+// → 物件進入銷毀流程
+// → OnDestroy()</code></pre>
+        <dl class="term-list">
+          <div><dt>OnDisable()</dt><dd>物件或腳本從啟用狀態離開時呼叫，之後仍可能再次 OnEnable。</dd></div>
+          <div><dt>OnDestroy()</dt><dd>物件被真正銷毀時，用來做最後的清理工作。</dd></div>
+        </dl>
+        <div class="memory-line"><span>差別</span><strong>Disable 是「先下線」；Destroy 才是「這個物件要沒了」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="correction"><span class="section-index">05</span><div>
+        <h2>新版 Unity 校正：核心沒變，但流程圖不能背成死循環</h2>
+        <p>這堂的核心生命週期在目前 Unity 版本仍然成立。官方現在仍描述同一物件的初始化順序為 <code>Awake → OnEnable → Start</code>，而 <code>LateUpdate</code> 仍在該幀的 <code>Update</code> 之後。</p>
+        <aside class="callout"><span class="callout-label">最重要的校正</span><p><strong>不要把 FixedUpdate → Update → LateUpdate 理解成每一幀固定各跑一次。</strong> <code>FixedUpdate</code> 跟物理的 Fixed Timestep 走，<code>Update</code> 跟渲染 frame 走；兩個時鐘不是一對一。</p></aside>
+        <pre><code>// 例如固定物理時間為 0.02 秒：大約 50 次 / 秒
+// 如果畫面是 100 FPS：Update 約 100 次 / 秒，FixedUpdate 約 50 次 / 秒
+// 如果畫面只有 25 FPS：一個渲染 frame 間可能需要補跑多次 FixedUpdate</code></pre>
+        <p>另外，只能安全依賴「同一個物件」上的 <code>Awake</code> 早於 <code>OnEnable</code>。不同 GameObject 之間的 Awake / OnEnable 誰先誰後，不應拿來當程式依賴。</p>
+        <p>參考：<a href="https://docs.unity3d.com/cn/current/Manual/execution-order.html">Unity Manual：事件函式執行順序</a></p>
+      </div></section>
+
+      <section class="note-section" id="remember"><span class="section-index">06</span><div>
+        <h2>真正要背的是「工作類型」，不是一串函式名</h2>
+        <pre><code>初始化？
+→ Awake / Start
+
+每次啟用或停用？
+→ OnEnable / OnDisable
+
+物理？
+→ FixedUpdate
+
+每幀主要邏輯？
+→ Update
+
+必須等 Update 做完？
+→ LateUpdate
+
+最後清理？
+→ OnDestroy</code></pre>
+        <p>之後看到一段程式，不要先問「老師把它寫在哪個函式」。先問：<strong>這件事應該在物件生命中的哪個時間點發生？</strong></p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Unity 生命週期就是把「何時執行」變成一組明確的事件函式。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-30-purpose"> 知道生命週期是 Unity 在不同時機自動呼叫事件函式</label>
+        <label><input type="checkbox" data-check="lesson-30-startup"> 能分辨 Awake、OnEnable、Start 的角色</label>
+        <label><input type="checkbox" data-check="lesson-30-update"> 能說出 FixedUpdate、Update、LateUpdate 的用途差異</label>
+        <label><input type="checkbox" data-check="lesson-30-fixed"> 知道 FixedUpdate 不等於每個 frame 固定一次</label>
+        <label><input type="checkbox" data-check="lesson-30-disable"> 能分辨 OnDisable 與 OnDestroy</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch2-17.html"><small>上一堂</small><strong>← ch2_17 靜態與非靜態</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_2 生命週期程式說明 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
