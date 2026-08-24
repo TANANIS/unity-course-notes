@@ -68,7 +68,7 @@
         {"id":"ch3-1","courseLessonNumber":30,"title":"Unity3D 生命週期介紹","duration":"4 分鐘","url":"notes/ch3-1.html","keywords":["生命週期","MonoBehaviour","Awake","OnEnable","Start","FixedUpdate","Update","LateUpdate","OnDisable","OnDestroy"]},
         {"id":"ch3-2","courseLessonNumber":31,"title":"Unity3D 生命週期程式說明","duration":"2 分鐘","url":"notes/ch3-2.html","keywords":["生命週期","Debug.Log","Awake","OnEnable","Start","FixedUpdate","Update","OnDisable","OnDestroy","Destroy","DestroyObject"]},
         {"id":"ch3-3","courseLessonNumber":32,"title":"Vector_1（向量類介紹）","duration":"5 分鐘","url":"notes/ch3-3.html","keywords":["Vector3","向量","struct","x","y","z","forward","up","right","magnitude","sqrMagnitude","normalized","正規化"]},
-        {"id":"ch3-4","courseLessonNumber":33,"title":"Vector_2（向量類介紹）","duration":"6 分鐘"},
+        {"id":"ch3-4","courseLessonNumber":33,"title":"Vector_2（向量類介紹）","duration":"6 分鐘","url":"notes/ch3-4.html","keywords":["Vector3","Dot","Cross","點積","外積","前後判斷","左右判斷","transform.forward","TransformDirection","toTarget","AI","轉向"]},
         {"id":"ch3-5","courseLessonNumber":34,"title":"Vector_3（向量類介紹）","duration":"5 分鐘"},
         {"id":"ch3-6","courseLessonNumber":35,"title":"Time_簡介","duration":"3 分鐘"},
         {"id":"ch3-7","courseLessonNumber":36,"title":"Time_程式說明1","duration":"5 分鐘"},
