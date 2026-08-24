@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_4 Vector_2 向量介紹筆記，整理 Vector3.Dot 與 Vector3.Cross、前後左右判斷、transform.forward、toTarget，以及課程中的方向判斷校正。">
+  <title>ch3_4 Vector_2（向量類介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_4</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 33</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_4 Vector_2（向量類介紹）</h1>
+        <p>上一堂在看「一個向量自己的方向與長度」，這堂開始比較兩個向量。老師用兩個 Cube 示範 <code>Vector3.Dot</code> 與 <code>Vector3.Cross</code>，分別判斷目標位於物件的前後與左右。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">DOT · CROSS · RELATIVE DIRECTION</span><h2 id="lesson-map-title">Dot 問前後，Cross 問左右</h2><p>先準備兩支箭：一支是「我朝哪裡」，另一支是「目標在哪個方向」。再讓 Dot 或 Cross 回答它們之間的空間關係。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#vectors"><strong>01</strong><span>先準備兩支向量<small>forward / toTarget</small></span></a>
+          <a href="#dot"><strong>02</strong><span>Dot<small>前方還是後方</small></span></a>
+          <a href="#cross"><strong>03</strong><span>Cross<small>左方還是右方</small></span></a>
+          <a href="#usage"><strong>04</strong><span>遊戲用途<small>AI、視野、轉向</small></span></a>
+          <a href="#correction"><strong>05</strong><span>課程校正<small>平行、浮點數、順序</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="vectors"><span class="section-index">01</span><div>
+        <h2>先準備兩支箭：我的前方、目標方向</h2>
+        <p>老師的測試場景把白色 Cube 當 A，紅色 Cube 當 B / Target。程式先取得 A 的前方，再算出從 A 指向 B 的向量：</p>
+        <pre><code>Vector3 forward = transform.TransformDirection(Vector3.forward);
+Vector3 toOther = target.position - transform.position;</code></pre>
+        <p><code>toOther</code> 的意思非常重要：用「目標位置 - 自己位置」，得到一支從自己指向目標的箭。</p>
+        <pre><code>自己 A ● ─────────→ ● B 目標
+         toOther</code></pre>
+        <p>這個例子裡，<code>transform.TransformDirection(Vector3.forward)</code> 是把本地座標的正前方轉成世界座標方向。若目的只是取得物件目前朝向，通常也可以直接使用：</p>
+        <pre><code>Vector3 forward = transform.forward;</code></pre>
+        <div class="memory-line"><span>先準備好問題</span><strong>forward = 我朝哪裡；toOther = 目標在我哪個方向。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="dot"><span class="section-index">02</span><div>
+        <h2>Vector3.Dot：目標在前面還是後面？</h2>
+        <p><code>Dot</code>（點積）比較兩支向量的方向關係，回傳的是一個 <code>float</code>。這堂可以先把它理解成：「目標方向和我的正前方有多一致？」</p>
+        <pre><code>float dot = Vector3.Dot(forward, toOther);
+
+if (dot &gt; 0)
+{
+    // 目標在前半邊
+}
+else if (dot &lt; 0)
+{
+    // 目標在後半邊
+}
+else
+{
+    // 兩個方向互相垂直，目標在正側方
+}</code></pre>
+        <pre><code>Dot &gt; 0   → 大致同方向 → 前方
+Dot &lt; 0   → 大致反方向 → 後方
+Dot = 0   → 互相垂直   → 正側方</code></pre>
+        <p>因此 Dot 很適合回答「他是不是在我看的這一邊？」</p>
+        <div class="memory-line"><span>Dot</span><strong>前後找 Dot。回傳 float，看正負就能知道目標在前半邊還是後半邊。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="cross"><span class="section-index">03</span><div>
+        <h2>Vector3.Cross：目標在左邊還是右邊？</h2>
+        <p><code>Cross</code>（外積）和 Dot 不同，它回傳的是一個新的 <code>Vector3</code>。這個新向量會垂直於原本兩支向量形成的平面。</p>
+        <pre><code>Vector3 cross = Vector3.Cross(forward, toOther);</code></pre>
+        <p>老師的場景是在水平面上判斷左右，因此看結果的 <code>y</code> 正負：</p>
+        <pre><code>if (cross.y &gt; 0)
+{
+    // 右方
+}
+else if (cross.y &lt; 0)
+{
+    // 左方
+}
+else
+{
+    // 沒有左右偏移
+}</code></pre>
+        <p>在老師使用的參數順序 <code>Cross(forward, toOther)</code> 下，可以用這個方式做左右判斷。</p>
+        <div class="memory-line"><span>Cross</span><strong>左右找 Cross。回傳 Vector3；在這個水平面範例中，看 cross.y 的正負判斷左右。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="usage"><span class="section-index">04</span><div>
+        <h2>這兩個在遊戲裡到底拿來幹嘛？</h2>
+        <p>兩個 Cube 只是示範。真正有用的是「相對方向判斷」：</p>
+        <h3>Dot：前後、視野、背面</h3>
+        <pre><code>Vector3 toPlayer = player.position - transform.position;
+float dot = Vector3.Dot(transform.forward, toPlayer);
+
+if (dot &gt; 0)
+{
+    // 玩家在敵人的前半邊
+}
+else
+{
+    // 玩家在敵人的後半邊
+}</code></pre>
+        <p>常見用途：敵人視野、NPC 是否面向玩家、背刺判定、攻擊是否來自背後、角色前方互動。</p>
+
+        <h3>Cross：左右、轉向方向</h3>
+        <pre><code>Vector3 toPlayer = player.position - transform.position;
+float crossY = Vector3.Cross(transform.forward, toPlayer).y;
+
+if (crossY &gt; 0)
+{
+    // 目標偏右，往右轉
+}
+else if (crossY &lt; 0)
+{
+    // 目標偏左，往左轉
+}</code></pre>
+        <p>常見用途：敵人追蹤時決定左轉或右轉、車輛 / 飛機 steering、瞄準轉向、判斷物件位於自身哪一側。</p>
+
+        <h3>兩個一起用：知道目標在哪一象限</h3>
+        <pre><code>Dot       → 前 / 後
+Cross.y   → 左 / 右
+
+兩者組合：
+前 + 右 → 右前方
+前 + 左 → 左前方
+後 + 右 → 右後方
+後 + 左 → 左後方</code></pre>
+        <div class="memory-line"><span>遊戲直覺</span><strong>Dot =「你在我前面還後面？」；Cross =「你在我左邊還右邊？」</strong></div>
+      </div></section>
+
+      <section class="note-section" id="correction"><span class="section-index">05</span><div>
+        <h2>課程校正：有三個地方不要死背</h2>
+        <h3>1. Dot = 0 不是「平行」</h3>
+        <p>老師範例在 <code>dot == 0</code> 時輸出「平行」，但向量數學上 <strong>Dot = 0 表示兩向量互相垂直</strong>。放到這個遊戲情境，就是目標位於物件的正側方。</p>
+
+        <h3>2. 浮點數不要太依賴 == 0</h3>
+        <p>課程為了示範寫 <code>dot == 0</code> 很直觀，但實際程式計算可能得到非常接近 0 的小數。需要判斷「接近垂直」時，可使用容許誤差：</p>
+        <pre><code>if (Mathf.Abs(dot) &lt; 0.001f)
+{
+    // 視為接近垂直
+}</code></pre>
+
+        <h3>3. Cross 有順序</h3>
+        <pre><code>Vector3.Cross(forward, toOther)
+Vector3.Cross(toOther, forward)</code></pre>
+        <p>兩者結果方向相反。因此不能脫離參數順序死背「cross.y &gt; 0 永遠等於右」。老師這堂的左右規則，是建立在 <code>Cross(forward, toOther)</code> 這個順序上。</p>
+
+        <aside class="callout"><span class="callout-label">先別急著背公式</span><p>這堂老師的目標是學會使用 Dot / Cross 做方向判斷，不是推導向量數學。先知道它們各自在回答什麼空間問題，比現在硬背外積公式有價值得多。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="summary"><span class="section-index">06</span><div>
+        <h2>最後只記這張</h2>
+        <pre><code>先準備：
+forward  = 我朝哪裡
+toTarget = 目標在哪個方向
+
+Vector3.Dot(forward, toTarget)
+→ float
+→ 前 / 後
+
+Vector3.Cross(forward, toTarget)
+→ Vector3
+→ 在本堂水平面範例看 y 判斷左 / 右</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>前後找 Dot，左右找 Cross；先理解「空間問題」，再記 API。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-33-vectors"> 知道 forward 與 toTarget 各代表哪一支向量</label>
+        <label><input type="checkbox" data-check="lesson-33-dot"> 知道 Dot 回傳 float，能用正負判斷前後</label>
+        <label><input type="checkbox" data-check="lesson-33-cross"> 知道 Cross 回傳 Vector3，並能理解本堂如何用 y 判斷左右</label>
+        <label><input type="checkbox" data-check="lesson-33-usage"> 能舉出 Dot / Cross 在 AI、視野或轉向中的一個實際用途</label>
+        <label><input type="checkbox" data-check="lesson-33-correction"> 知道 Dot = 0 是垂直，不是平行；Cross 的結果也與參數順序有關</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-3.html"><small>上一堂</small><strong>← ch3_3 Vector_1（向量類介紹）</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_5 Vector_3（向量類介紹） →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
