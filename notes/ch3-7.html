@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_7 Time 程式說明1筆記，實際驗證 Time.time、realtimeSinceStartup、timeScale、deltaTime 與暫停、快慢動作效果。">
+  <title>ch3_7 Time_程式說明1｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_7</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 36</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_7 Time_程式說明1</h1>
+        <p>這堂把上一堂的時間屬性真的跑起來看。老師用 Console 比較 <code>Time.time</code> 與 <code>Time.realtimeSinceStartup</code>，再用 <code>Time.timeScale</code> 控制 Rigidbody 下落速度，實際做出暫停、快動作與慢動作。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">TIME · TIMESCALE · REALTIME</span><h2 id="lesson-map-title">Unity 同時維護「遊戲時間」與「真實時間」</h2><p>這堂最重要的不是 Console 數字本身，而是看懂：<code>timeScale</code> 可以改變遊戲世界的時間速度，但真實時間仍然持續前進。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#script"><strong>01</strong><span>測試程式<small>Time 與 FPS 輸出</small></span></a>
+          <a href="#compare"><strong>02</strong><span>兩條時間軸<small>time / realtime</small></span></a>
+          <a href="#scale"><strong>03</strong><span>timeScale<small>暫停、快慢動作</small></span></a>
+          <a href="#delta"><strong>04</strong><span>deltaTime<small>Update / FixedUpdate</small></span></a>
+          <a href="#use"><strong>05</strong><span>實際用途<small>暫停 UI、子彈時間</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="script"><span class="section-index">01</span><div>
+        <h2>測試腳本：把時間值直接印到 Console</h2>
+        <p>老師使用 <code>TestTime</code>，用公開變數控制是否修改 <code>Time.timeScale</code>，並在 Update / FixedUpdate 觀察時間值：</p>
+        <pre><code>public float timeScale = 0;
+public bool changeScale = false;
+
+void Awake()
+{
+    Application.targetFrameRate = 30;
+}
+
+void Update()
+{
+    if (changeScale)
+    {
+        Time.timeScale = timeScale;
+        changeScale = false;
+    }
+
+    Debug.Log("Time:" + Time.time);
+    Debug.Log("RealtimeSinceStartup:" + Time.realtimeSinceStartup);
+    Debug.Log("Update DeltaTime:" + Time.deltaTime);
+}
+
+void FixedUpdate()
+{
+    Debug.Log("FixedUpdate DeltaTime:" + Time.deltaTime);
+}</code></pre>
+        <p><code>Application.targetFrameRate = 30</code> 在這堂只是讓測試更容易觀察，重點仍然是 Time 的差異。</p>
+      </div></section>
+
+      <section class="note-section" id="compare"><span class="section-index">02</span><div>
+        <h2>Time.time 與 realtimeSinceStartup：兩條不同的時間軸</h2>
+        <p>老師先觀察兩個數值。課堂中 <code>realtimeSinceStartup</code> 會比 <code>Time.time</code> 稍早開始累積，因此執行後通常會看到 realtime 略大一些。</p>
+        <pre><code>Time.time
+→ 遊戲時間軸目前走到哪裡
+→ 會受到 Time.timeScale 影響
+
+Time.realtimeSinceStartup
+→ 遊戲啟動後，現實真正經過多久
+→ 不受 Time.timeScale 影響</code></pre>
+        <div class="memory-line"><span>兩條手錶</span><strong>Time.time 是遊戲世界的手錶；realtimeSinceStartup 是現實世界的手錶。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="scale"><span class="section-index">03</span><div>
+        <h2>Time.timeScale：直接改變遊戲世界的時間速度</h2>
+        <p>老師在場景中的 Cube 加入 Rigidbody，讓它受到重力往下掉，再利用 Inspector 修改 <code>timeScale</code>：</p>
+        <pre><code>if (changeScale)
+{
+    Time.timeScale = timeScale;
+    changeScale = false;
+}</code></pre>
+        <pre><code>Time.timeScale = 1f;    // 正常
+Time.timeScale = 0.5f;  // 半速
+Time.timeScale = 0f;    // 暫停遊戲時間
+Time.timeScale = 100f;  // 非常快
+Time.timeScale = 0.05f; // 非常慢</code></pre>
+        <p>當老師把 <code>timeScale</code> 設為 0，Rigidbody 下落會停止；設成 100 時幾乎瞬間掉下去；設成 0.05 時則變成極慢動作。</p>
+        <div class="memory-line"><span>timeScale</span><strong>不是角色速度倍率，而是整個遊戲「時間流速」的倍率。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="delta"><span class="section-index">04</span><div>
+        <h2>timeScale = 0 時，遊戲時間停，但 realtime 繼續</h2>
+        <p>這堂最值得看的現象是：當 <code>Time.timeScale = 0</code>，<code>Time.time</code> 不再前進，但 <code>Time.realtimeSinceStartup</code> 仍持續增加。</p>
+        <pre><code>timeScale = 0
+
+Time.time
+→ 停
+
+Time.realtimeSinceStartup
+→ 繼續增加</code></pre>
+        <p>老師因此提醒，如果某個 UI 動畫或效果不希望跟著遊戲暫停，就要使用不受 timeScale 影響的時間概念。</p>
+
+        <h3>Update 與 FixedUpdate 都印 deltaTime</h3>
+        <p>程式也分別在 <code>Update()</code> 與 <code>FixedUpdate()</code> 印出 <code>Time.deltaTime</code>，是在替下一堂比較 frame 更新與固定物理更新鋪路。</p>
+        <pre><code>void Update()
+{
+    Debug.Log(Time.deltaTime);
+}
+
+void FixedUpdate()
+{
+    Debug.Log(Time.deltaTime);
+}</code></pre>
+        <aside class="callout"><span class="callout-label">先不要超前背細節</span><p>這堂先記「Update 跟 frame 走、FixedUpdate 跟固定物理時間走」。兩者的時間差異下一堂再正式整理。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="use"><span class="section-index">05</span><div>
+        <h2>實際用途：暫停、慢動作與不受暫停影響的 UI</h2>
+        <pre><code>暫停遊戲
+→ Time.timeScale = 0
+
+慢動作 / 子彈時間
+→ 0 &lt; Time.timeScale &lt; 1
+
+快動作
+→ Time.timeScale &gt; 1
+
+暫停時仍要工作的 UI / 動畫
+→ 使用不受 timeScale 影響的時間來源</code></pre>
+        <p>補充理解：現代 Unity 還有 <code>Time.unscaledDeltaTime</code>、<code>Time.unscaledTime</code> 這類直接處理「不受 timeScale 影響」的 API；這不是老師本堂主要內容，先知道有這種做法即可。</p>
+        <div class="memory-line"><span>這堂核心</span><strong>遊戲可以暫停自己的時間，但現實時間不會因此停下來。timeScale 正是在控制這兩條時間軸的分離。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-36-time"> 能分辨 Time.time 與 realtimeSinceStartup</label>
+        <label><input type="checkbox" data-check="lesson-36-scale"> 知道 timeScale = 0 可以停止遊戲時間</label>
+        <label><input type="checkbox" data-check="lesson-36-speed"> 知道 timeScale 小於 1 是慢動作、大於 1 是快動作</label>
+        <label><input type="checkbox" data-check="lesson-36-real"> 知道 realtimeSinceStartup 不會跟著 timeScale 停止</label>
+        <label><input type="checkbox" data-check="lesson-36-delta"> 知道這堂已開始比較 Update 與 FixedUpdate 的 deltaTime</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-6.html"><small>上一堂</small><strong>← ch3_6 Time_簡介</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_8 Time_程式說明2 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
