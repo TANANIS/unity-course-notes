@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_3 Vector_1 向量介紹筆記，整理 Vector3、Unity 座標方向、forward/up/right、magnitude、sqrMagnitude 與 normalized 的直覺理解。">
+  <title>ch3_3 Vector_1（向量類介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_3</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 32</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_3 Vector_1（向量類介紹）</h1>
+        <p>這堂開始進入 Unity 很核心的向量概念：<code>Vector3</code> 不只是三個數字，而可以拿來表達位置、方向與位移。老師先介紹座標方向、常用靜態向量，以及 <code>magnitude</code>、<code>sqrMagnitude</code>、<code>normalized</code>。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">VECTOR3 · DIRECTION · LENGTH</span><h2 id="lesson-map-title">先把 Vector3 想成一支「有方向、也有長度的箭頭」</h2><p>這堂真正要建立的不是 API 清單，而是向量的直覺：一支箭頭同時包含「往哪裡」與「有多長」兩種資訊。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#vector"><strong>01</strong><span>Vector3 是什麼<small>struct 與 XYZ</small></span></a>
+          <a href="#axis"><strong>02</strong><span>Unity 座標方向<small>X / Y / Z</small></span></a>
+          <a href="#static"><strong>03</strong><span>常用方向<small>forward / up / right</small></span></a>
+          <a href="#arrow"><strong>04</strong><span>箭頭心智模型<small>方向 + 長度</small></span></a>
+          <a href="#magnitude"><strong>05</strong><span>magnitude<small>真正長度</small></span></a>
+          <a href="#sqr"><strong>06</strong><span>sqrMagnitude<small>長度平方</small></span></a>
+          <a href="#normalized"><strong>07</strong><span>normalized<small>只保留方向</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="vector"><span class="section-index">01</span><div>
+        <h2>Vector3：三個數字組成的向量，而且它是 struct</h2>
+        <p>老師先提醒，Unity 的 <code>Vector3</code> 是結構（struct），因此前面學過的值型別概念會繼續適用。3D 常用 <code>Vector3</code>，2D 則常用少一個 Z 軸的 <code>Vector2</code>。</p>
+        <pre><code>Vector3 v = new Vector3(3, 4, 0);
+
+// x = 左右
+// y = 上下
+// z = 前後</code></pre>
+        <p><code>Vector3</code> 可以拿來表示很多東西，例如位置、方向、速度與位移。型別相同，不代表它們的數學意義相同。</p>
+        <pre><code>Vector3 position;   // 位置
+Vector3 direction;  // 方向
+Vector3 velocity;   // 速度
+Vector3 offset;     // 位移</code></pre>
+        <div class="memory-line"><span>先建立這個直覺</span><strong>Vector3 不是單純的「三個 float」，而是遊戲世界裡描述空間關係的基本工具。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="axis"><span class="section-index">02</span><div>
+        <h2>Unity 的 XYZ：右、上、前</h2>
+        <p>老師用左手示範 Unity 的座標方向。這堂先記正負方向即可：</p>
+        <pre><code>+X = 右     -X = 左
++Y = 上     -Y = 下
++Z = 前     -Z = 後</code></pre>
+        <p>因此往前就是 Z 增加，往上就是 Y 增加，往右就是 X 增加。</p>
+      </div></section>
+
+      <section class="note-section" id="static"><span class="section-index">03</span><div>
+        <h2>常用靜態方向：不用每次自己寫 (0, 0, 1)</h2>
+        <p>Unity 已經提供常見方向向量，而且它們是靜態成員，可以直接從 <code>Vector3</code> 類型使用。這也接回上一章學過的 static。</p>
+        <pre><code>Vector3.forward  // ( 0, 0, 1) 前
+Vector3.back     // ( 0, 0,-1) 後
+Vector3.up       // ( 0, 1, 0) 上
+Vector3.down     // ( 0,-1, 0) 下
+Vector3.right    // ( 1, 0, 0) 右
+Vector3.left     // (-1, 0, 0) 左</code></pre>
+        <p>例如向前移動、向前發射子彈，可以用 <code>Vector3.forward</code> 表示方向；向上跳則可用 <code>Vector3.up</code>。</p>
+      </div></section>
+
+      <section class="note-section" id="arrow"><span class="section-index">04</span><div>
+        <h2>最重要的心智模型：把向量想成箭頭</h2>
+        <p>如果只把 <code>(3, 4, 0)</code> 當成三個數字，後面的 magnitude 與 normalized 會很難記。比較好的方式是把它看成一支箭頭：</p>
+        <pre><code>Vector3 v = (3, 4, 0)
+
+它同時告訴我們：
+1. 方向：箭頭往哪裡指？
+2. 長度：這支箭有多長？</code></pre>
+        <p>後面三個屬性，其實都只是在問這支箭頭不同的問題。</p>
+        <div class="memory-line"><span>一支箭頭，兩種資訊</span><strong>向量 = 方向 + 長度。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="magnitude"><span class="section-index">05</span><div>
+        <h2>magnitude：這支箭到底有多長？</h2>
+        <p>老師說 <code>magnitude</code> 可以取得向量長度。用 <code>(3, 4, 0)</code> 當例子最容易看懂：</p>
+        <pre><code>Vector3 v = new Vector3(3, 4, 0);
+float length = v.magnitude;
+
+// length = 5</code></pre>
+        <p>因為它等同於一個 3、4、5 的直角三角形。換句話說，<code>magnitude</code> 是把方向暫時放一邊，只回答：</p>
+        <pre><code>「這支向量箭頭有多長？」</code></pre>
+        <div class="memory-line"><span>magnitude</span><strong>我要知道真正的向量長度。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="sqr"><span class="section-index">06</span><div>
+        <h2>sqrMagnitude：不是另一種長度，只是「長度的平方」</h2>
+        <p>這個名稱最容易嚇人，但概念其實沒有增加。剛才 <code>v.magnitude = 5</code>，那麼：</p>
+        <pre><code>v.magnitude      // 5
+v.sqrMagnitude   // 25，也就是 5²</code></pre>
+        <p>為什麼要 25？因為有時候根本不需要知道真正距離，只需要比較誰比較長。</p>
+        <pre><code>A 長度 = 5
+B 長度 = 7
+
+5 &lt; 7
+25 &lt; 49
+
+平方後，大小關係沒有改變。</code></pre>
+        <p>老師的重點是：<code>magnitude</code> 需要做平方根運算，而 <code>sqrMagnitude</code> 不需要。如果只是比較兩個向量長度，可以直接比較平方長度。</p>
+        <pre><code>if (a.sqrMagnitude &lt; b.sqrMagnitude)
+{
+    // a 比 b 短
+}</code></pre>
+        <div class="memory-line"><span>sqrMagnitude</span><strong>我要比較誰比較長，但我不需要知道真正長度是多少。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="normalized"><span class="section-index">07</span><div>
+        <h2>normalized：方向不變，把箭頭縮成長度 1</h2>
+        <p>這是這堂最容易誤解的地方。老師把它簡化成「把向量歸一，只留下方向」，這個方向沒錯，但不要把它理解成每個 XYZ 都變成 ±1。</p>
+        <pre><code>Vector3 v = new Vector3(3, 4, 0);
+Vector3 direction = v.normalized;
+
+v            = (3,   4,   0)   // 長度 5
+direction    = (0.6, 0.8, 0)   // 長度 1</code></pre>
+        <p>兩支箭頭仍然朝同一個方向，只是第二支被等比例縮短成長度 1。</p>
+        <pre><code>原本：(3, 4, 0)
+       ↗  同一方向，長度 5
+
+歸一：(0.6, 0.8, 0)
+       ↗  同一方向，長度 1</code></pre>
+        <aside class="callout"><span class="callout-label">不要這樣背</span><p><code>(3, 4, 0).normalized</code> 不是 <code>(1, 1, 0)</code>。normalized 的定義是「保留方向，把整個向量的長度變成 1」。</p></aside>
+        <p>這在遊戲移動很重要。當我們只想取得「往哪走」，不希望原本向量長度偷偷影響速度時，可以先 normalized，再乘上我們真正想要的速度。</p>
+        <pre><code>Vector3 direction = new Vector3(3, 4, 0).normalized;
+Vector3 velocity = direction * 10;
+
+// 純方向 × 自己指定的速度</code></pre>
+        <div class="memory-line"><span>normalized</span><strong>同方向，但長度固定成 1。可以把它想成「把力道拿掉，只留下純方向」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="summary"><span class="section-index">08</span><div>
+        <h2>三個最容易混的屬性，最後只背這三句</h2>
+        <pre><code>magnitude
+= 長度
+
+sqrMagnitude
+= 長度²
+
+normalized
+= 同方向，但長度變 1</code></pre>
+        <p>如果要再換成問題：</p>
+        <pre><code>magnitude
+→ 這支箭多長？
+
+sqrMagnitude
+→ 我只想比較誰比較長。
+
+normalized
+→ 我不在乎多長，只想知道往哪裡。</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>Vector3 = 方向 × 長度；magnitude 看長度，normalized 看純方向。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="next"><span class="section-index">09</span><div>
+        <h2>講義下方的方法先知道名字即可</h2>
+        <p>老師的整理表還列出 <code>Cross</code>、<code>Dot</code>、<code>Distance</code>、<code>MoveTowards</code>。這堂字幕最後只預告接下來會介紹方法，因此目前先保留名稱，不在這頁提前把後面的 Vector 課吃掉。</p>
+        <pre><code>Vector3.Cross(...)
+Vector3.Dot(...)
+Vector3.Distance(...)
+Vector3.MoveTowards(...)</code></pre>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-32-struct"> 知道 Vector3 是 struct，並由 x、y、z 組成</label>
+        <label><input type="checkbox" data-check="lesson-32-axis"> 能說出 +X、+Y、+Z 分別是右、上、前</label>
+        <label><input type="checkbox" data-check="lesson-32-static"> 知道 forward、up、right 等常用靜態方向</label>
+        <label><input type="checkbox" data-check="lesson-32-magnitude"> 知道 magnitude 是真正長度</label>
+        <label><input type="checkbox" data-check="lesson-32-sqr"> 知道 sqrMagnitude 是長度平方，適合只比較大小</label>
+        <label><input type="checkbox" data-check="lesson-32-normalized"> 知道 normalized 保留方向並把向量長度變成 1</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-2.html"><small>上一堂</small><strong>← ch3_2 Unity3D 生命週期程式說明</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_4 Vector_2（向量類介紹） →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
