@@ -66,7 +66,7 @@
       "duration": "2 小時 23 分鐘",
       "lessons": [
         {"id":"ch3-1","courseLessonNumber":30,"title":"Unity3D 生命週期介紹","duration":"4 分鐘","url":"notes/ch3-1.html","keywords":["生命週期","MonoBehaviour","Awake","OnEnable","Start","FixedUpdate","Update","LateUpdate","OnDisable","OnDestroy"]},
-        {"id":"ch3-2","courseLessonNumber":31,"title":"Unity3D 生命週期程式說明","duration":"2 分鐘"},
+        {"id":"ch3-2","courseLessonNumber":31,"title":"Unity3D 生命週期程式說明","duration":"2 分鐘","url":"notes/ch3-2.html","keywords":["生命週期","Debug.Log","Awake","OnEnable","Start","FixedUpdate","Update","OnDisable","OnDestroy","Destroy","DestroyObject"]},
         {"id":"ch3-3","courseLessonNumber":32,"title":"Vector_1（向量類介紹）","duration":"5 分鐘"},
         {"id":"ch3-4","courseLessonNumber":33,"title":"Vector_2（向量類介紹）","duration":"6 分鐘"},
         {"id":"ch3-5","courseLessonNumber":34,"title":"Vector_3（向量類介紹）","duration":"5 分鐘"},
