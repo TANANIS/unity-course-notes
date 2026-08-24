@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_6 Time 簡介筆記，整理 Time.time、realtimeSinceStartup、deltaTime、timeScale，以及遊戲時間與真實時間的差異。">
+  <title>ch3_6 Time_簡介｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_6</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 35</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_6 Time_簡介</h1>
+        <p>這堂開始整理 Unity 的時間相關靜態屬性。老師主要比較 <code>Time.time</code> 與 <code>Time.realtimeSinceStartup</code>，再介紹 <code>Time.deltaTime</code> 與 <code>Time.timeScale</code>，把上一堂 MoveTowards 裡出現的時間概念正式接起來。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">TIME · DELTATIME · TIMESCALE</span><h2 id="lesson-map-title">同樣都是「時間」，先分清楚遊戲時間、真實時間與每幀時間</h2><p>這堂不是要背四個名字，而是要知道它們各自在回答不同問題：遊戲跑多久、現實過多久、這一幀花多久，以及整個遊戲時間要跑多快。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#static"><strong>01</strong><span>Time 的靜態屬性<small>直接 Time.xxx 使用</small></span></a>
+          <a href="#time"><strong>02</strong><span>Time.time<small>遊戲累積時間</small></span></a>
+          <a href="#realtime"><strong>03</strong><span>realtimeSinceStartup<small>真實經過時間</small></span></a>
+          <a href="#delta"><strong>04</strong><span>deltaTime<small>這一幀花多久</small></span></a>
+          <a href="#scale"><strong>05</strong><span>timeScale<small>遊戲時間倍率</small></span></a>
+          <a href="#supplement"><strong>06</strong><span>補充理解<small>為什麼速度要乘 deltaTime</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="static"><span class="section-index">01</span><div>
+        <h2>Time 這堂介紹的都是靜態屬性</h2>
+        <p>老師先提醒，這些屬性都是靜態的，因此直接從 <code>Time</code> 使用，不需要先建立 Time 物件。</p>
+        <pre><code>Time.time
+Time.realtimeSinceStartup
+Time.deltaTime
+Time.timeScale</code></pre>
+        <div class="memory-line"><span>接回 static</span><strong>Time.xxx = 直接從 Time 類別取得全域時間資訊。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="time"><span class="section-index">02</span><div>
+        <h2>Time.time：遊戲累積運行了多久</h2>
+        <p>老師把 <code>Time.time</code> 描述為遊戲運行了多久的時間，並特別拿它和 <code>realtimeSinceStartup</code> 比較。</p>
+        <p>這堂最需要先記的是：<strong><code>Time.time</code> 會受到 <code>Time.timeScale</code> 影響。</strong>也就是當遊戲時間被放慢或加速時，這個累積時間也會跟著改變速度。</p>
+        <div class="memory-line"><span>Time.time</span><strong>把它想成「遊戲世界的手錶」：會跟著 timeScale 一起變快或變慢。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="realtime"><span class="section-index">03</span><div>
+        <h2>Time.realtimeSinceStartup：不受 timeScale 影響的真實時間</h2>
+        <p>老師把 <code>Time.realtimeSinceStartup</code> 和 <code>Time.time</code> 放在一起比較，指出前者不會受到 <code>timeScale</code> 影響。</p>
+        <pre><code>Time.time
+→ 受 Time.timeScale 影響
+
+Time.realtimeSinceStartup
+→ 不受 Time.timeScale 影響</code></pre>
+        <p>老師也提到，這類不受遊戲時間倍率影響的時間資訊，常會在 UI 動畫等需求中使用。</p>
+        <aside class="callout"><span class="callout-label">這堂先不硬背起算點細節</span><p>老師另外提到兩者開始計算的時間點不同。這裡先保留課堂脈絡，不把它擴寫成精確 API 規則；下一堂實際跑程式時再配合結果理解。</p></aside>
+        <div class="memory-line"><span>兩支手錶</span><strong>Time.time 看遊戲時間；realtimeSinceStartup 看不受 timeScale 影響的真實經過時間。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="delta"><span class="section-index">04</span><div>
+        <h2>Time.deltaTime：上一幀到這一幀經過多少秒</h2>
+        <p>老師將 <code>Time.deltaTime</code> 描述為「每一個 Frame 運行的時間」，單位是秒。這正是上一堂 MoveTowards 中 <code>Time.deltaTime * speed</code> 的來源。</p>
+        <pre><code>Time.deltaTime
+= 這一幀經過多少秒</code></pre>
+        <p>因此如果 <code>speed</code> 的意思是「每秒移動多少單位」，就可以：</p>
+        <pre><code>float distanceThisFrame = speed * Time.deltaTime;</code></pre>
+        <pre><code>每秒速度 × 這幀經過的秒數
+= 這一幀應該移動的距離</code></pre>
+        <div class="memory-line"><span>deltaTime</span><strong>把「每秒多少」換算成「這一幀該做多少」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="scale"><span class="section-index">05</span><div>
+        <h2>Time.timeScale：控制遊戲時間的快慢</h2>
+        <p>老師介紹 <code>Time.timeScale</code> 時，將它用在快動作與慢動作效果。它可以控制遊戲時間的倍率。</p>
+        <pre><code>Time.timeScale = 1f;   // 正常速度
+Time.timeScale = 0.5f; // 慢動作
+Time.timeScale = 2f;   // 快動作
+Time.timeScale = 0f;   // 遊戲時間停止</code></pre>
+        <p>課堂同時強調：<code>timeScale</code> 會影響 <code>Time.time</code>，但不會影響 <code>Time.realtimeSinceStartup</code>。</p>
+        <div class="memory-line"><span>timeScale</span><strong>它不是「現在幾秒」，而是控制遊戲世界的時間流速倍率。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="supplement"><span class="section-index">06</span><div>
+        <h2>補充理解：為什麼移動速度通常要乘 deltaTime？</h2>
+        <p>這一段是課後補充，用來把上一堂 MoveTowards 和這堂 Time 串起來。若直接在 <code>Update()</code> 裡每幀固定移動相同距離，那每秒移動多少會跟 FPS 有關。</p>
+        <pre><code>// 每一幀都走 0.1
+transform.position += Vector3.forward * 0.1f;</code></pre>
+        <p>60 FPS 時一秒會執行約 60 次，120 FPS 時約 120 次，因此高 FPS 反而走得更快。改成：</p>
+        <pre><code>transform.position += Vector3.forward * speed * Time.deltaTime;</code></pre>
+        <p>就把意義改成「每秒以 speed 移動」，每幀實際走多少則交給 deltaTime 換算。</p>
+        <pre><code>speed
+= 每秒速度
+
+Time.deltaTime
+= 這幀經過的秒數
+
+speed * Time.deltaTime
+= 這幀距離</code></pre>
+        <div class="memory-line"><span>真正用途</span><strong>deltaTime 讓每幀執行的 Update 邏輯，能用「每秒速度」來描述，而不是綁死在 FPS 上。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="summary"><span class="section-index">07</span><div>
+        <h2>四個 Time 屬性先用四句話記</h2>
+        <pre><code>Time.time
+= 遊戲累積時間，受 timeScale 影響
+
+Time.realtimeSinceStartup
+= 真實經過時間，不受 timeScale 影響
+
+Time.deltaTime
+= 上一幀到這一幀經過多少秒
+
+Time.timeScale
+= 遊戲時間流速倍率</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>deltaTime 解決「每幀」與「每秒」的換算；timeScale 控制遊戲時間到底流多快。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-35-time"> 能分辨 Time.time 與 realtimeSinceStartup 是否受 timeScale 影響</label>
+        <label><input type="checkbox" data-check="lesson-35-delta"> 知道 Time.deltaTime 是一幀經過的秒數</label>
+        <label><input type="checkbox" data-check="lesson-35-speed"> 能說出 speed × deltaTime 為什麼代表本幀距離</label>
+        <label><input type="checkbox" data-check="lesson-35-scale"> 知道 Time.timeScale 用來控制遊戲時間快慢</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-5.html"><small>上一堂</small><strong>← ch3_5 Vector_3（向量類介紹）</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_7 Time_程式說明1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
