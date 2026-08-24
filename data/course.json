@@ -70,7 +70,7 @@
         {"id":"ch3-3","courseLessonNumber":32,"title":"Vector_1（向量類介紹）","duration":"5 分鐘","url":"notes/ch3-3.html","keywords":["Vector3","向量","struct","x","y","z","forward","up","right","magnitude","sqrMagnitude","normalized","正規化"]},
         {"id":"ch3-4","courseLessonNumber":33,"title":"Vector_2（向量類介紹）","duration":"6 分鐘","url":"notes/ch3-4.html","keywords":["Vector3","Dot","Cross","點積","外積","前後判斷","左右判斷","transform.forward","TransformDirection","toTarget","AI","轉向"]},
         {"id":"ch3-5","courseLessonNumber":34,"title":"Vector_3（向量類介紹）","duration":"5 分鐘","url":"notes/ch3-5.html","keywords":["Vector3","MoveTowards","Time.deltaTime","speed","targetPoint","移動","固定速度","Update","向量乘法","scalar"]},
-        {"id":"ch3-6","courseLessonNumber":35,"title":"Time_簡介","duration":"3 分鐘"},
+        {"id":"ch3-6","courseLessonNumber":35,"title":"Time_簡介","duration":"3 分鐘","url":"notes/ch3-6.html","keywords":["Time","Time.time","realtimeSinceStartup","deltaTime","timeScale","遊戲時間","真實時間","FPS","慢動作","暫停"]},
         {"id":"ch3-7","courseLessonNumber":36,"title":"Time_程式說明1","duration":"5 分鐘"},
         {"id":"ch3-8","courseLessonNumber":37,"title":"Time_程式說明2","duration":"6 分鐘"},
         {"id":"ch3-9","courseLessonNumber":38,"title":"RigidbodyAnComponent_1（物理元件介紹）","duration":"4 分鐘"},
