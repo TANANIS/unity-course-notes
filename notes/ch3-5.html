@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_5 Vector_3 向量介紹筆記，整理 Vector3.MoveTowards、Time.deltaTime、固定速度移動、Update 持續更新，以及向量乘上純量的概念。">
+  <title>ch3_5 Vector_3（向量類介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_5</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 34</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_5 Vector_3（向量類介紹）</h1>
+        <p>這堂把向量直接拿來做移動：使用 <code>Vector3.MoveTowards</code>，讓物件在 <code>Update()</code> 中以指定速度持續靠近目標點，而且抵達時不會越過目標。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">MOVETOWARDS · DELTATIME · SPEED</span><h2 id="lesson-map-title">現在在哪裡、要去哪裡、這次最多走多遠</h2><p><code>MoveTowards</code> 的三個參數就是整堂課的骨架。再搭配 <code>Time.deltaTime * speed</code>，把「每秒速度」換算成「這一幀應該走的距離」。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#api"><strong>01</strong><span>MoveTowards<small>三個參數</small></span></a>
+          <a href="#frame"><strong>02</strong><span>每幀距離<small>deltaTime × speed</small></span></a>
+          <a href="#update"><strong>03</strong><span>為什麼放 Update<small>持續重新計算</small></span></a>
+          <a href="#target"><strong>04</strong><span>不會越過目標<small>抵達就停</small></span></a>
+          <a href="#scalar"><strong>05</strong><span>向量乘數字<small>方向不變、長度縮放</small></span></a>
+          <a href="#supplement"><strong>06</strong><span>補充理解<small>MoveTowards 不是 easing</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="api"><span class="section-index">01</span><div>
+        <h2>MoveTowards：從目前位置往目標靠近</h2>
+        <pre><code>Vector3.MoveTowards(current, target, maxDistanceDelta)</code></pre>
+        <dl class="term-list">
+          <div><dt>current</dt><dd>目前位置，也就是「我現在在哪裡」。</dd></div>
+          <div><dt>target</dt><dd>目標位置，也就是「我要去哪裡」。</dd></div>
+          <div><dt>maxDistanceDelta</dt><dd>這一次呼叫最多可以前進多少距離。</dd></div>
+        </dl>
+        <p>老師的範例先取得物件目前的位置，再把 MoveTowards 算出的新位置指定回 <code>transform.position</code>：</p>
+        <pre><code>Vector3 currentPoint = transform.position;
+
+transform.position = Vector3.MoveTowards(
+    currentPoint,
+    targetPoint,
+    maxDistanceDelta
+);</code></pre>
+        <div class="memory-line"><span>一句話翻譯</span><strong>從 current 朝 target 前進，但這一次最多只走 maxDistanceDelta。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="frame"><span class="section-index">02</span><div>
+        <h2>Time.deltaTime × speed：這一幀應該走多遠</h2>
+        <p>老師用公開的 <code>speed</code> 表示每秒希望移動多少 Unity 單位，再乘上 <code>Time.deltaTime</code>，換算成本幀應移動的距離：</p>
+        <pre><code>public int speed = 3;
+
+float maxDistanceDelta = Time.deltaTime * speed;</code></pre>
+        <pre><code>speed
+= 每秒想走多少單位
+
+Time.deltaTime
+= 這一幀經過多少秒
+
+speed × Time.deltaTime
+= 這一幀應該移動多少距離</code></pre>
+        <p>例如 <code>speed = 3</code>，某幀的 <code>deltaTime = 0.02</code> 秒，那一幀最多前進 <code>0.06</code> 單位。</p>
+        <aside class="callout"><span class="callout-label">先知道用途即可</span><p><code>Time.deltaTime</code> 會在接下來的 Time 課程正式介紹。這堂先把它理解成「讓每秒速度換算成每幀距離」即可。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="update"><span class="section-index">03</span><div>
+        <h2>為什麼一定放在 Update？因為一次 MoveTowards 只算一步</h2>
+        <p>老師把移動放在 <code>Update()</code>，讓 Unity 每一幀重新取得現在位置、重新計算本幀距離，再往目標走一步。</p>
+        <pre><code>void Update()
+{
+    Vector3 currentPoint = transform.position;
+    float maxDistanceDelta = Time.deltaTime * speed;
+
+    transform.position = Vector3.MoveTowards(
+        currentPoint,
+        targetPoint,
+        maxDistanceDelta
+    );
+}</code></pre>
+        <pre><code>取得目前位置
+↓
+算這幀能走多少
+↓
+往目標前進一點
+↓
+下一幀重新計算
+↓
+持續到抵達目標</code></pre>
+        <p>如果只在 <code>Start()</code> 呼叫一次，它只會前進一次，不會自己一路跑完整段路。</p>
+        <div class="memory-line"><span>Update 的角色</span><strong>不是 MoveTowards 自己會持續移動，而是 Update 每幀一直重新呼叫它。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="target"><span class="section-index">04</span><div>
+        <h2>MoveTowards 不會越過目標</h2>
+        <p>老師特別強調：當剩餘距離比 <code>maxDistanceDelta</code> 還短時，MoveTowards 會直接回傳目標位置，而不是多走一步衝過頭。</p>
+        <pre><code>目前 ● -------- ★ 目標
+
+剩餘距離：0.2
+本幀最多可走：0.5
+
+結果：直接停在 ★
+不是跑到 ★ 後面。</code></pre>
+        <p>因此它很適合「角色點擊地面後走到指定點」、「NPC 前往指定位置」、「物件回到原位」這類明確目標點移動。</p>
+        <div class="memory-line"><span>抵達規則</span><strong>一路靠近，最後精確停在 target，不會 overshoot。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="scalar"><span class="section-index">05</span><div>
+        <h2>向量乘上一個數字：方向不變，長度跟著縮放</h2>
+        <p>講義最後補了一個基本向量運算：</p>
+        <pre><code>Vector3 v = new Vector3(2, 3, 5);
+v *= 2;
+
+// v = (4, 6, 10)</code></pre>
+        <p>每個軸一起乘上 2。接回前面「向量是一支箭」的心智模型，就是箭頭方向不變、長度變成兩倍。</p>
+        <pre><code>Vector3.forward * 5
+// (0, 0, 5)
+// 仍然朝前，只是長度從 1 變成 5</code></pre>
+        <p>這也能和 normalized 串起來：</p>
+        <pre><code>Vector3 direction = someVector.normalized;
+Vector3 velocity = direction * speed;
+
+// 純方向 × 想要的速度</code></pre>
+        <div class="memory-line"><span>純量乘法</span><strong>向量 × 數字 = 保留方向，縮放整支向量的長度。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="supplement"><span class="section-index">06</span><div>
+        <h2>補充理解：MoveTowards 的「平順」不是 easing</h2>
+        <p>這一段是課後補充。講義把 MoveTowards 描述成平順移動，但不要把它理解成自動加速、減速的動畫曲線。若 <code>speed</code> 固定，它基本上就是固定速度靠近，抵達後停止。</p>
+        <pre><code>固定速度 → 固定速度 → 固定速度 → 抵達 → 停</code></pre>
+        <p>後面課程會另外介紹 <code>Lerp</code>。兩者不要現在混成同一個概念。</p>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-34-params"> 能說出 MoveTowards 的三個參數：現在位置、目標位置、這次最多走多遠</label>
+        <label><input type="checkbox" data-check="lesson-34-delta"> 知道 Time.deltaTime × speed 代表這一幀應移動的距離</label>
+        <label><input type="checkbox" data-check="lesson-34-update"> 知道為什麼 MoveTowards 通常要在 Update 中持續呼叫</label>
+        <label><input type="checkbox" data-check="lesson-34-target"> 知道 MoveTowards 不會越過 target</label>
+        <label><input type="checkbox" data-check="lesson-34-scalar"> 知道向量乘數字會等比例縮放向量長度</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-4.html"><small>上一堂</small><strong>← ch3_4 Vector_2（向量類介紹）</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_6 Time_簡介 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
