@@ -73,7 +73,7 @@
         {"id":"ch3-6","courseLessonNumber":35,"title":"Time_簡介","duration":"3 分鐘","url":"notes/ch3-6.html","keywords":["Time","Time.time","realtimeSinceStartup","deltaTime","timeScale","遊戲時間","真實時間","FPS","慢動作","暫停"]},
         {"id":"ch3-7","courseLessonNumber":36,"title":"Time_程式說明1","duration":"5 分鐘","url":"notes/ch3-7.html","keywords":["Time","Time.time","realtimeSinceStartup","timeScale","deltaTime","Application.targetFrameRate","Rigidbody","暫停","慢動作","快動作","unscaledDeltaTime"]},
         {"id":"ch3-8","courseLessonNumber":37,"title":"Time_程式說明2","duration":"6 分鐘","url":"notes/ch3-8.html","keywords":["Time","deltaTime","FPS","Frame","Application.targetFrameRate","VSync","VSync Count","Don't Sync","Update","FixedUpdate","fixed timestep","速度"]},
-        {"id":"ch3-9","courseLessonNumber":38,"title":"RigidbodyAnComponent_1（物理元件介紹）","duration":"4 分鐘"},
+        {"id":"ch3-9","courseLessonNumber":38,"title":"RigidbodyAnComponent_1（物理元件介紹）","duration":"4 分鐘","url":"notes/ch3-9.html","keywords":["Rigidbody","剛體","物理","FixedUpdate","GetComponent","GetComponentInChildren","Component","AddForce","Vector3.up","Vector3.right","Force"]},
         {"id":"ch3-10","courseLessonNumber":39,"title":"RigidbodyAnComponent_2（物理元件介紹）","duration":"10 分鐘"},
         {"id":"ch3-11","courseLessonNumber":40,"title":"Transform_1（Transform 物件常用方法介紹）","duration":"4 分鐘"},
         {"id":"ch3-12","courseLessonNumber":41,"title":"Transform_2（Transform 物件常用方法介紹）","duration":"12 分鐘"},
