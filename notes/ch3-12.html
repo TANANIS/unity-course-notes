@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_12 Transform_2 筆記，整理 position、Translate、TransformDirection、Quaternion.Euler、eulerAngles、Rotate、LookAt 與 Local / World 座標差異。">
+  <title>ch3_12 Transform_2（Transform 物件常用方法介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_12</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 41</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_12 Transform_2（Transform 物件常用方法介紹）</h1>
+        <p>這堂用 TestTransform1 把上一堂的 Transform API 一個個跑過。重點是比較「直接設定狀態」與「持續累加變化」，並實際觀察 Local / World 方向、Euler Angle、Quaternion 與 LookAt。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">POSITION · TRANSLATE · LOCAL / WORLD · ROTATION</span><h2 id="lesson-map-title">同樣是移動或旋轉，API 的語意可能完全不同</h2><p>這堂不要只看「物件動了」，而要分辨它是被指定到某個狀態，還是在目前狀態上持續增加。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#setup"><strong>01</strong><span>測試設定<small>euler 與 move</small></span></a>
+          <a href="#position"><strong>02</strong><span>position / Translate<small>指定位置 vs. 累加位移</small></span></a>
+          <a href="#direction"><strong>03</strong><span>TransformDirection<small>Local / World 實際差異</small></span></a>
+          <a href="#rotation"><strong>04</strong><span>Quaternion / Euler<small>旋轉表示與 Rotate</small></span></a>
+          <a href="#lookat"><strong>05</strong><span>LookAt<small>持續朝向 target</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="setup"><span class="section-index">01</span><div>
+        <h2>TestTransform1 的共用測試資料</h2>
+        <pre><code>public Transform target;
+
+Vector3 euler = new Vector3(0, 270, 0);
+Vector3 move = Vector3.forward * 5;</code></pre>
+        <p><code>euler</code> 代表繞 Y 軸 270 度；<code>move</code> 等於 <code>(0, 0, 5)</code>，代表 +Z 方向 5 單位。後面每個測試都用這兩個向量觀察 Transform 的不同 API。</p>
+        <div class="memory-line"><span>測試基準</span><strong>euler = Y 270°；move = +Z 5。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="position"><span class="section-index">02</span><div>
+        <h2>position 是直接指定；Translate 是在目前位置上增加</h2>
+        <pre><code>void testPosition()
+{
+    transform.position = move;
+}</code></pre>
+        <p>這段執行後，物件的位置直接變成 <code>(0, 0, 5)</code>。課程用「往前五格」描述結果，但程式語意是把世界座標設定成這個值。</p>
+        <pre><code>void testTranslate()
+{
+    transform.Translate(move * Time.deltaTime);
+}</code></pre>
+        <p><code>Translate()</code> 則會在目前位置基礎上持續增加位移。因為 <code>move</code> 長度是 5，並乘上 <code>Time.deltaTime</code>，課程觀察到物件持續以每秒約 5 單位向前移動。</p>
+        <pre><code>position = ...
+→ 直接設定目前位置
+
+Translate(...)
+→ 從目前位置再移多少</code></pre>
+        <div class="memory-line"><span>最重要對照</span><strong>position 是狀態指定；Translate 是位移累加。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="direction"><span class="section-index">03</span><div>
+        <h2>TransformDirection：角色自己的前方，換算成世界中的方向</h2>
+        <p>物件沒有旋轉時，Local forward 和 World 的 +Z 看起來可能一樣；真正的差異要等物件旋轉後才明顯。</p>
+        <p>課程用東南西北比喻 World 與 Local：</p>
+        <pre><code>World / Global
+→ 東方永遠是東方
+→ 不會因為物件轉身而改變
+
+Local
+→ 物件自己的前方
+→ 物件旋轉後，前方也跟著旋轉</code></pre>
+        <p>因此當物件已經轉向，而移動又希望跟著「自身前方」時，可以把本地方向轉成世界方向：</p>
+        <pre><code>Vector3 worldDirection =
+    transform.TransformDirection(Vector3.forward);</code></pre>
+        <aside class="callout"><span class="callout-label">建立直覺</span><p><code>Vector3.forward</code> 先表示「Local 的前方」，<code>TransformDirection</code> 再回答「這個前方放到世界座標到底是哪邊」。</p></aside>
+        <div class="memory-line"><span>Local / World</span><strong>世界方向不因物件旋轉改變；本地方向會跟著物件朝向改變。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="rotation"><span class="section-index">04</span><div>
+        <h2>Euler Angle 與 Quaternion，以及設定旋轉與累加旋轉</h2>
+        <p>課程先用容易理解的 Vector3 表示想要的旋轉：</p>
+        <pre><code>Vector3 euler = new Vector3(0, 270, 0);</code></pre>
+        <p>若要指定 <code>transform.rotation</code>，則用 <code>Quaternion.Euler()</code> 將 Euler Angle 轉成 Quaternion：</p>
+        <pre><code>transform.rotation = Quaternion.Euler(euler);</code></pre>
+        <p>也可以直接以 Euler Angle 形式設定：</p>
+        <pre><code>transform.eulerAngles = euler;</code></pre>
+        <p>兩者都可表達 Y 軸 270 度的旋轉，只是資料表示不同。課程特別強調 Quaternion 的四個數值不容易直接看出軸向與角度，因此 Euler Angle 對人比較直觀。</p>
+        <p><code>Rotate()</code> 則不是指定到固定角度，而是在目前旋轉上繼續增加：</p>
+        <pre><code>transform.Rotate(euler * Time.deltaTime);</code></pre>
+        <p>乘上 <code>Time.deltaTime</code> 後，課程把 270 理解為每秒旋轉約 270 度；如果不乘 deltaTime，就會變成每個 Frame 都累加 270 度。</p>
+        <pre><code>rotation / eulerAngles
+→ 設定目前旋轉
+
+Rotate(...)
+→ 持續增加旋轉</code></pre>
+        <div class="memory-line"><span>旋轉模型</span><strong>Euler 適合人理解；Quaternion 是 rotation 使用的表示方式；Rotate 負責累加。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="lookat"><span class="section-index">05</span><div>
+        <h2>LookAt：讓物件持續看向 target</h2>
+        <p>課程先透過 Inspector 指定 <code>public Transform target</code>，之後把目標的位置傳進 LookAt：</p>
+        <pre><code>transform.LookAt(target.position);</code></pre>
+        <p>執行後，當 target 移到物件周圍不同位置，測試物件會跟著旋轉，維持面向 target。</p>
+        <pre><code>target.position
+      ↓
+   LookAt()
+      ↓
+更新自己的 rotation</code></pre>
+        <p>這種方法可建立「某物件持續面向另一個物件」的基本行為。</p>
+        <div class="memory-line"><span>這堂核心</span><strong>先分清楚「指定狀態」與「累加變化」，再處理 Local / World，Transform API 就不容易混。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-41-position"> 能說明 transform.position = move 與 Translate(move) 的差異</label>
+        <label><input type="checkbox" data-check="lesson-41-direction"> 能用「世界方向 vs. 自己前方」解釋 Local / World</label>
+        <label><input type="checkbox" data-check="lesson-41-transformdirection"> 知道 TransformDirection 解決的是方向座標轉換</label>
+        <label><input type="checkbox" data-check="lesson-41-quaternion"> 知道 Quaternion.Euler(euler) 是把 Euler Angle 轉成 Quaternion</label>
+        <label><input type="checkbox" data-check="lesson-41-rotate"> 能區分設定 rotation 與 Rotate 累加旋轉</label>
+        <label><input type="checkbox" data-check="lesson-41-lookat"> 知道 LookAt 會讓物件面向 target</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-11.html"><small>上一堂</small><strong>← ch3_11 Transform_1</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_13 Quaternion →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
