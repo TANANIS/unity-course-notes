@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_10 RigidbodyAnComponent_2 筆記，整理 Rigidbody、Input.GetAxis、AddForce、Is Kinematic、Freeze Rotation 與砲彈發射案例。">
+  <title>ch3_10 RigidbodyAnComponent_2（物理元件介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_10</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 39</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_10 RigidbodyAnComponent_2（物理元件介紹）</h1>
+        <p>這堂把上一堂的 Rigidbody、GetComponent、Vector3 與 FixedUpdate 組成一個完整案例：Cube 以鍵盤輸入受力移動，Sphere 則在滑鼠按下後解除 Kinematic 並施力發射。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">RIGIDBODY · INPUT · ADDFORCE · KINEMATIC</span><h2 id="lesson-map-title">從取得輸入，到組成方向向量，再交給 Rigidbody 施力</h2><p>這堂的價值不是多背一個 API，而是第一次把輸入、向量、Component 與物理系統串成可玩的操作流程。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#setup"><strong>01</strong><span>場景設定<small>Cube 與 Sphere 的 Rigidbody</small></span></a>
+          <a href="#move"><strong>02</strong><span>鍵盤移動<small>Input.GetAxis + AddForce</small></span></a>
+          <a href="#component"><strong>03</strong><span>取得元件<small>GetComponent / InChildren</small></span></a>
+          <a href="#shoot"><strong>04</strong><span>發射子彈<small>isKinematic + shootSpeed</small></span></a>
+          <a href="#notes"><strong>05</strong><span>案例注意點<small>GetMouseButton 與座標軸</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="setup"><span class="section-index">01</span><div>
+        <h2>Cube 與 Sphere 的 Rigidbody 設定</h2>
+        <p>課程中的紅色 Cube 是可移動砲台。它有 Rigidbody、Box Collider 與 TestComponent，Inspector 中的移動速度設為 20。</p>
+        <pre><code>Cube
+├── Box Collider
+├── Rigidbody
+│   ├── Use Gravity = true
+│   ├── Is Kinematic = false
+│   └── Freeze Rotation
+│       ├── X = true
+│       ├── Y = false
+│       └── Z = true
+└── TestComponent
+    └── Speed = 20</code></pre>
+        <p>Freeze Rotation X / Z 可以避免物件受力後前後或左右翻滾；Y 軸保留，仍可允許水平轉向。</p>
+        <p>Sphere 則作為子彈，初始勾選 <code>Is Kinematic</code>，並停用 Sphere Collider。Shoot 元件中的發射向量設定為 <code>(0, 50, 100)</code>。</p>
+        <pre><code>Sphere
+├── Sphere Collider = Disabled
+├── Rigidbody
+│   ├── Use Gravity = true
+│   └── Is Kinematic = true
+└── Shoot
+    └── Shoot Speed = (0, 50, 100)</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>Cube 一開始就是動態剛體；Sphere 則先以 Kinematic 等待發射。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="move"><span class="section-index">02</span><div>
+        <h2>Input.GetAxis 組成 X/Z 平面的施力方向</h2>
+        <pre><code>float x = Input.GetAxis("Horizontal");
+float y = Input.GetAxis("Vertical");
+
+Vector3 force = new Vector3(
+    x * speed,
+    0,
+    y * speed
+);
+
+rigidbody.AddForce(force);</code></pre>
+        <p><code>Horizontal</code> 控制世界 X 軸左右；課程雖把 <code>Vertical</code> 存在變數 <code>y</code>，實際卻放到 Vector3 的 Z 分量，因為 3D 地面上的前後是 Z，而世界 Y 是上下。</p>
+        <pre><code>Horizontal → X → 左右
+Vertical   → Z → 前後
+Y          → 0 → 不主動往天空施力</code></pre>
+        <p><code>GetAxis</code> 的輸入值大致位於 -1 到 1，因此再乘上 <code>speed</code> 放大力道，最後交給 Rigidbody 的 <code>AddForce()</code>。</p>
+        <div class="memory-line"><span>資料流</span><strong>鍵盤輸入 → Vector3 方向 → × speed → Rigidbody.AddForce。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="component"><span class="section-index">03</span><div>
+        <h2>同一支腳本同時取得自己與子物件的 Component</h2>
+        <pre><code>private Rigidbody rigidbody;
+private Shoot shootObj;
+
+void Start()
+{
+    rigidbody = GetComponent&lt;Rigidbody&gt;();
+    shootObj = GetComponentInChildren&lt;Shoot&gt;();
+}</code></pre>
+        <p><code>GetComponent&lt;Rigidbody&gt;()</code> 取得 Cube 自己身上的 Rigidbody；<code>GetComponentInChildren&lt;Shoot&gt;()</code> 則往子階層找到 Sphere 上的 Shoot 元件。</p>
+        <pre><code>Cube
+├── Rigidbody ← GetComponent
+└── Sphere
+    └── Shoot ← GetComponentInChildren</code></pre>
+        <div class="memory-line"><span>Component 模型</span><strong>先取得元件參考，之後才能呼叫該元件提供的能力。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="shoot"><span class="section-index">04</span><div>
+        <h2>Sphere 發射：解除 Kinematic，再 AddForce</h2>
+        <pre><code>public Vector3 shootSpeed;
+private Rigidbody shootRigidbody;
+
+void Start()
+{
+    shootRigidbody = GetComponent&lt;Rigidbody&gt;();
+}
+
+public void shoot()
+{
+    shootRigidbody.isKinematic = false;
+    shootRigidbody.AddForce(shootSpeed);
+}</code></pre>
+        <p>Sphere 初始 <code>isKinematic = true</code>，因此先不由一般動態物理帶著移動。呼叫 <code>shoot()</code> 時改成 false，再施加 <code>(0, 50, 100)</code> 的力。</p>
+        <pre><code>(0, 50, 100)
+    ↑     ↑
+   +Y    +Z
+  往上   往前</code></pre>
+        <p>因此子彈同時有向上與向前的初始力，加上已啟用的 Gravity，畫面會呈現拋射感。</p>
+        <div class="memory-line"><span>發射流程</span><strong>isKinematic = false → AddForce(shootSpeed) → 重力持續作用。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="notes"><span class="section-index">05</span><div>
+        <h2>案例裡值得特別記住的兩個細節</h2>
+        <p>課程使用：</p>
+        <pre><code>if (Input.GetMouseButton(0))
+{
+    shootObj.shoot();
+}</code></pre>
+        <p>這表示滑鼠左鍵只要維持按住，條件就會持續成立，而不是只在按下的瞬間觸發。這是本課範例的實際行為。</p>
+        <aside class="callout"><span class="callout-label">讀程式不要被變數名稱騙</span><p>課程把 Vertical 輸入存在名為 <code>y</code> 的變數，但最後使用的是 Vector3 的 Z 軸。判斷座標意義時要看資料最後放到哪個分量，而不是只看區域變數叫什麼。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>Input、Vector3、GetComponent 與 Rigidbody 在這堂第一次完整串成操作流程。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-39-setup"> 知道 Cube 為何 Freeze Rotation X / Z</label>
+        <label><input type="checkbox" data-check="lesson-39-axis"> 能說明 Horizontal → X、Vertical → Z</label>
+        <label><input type="checkbox" data-check="lesson-39-component"> 能解釋 GetComponent 與 GetComponentInChildren 在案例中各取得什麼</label>
+        <label><input type="checkbox" data-check="lesson-39-kinematic"> 知道 Sphere 發射前後 isKinematic 的變化</label>
+        <label><input type="checkbox" data-check="lesson-39-force"> 能說明 shootSpeed (0, 50, 100) 的方向意義</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-9.html"><small>上一堂</small><strong>← ch3_9 RigidbodyAnComponent_1</strong></a><a class="next" href="ch3-11.html"><small>下一堂</small><strong>ch3_11 Transform_1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
