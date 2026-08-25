@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_9 RigidbodyAnComponent_1 筆記，整理 Rigidbody、FixedUpdate、GetComponent、GetComponentInChildren 與用 Vector3 表示施力方向的基本概念。">
+  <title>ch3_9 RigidbodyAnComponent_1（物理元件介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_9</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 38</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_9 RigidbodyAnComponent_1（物理元件介紹）</h1>
+        <p>這堂把前面的 <code>FixedUpdate()</code>、<code>Vector3</code> 與 Unity 的 Component 系統接到物理操作上。核心是認識 <code>Rigidbody</code>，並知道如何取得元件、指定施力方向，以及為什麼物理更新通常放在固定時間步中。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">RIGIDBODY · FIXEDUPDATE · GETCOMPONENT</span><h2 id="lesson-map-title">GameObject 是容器，Rigidbody 是讓物件參與物理模擬的 Component</h2><p>這堂開始不只是直接改 Transform，而是讓 Unity 的物理系統參與物件運動。先取得 Rigidbody，再透過方向向量表示要往哪裡施力。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#rigidbody"><strong>01</strong><span>Rigidbody<small>物理元件與剛體概念</small></span></a>
+          <a href="#fixed"><strong>02</strong><span>FixedUpdate<small>固定時間步處理物理</small></span></a>
+          <a href="#component"><strong>03</strong><span>GetComponent<small>取得物件身上的元件</small></span></a>
+          <a href="#children"><strong>04</strong><span>GetComponentInChildren<small>往子階層取得元件</small></span></a>
+          <a href="#force"><strong>05</strong><span>方向與力量<small>Vector3.up / right</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="rigidbody"><span class="section-index">01</span><div>
+        <h2>Rigidbody：讓固體 GameObject 參與 Unity 物理模擬</h2>
+        <p>課程先用「剛體」建立直覺：理想剛體可以視為不會因受力而改變形狀的固體。Unity 裡的 <code>Rigidbody</code> 則是常用的物理 Component，讓 GameObject 能進入物理系統，之後才能用物理方式推動它。</p>
+        <pre><code>GameObject
+├── Transform
+├── Collider
+└── Rigidbody  ← 物理元件</code></pre>
+        <p>這裡要先把「物件」與「元件」分開理解。GameObject 本身比較像容器，真正提供移動、碰撞、渲染或物理能力的是掛在它身上的 Component。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Rigidbody 是掛在 GameObject 上的物理元件，不是另一個 GameObject。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="fixed"><span class="section-index">02</span><div>
+        <h2>物理操作通常放在 FixedUpdate()</h2>
+        <p>老師把前一堂的時間概念接回來：<code>FixedUpdate()</code> 依固定時間步執行，因此 Rigidbody 的持續物理運算通常放在這裡，而不是直接跟著不固定的畫面 FPS 跑。</p>
+        <pre><code>void FixedUpdate()
+{
+    // 持續性的 Rigidbody 物理操作通常放在這裡
+}</code></pre>
+        <p>這跟前一堂形成很清楚的對照：</p>
+        <pre><code>Update()
+→ 跟畫面 Frame 走
+→ 每次間隔可能不同
+
+FixedUpdate()
+→ 跟固定物理時間步走
+→ 適合持續性的物理運算</code></pre>
+        <aside class="callout"><span class="callout-label">概念校正</span><p>不要背成「只要碰到 Rigidbody，所有程式都必須塞進 FixedUpdate」。課程這裡真正要建立的是：持續施力、速度等物理操作通常交給固定物理時間步；輸入讀取等其他邏輯仍可能放在 <code>Update()</code>。</p></aside>
+        <div class="memory-line"><span>FixedUpdate</span><strong>畫面更新與物理更新是兩套不同節奏，不要把兩者混成同一件事。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="component"><span class="section-index">03</span><div>
+        <h2>GetComponent&lt;T&gt;()：取得目前 GameObject 身上的指定元件</h2>
+        <p>接著課程進入「取得 Component」。一個 GameObject 身上可能同時有 Transform、Collider、Rigidbody 或其他腳本；程式取得指定元件後，就能進一步控制它。</p>
+        <pre><code>Rigidbody rb = GetComponent&lt;Rigidbody&gt;();</code></pre>
+        <p>這行可以拆成：</p>
+        <pre><code>GetComponent&lt;Rigidbody&gt;()
+→ 到目前這個 GameObject 身上
+→ 找 Rigidbody Component
+→ 把取得的參考交給 rb</code></pre>
+        <p>因此這裡不是「取得整個物件」，而是從物件這個容器裡拿到某個具體功能元件。</p>
+        <div class="memory-line"><span>核心模型</span><strong>GetComponent 取得的是 Component 參考；取得後才能呼叫該元件提供的功能。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="children"><span class="section-index">04</span><div>
+        <h2>GetComponentInChildren&lt;T&gt;()：往自己與子物件階層尋找元件</h2>
+        <p>除了 <code>GetComponent()</code>，老師也先介紹 <code>GetComponentInChildren()</code>。當需要的 Component 不一定直接掛在目前 GameObject，而可能存在子物件時，就可以往子階層尋找。</p>
+        <pre><code>Player
+├── Rigidbody
+└── Gun
+    └── Muzzle
+        └── SomeComponent</code></pre>
+        <pre><code>SomeComponent target =
+    GetComponentInChildren&lt;SomeComponent&gt;();</code></pre>
+        <div class="memory-line"><span>差異</span><strong>GetComponent 先看自己；GetComponentInChildren 用於自己與子階層中的指定元件。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="force"><span class="section-index">05</span><div>
+        <h2>Vector3 表示方向，乘上的數值表示力量大小</h2>
+        <p>老師最後把前面學過的向量接到物理概念。若希望物體往上，就用向上的方向；往右則使用向右的方向。方向向量再乘上一個數值，就能把力量放大。</p>
+        <pre><code>Vector3.up
+= (0, 1, 0)
+
+Vector3.up * 10
+= (0, 10, 0)
+
+Vector3.right
+= (1, 0, 0)</code></pre>
+        <p>因此可以先用下面的心智模型理解：</p>
+        <pre><code>方向 × 力量大小
+
+Vector3.up * 10f
+→ 往上、大小 10
+
+Vector3.right * 100f
+→ 往右、大小 100</code></pre>
+        <p>下一個案例會把這些概念合起來：用鍵盤控制砲台移動，按下滑鼠左鍵時讓球被發射出去。</p>
+        <aside class="callout"><span class="callout-label">先不要過度簡化</span><p>課程目前是在建立「向量代表施力方向與大小」的直覺。實際 Rigidbody 最終怎麼移動，還會受到質量、重力、阻力與施力模式等物理設定影響；這些不是本堂字幕的重點，後面遇到再拆。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>取得 Rigidbody → 在固定物理時間步中操作 → 用 Vector3 決定施力方向。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-38-rigidbody"> 知道 Rigidbody 是讓 GameObject 參與物理模擬的 Component</label>
+        <label><input type="checkbox" data-check="lesson-38-fixed"> 能說明為什麼持續性的物理操作通常放在 FixedUpdate</label>
+        <label><input type="checkbox" data-check="lesson-38-getcomponent"> 能解釋 GetComponent&lt;Rigidbody&gt;() 取得的是什麼</label>
+        <label><input type="checkbox" data-check="lesson-38-children"> 知道 GetComponentInChildren 與 GetComponent 的用途差異</label>
+        <label><input type="checkbox" data-check="lesson-38-force"> 能用 Vector3.up / right 說明施力方向</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-8.html"><small>上一堂</small><strong>← ch3_8 Time_程式說明2</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_10 RigidbodyAnComponent_2 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
