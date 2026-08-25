@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_11 Transform_1 筆記，整理 Transform 的 Position、Rotation、Scale、position、rotation、eulerAngles、Translate、TransformDirection、Rotate 與 LookAt。">
+  <title>ch3_11 Transform_1（Transform 物件常用方法介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_11</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 40</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_11 Transform_1（Transform 物件常用方法介紹）</h1>
+        <p>這堂先建立 Transform 的總覽：它保存 GameObject 的位置、旋轉與縮放狀態，也提供常用的移動、座標轉換、旋轉與朝向方法。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">TRANSFORM · POSITION · ROTATION · LOCAL / WORLD</span><h2 id="lesson-map-title">Transform 描述物件的空間狀態，也提供改變空間狀態的方法</h2><p>先把「目前是什麼狀態」與「從目前狀態再改多少」分開，後面的 API 會容易理解很多。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#state"><strong>01</strong><span>三大狀態<small>Position / Rotation / Scale</small></span></a>
+          <a href="#variables"><strong>02</strong><span>常用屬性<small>position / rotation / eulerAngles</small></span></a>
+          <a href="#translate"><strong>03</strong><span>Translate<small>在目前位置上增加位移</small></span></a>
+          <a href="#direction"><strong>04</strong><span>TransformDirection<small>Local → World</small></span></a>
+          <a href="#rotate"><strong>05</strong><span>Rotate / LookAt<small>累加旋轉與朝向目標</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="state"><span class="section-index">01</span><div>
+        <h2>Transform 的三大空間狀態</h2>
+        <pre><code>Transform
+├── Position  位置
+├── Rotation  旋轉
+└── Scale     縮放</code></pre>
+        <p>課程先回到 Inspector 的 Transform 元件。所有 GameObject 都會有 Transform，它用來描述物件在場景中的位置、旋轉與縮放。</p>
+        <p>三項資料都具有 X、Y、Z 三個方向，因此也會再次碰到 Unity 的 3D 座標與 Local / World 概念。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Transform 是 GameObject 的空間狀態核心。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="variables"><span class="section-index">02</span><div>
+        <h2>position、rotation、eulerAngles</h2>
+        <pre><code>transform.position
+→ Vector3
+→ 物件位置
+
+transform.rotation
+→ Quaternion
+→ 物件旋轉
+
+transform.eulerAngles
+→ Vector3
+→ 用 X / Y / Z 角度表示旋轉</code></pre>
+        <p>課程指出 Quaternion 是 Unity 常用的旋轉表示方式，但四個數值不容易直接看出「繞哪個軸轉幾度」；Euler Angle 則以 Vector3 的 X、Y、Z 角度表示，對人比較直觀。</p>
+        <p>因此實作時常會先用 Euler Angle 思考旋轉，再視需求轉成 Quaternion。</p>
+        <div class="memory-line"><span>旋轉表示</span><strong>Euler Angle 比較直觀；rotation 使用 Quaternion。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="translate"><span class="section-index">03</span><div>
+        <h2>Translate：在目前位置上增加位移</h2>
+        <p>課程用位置 5、每次移動 2 的例子建立直覺：</p>
+        <pre><code>5 → 7 → 9 → 11 → 13 ...</code></pre>
+        <p><code>Translate()</code> 的重點不是指定一個固定座標，而是從目前位置再移動指定向量。</p>
+        <pre><code>transform.Translate(Vector3.forward * 2f);</code></pre>
+        <aside class="callout"><span class="callout-label">和 position 分開理解</span><p><code>position = ...</code> 描述或直接設定目前位置；<code>Translate(...)</code> 則是在目前位置基礎上再增加一段位移。</p></aside>
+        <div class="memory-line"><span>Translate</span><strong>不是「去哪裡」，而是「從現在再移多少」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="direction"><span class="section-index">04</span><div>
+        <h2>TransformDirection：Local direction 轉成 World direction</h2>
+        <pre><code>transform.TransformDirection(Vector3.forward)</code></pre>
+        <p>課程先給出定義：將 Local Space 的方向轉換成 World Space。當物件已經旋轉時，「自己的前方」不一定等於世界座標的 +Z，因此需要把本地方向換算成世界方向。</p>
+        <pre><code>Local forward
+→ TransformDirection
+→ World 中實際對應的方向</code></pre>
+        <div class="memory-line"><span>直覺</span><strong>「我的前方」轉成「在世界裡到底是哪個方向」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="rotate"><span class="section-index">05</span><div>
+        <h2>Rotate 累加旋轉；LookAt 朝向目標</h2>
+        <p><code>Rotate()</code> 和 Translate 很像，重點是「在目前狀態上繼續增加」。課程以每次增加 20 度為例：</p>
+        <pre><code>0° → 20° → 40° → 60° → ...</code></pre>
+        <p>而 <code>LookAt()</code> 則用來讓物件看向指定目標。當目標移動到不同位置，物件可跟著改變 rotation 以維持朝向。</p>
+        <pre><code>transform.Rotate(...);
+transform.LookAt(target);</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>position / rotation 描述狀態；Translate / Rotate 在目前狀態上持續改變。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-40-transform"> 知道 Transform 的 Position、Rotation、Scale 三大狀態</label>
+        <label><input type="checkbox" data-check="lesson-40-rotation"> 能區分 rotation 與 eulerAngles 的表示方式</label>
+        <label><input type="checkbox" data-check="lesson-40-translate"> 能說明 position 與 Translate 的思考差異</label>
+        <label><input type="checkbox" data-check="lesson-40-direction"> 知道 TransformDirection 是 Local → World 的方向轉換</label>
+        <label><input type="checkbox" data-check="lesson-40-lookat"> 知道 Rotate 與 LookAt 各在解決什麼問題</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-10.html"><small>上一堂</small><strong>← ch3_10 RigidbodyAnComponent_2</strong></a><a class="next" href="ch3-12.html"><small>下一堂</small><strong>ch3_12 Transform_2 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
