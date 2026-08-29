@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_22 event_1 筆記，以直覺方式整理 Event 的用途，以及它和 Message 在物件階層限制上的差異。">
+  <title>ch3_22 event_1（事件使用方式）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_22</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 51</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_22 event_1（事件使用方式）</h1>
+        <p>前兩堂的 Message 很適合在父子階層裡喊話；但如果要通知 UI、音效、GameManager 這些彼此沒有父子關係的物件，就會開始卡住。這堂先介紹 Event 為什麼會出場。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">EVENT · MESSAGE · DECOUPLING</span><h2 id="lesson-map-title">不是跑去叫每個人，而是宣布：「某件事發生了」</h2><p>課程用「玩家 HP 歸零」當例子。死亡時可能要同時播放音效、更新 UI、觸發其他遊戲效果，但這些物件不一定和 Player 有任何父子階層關係。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#problem"><strong>01</strong><span>Message 的限制<small>很在意父子階層</small></span></a>
+          <a href="#event"><strong>02</strong><span>Event 的直覺<small>像警報鈴</small></span></a>
+          <a href="#compare"><strong>03</strong><span>Message vs Event<small>叫人做事 vs 宣布事情</small></span></a>
+          <a href="#model"><strong>04</strong><span>整堂模型<small>HP 歸零 → 多系統反應</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="problem"><span class="section-index">01</span><div>
+        <h2>Message 的限制：大家如果不住在同一棵 hierarchy，就很難喊到</h2>
+        <p>課程先假設玩家 HP 歸零。這時可能要同時做很多事情：</p>
+        <pre><code>Player HP = 0
+      ↓
+播放死亡音效
+顯示死亡 UI
+觸發其他遊戲效果
+...</code></pre>
+        <p>問題是，負責這些工作的物件不一定是 Player 的父物件或子物件，甚至可能全部都和 Player 平行：</p>
+        <pre><code>Player
+UIManager
+AudioManager
+GameManager</code></pre>
+        <p>這種結構下，前面的 <code>BroadcastMessage</code> 往下傳、<code>SendMessageUpwards</code> 往上傳，都不適合拿來通知這些平行物件。</p>
+        <div class="memory-line"><span>問題核心</span><strong>Message 很依賴 Transform 階層；沒有父子關係時，它的用途就會受限。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="event"><span class="section-index">02</span><div>
+        <h2>Event：像按下一顆警報鈴</h2>
+        <p>這堂先把 Event 想成「某件事情發生了，我公開宣布一次」。有需要對這件事反應的系統，再各自處理自己的工作。</p>
+        <pre><code>          「Player 死亡了！」
+                  ↓
+               🔔 Event
+            ↙      ↓      ↘
+      Audio      UI      其他系統
+        ↓         ↓          ↓
+      播音效    顯示畫面    做自己的事</code></pre>
+        <p>五歲版：Player 不需要一個一個跑去敲門叫大家。它只要按下警報鈴，平常有在聽這顆鈴的人，就知道「現在輪到我做事了」。</p>
+        <div class="memory-line"><span>Event</span><strong>我不指定你一定要做什麼，我只宣布：「這件事發生了。」</strong></div>
+      </div></section>
+
+      <section class="note-section" id="compare"><span class="section-index">03</span><div>
+        <h2>Message vs Event：一個像叫人，一個像公告</h2>
+        <pre><code>Message
+→ 「我要叫這個階層範圍裡的人做事」
+→ 很在意自己 / 父物件 / 子物件
+
+Event
+→ 「某件事情發生了」
+→ 需要反應的人自己處理
+→ 不需要靠父子階層才能通知</code></pre>
+        <p>課程這堂的重點不是說 Message 完全沒用，而是當接收者彼此沒有合適的階層關係時，Event 會更適合。</p>
+        <div class="memory-line"><span>一句話分辨</span><strong>Message 比較像「我叫你做事」；Event 比較像「我宣布事情發生了」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">04</span><div>
+        <h2>把整堂壓成這個模型</h2>
+        <pre><code>玩家 HP 歸零
+      ↓
+需要很多系統一起反應
+      ↓
+但這些物件沒有父子階層關係
+      ↓
+Message 不方便
+      ↓
+改用 Event
+      ↓
+「PlayerDead 發生了」
+      ↓
+有需要的系統各自處理</code></pre>
+        <aside class="callout"><span class="callout-label">這堂先到這裡</span><p>這一堂只有概念介紹，字幕沒有進入 Event 的宣告、訂閱或呼叫語法。那些留到下一堂 <code>event_2</code> 再整理，不提前塞進來。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>當很多彼此沒有階層關係的物件都需要知道「某件事發生了」，就輪到 Event 上場。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-51-problem"> 知道 Message 的傳遞會受到父子階層限制</label>
+        <label><input type="checkbox" data-check="lesson-51-event"> 能把 Event 解釋成「某件事發生了」的公告</label>
+        <label><input type="checkbox" data-check="lesson-51-example"> 能用玩家 HP 歸零的例子說明為什麼需要 Event</label>
+        <label><input type="checkbox" data-check="lesson-51-compare"> 能分辨 Message 是叫人做事，Event 是宣布事情發生</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-21.html"><small>上一堂</small><strong>← ch3_21 message_2</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_23 event_2 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
