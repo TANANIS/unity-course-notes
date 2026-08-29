@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_14 Lerp 簡介筆記，用直覺方式整理 A 到 B 的插值、t 的 0 到 1 範圍、反覆 Lerp 的逼近效果與 Time.deltaTime。">
+  <title>ch3_14 Lerp_簡介｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_14</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 43</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_14 Lerp_簡介</h1>
+        <p>Lerp 可以先想成：「我現在在 A，想往 B 靠近一點。」這堂先建立直覺，不急著把它想成什麼可怕的數學魔法。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">LERP · A → B · t · INTERPOLATION</span><h2 id="lesson-map-title">把 A 和 B 中間的一小段拿出來</h2><p>位置可以從 A 走向 B，角度可以從 20 度轉向 80 度，顏色也可以從紅色慢慢變成黑色。Lerp 做的事情，就是幫你找「A 和 B 中間的某一點」。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#idea"><strong>01</strong><span>Lerp 是什麼<small>A 往 B 靠近</small></span></a>
+          <a href="#t"><strong>02</strong><span>第三個參數 t<small>0 到 1</small></span></a>
+          <a href="#repeat"><strong>03</strong><span>一直 Lerp<small>越來越接近</small></span></a>
+          <a href="#delta"><strong>04</strong><span>Time.deltaTime<small>課程中的用法</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="idea"><span class="section-index">01</span><div>
+        <h2>Lerp 就像：你站在 A，要往 B 走一點</h2>
+        <p>想像地上有兩個點：</p>
+        <pre><code>A -------------------- B</code></pre>
+        <p>你現在站在 A。Lerp 不一定叫你一次跑到 B，它可以只叫你走到中間、走四分之一，或走到快碰到 B 的地方。</p>
+        <p>課程舉的例子包括：</p>
+        <pre><code>位置：A 座標 → B 座標
+角度：20° → 80°
+顏色：紅色 → 黑色</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>Lerp = 在 A 和 B 中間，幫我找一個位置。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="t"><span class="section-index">02</span><div>
+        <h2>第三個參數 t：告訴 Lerp「你想走多少」</h2>
+        <pre><code>Mathf.Lerp(A, B, t)</code></pre>
+        <p>把 <code>t</code> 想成一條從 0 到 1 的進度條：</p>
+        <pre><code>t = 0
+A ●--------------------○ B
+  完全沒走
+
+t = 0.5
+A ○----------●---------○ B
+             走一半
+
+t = 1
+A ○--------------------● B
+                        到 B</code></pre>
+        <p>所以如果 A 是 0、B 是 100，<code>t = 0.5</code> 時就會拿到中間的 50。課程也特別提醒第三個參數的範圍是 0 到 1。</p>
+        <aside class="callout"><span class="callout-label">筆記補充：真正的計算方式</span><p>這不是老師逐字說出的公式，而是用來校正概念：<code>A + (B - A) * t</code>。先算「A 到 B 還差多少」，再拿其中的 t 比例加回 A。</p></aside>
+        <div class="memory-line"><span>t 的意思</span><strong>0 = 留在 A；0.5 = 中間；1 = 到 B。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="repeat"><span class="section-index">03</span><div>
+        <h2>如果每次都把「現在的位置」再往 B 拉一半</h2>
+        <p>假設一開始是 0，目標是 100，每次都取目前位置到 100 的一半：</p>
+        <pre><code>0
+↓
+50
+↓
+75
+↓
+87.5
+↓
+93.75
+↓
+...</code></pre>
+        <p>你會發現一開始跳很多，後面越來越小。原因很簡單：你離 B 很遠時，「剩下的一半」很大；越靠近 B，「剩下的一半」就越小。</p>
+        <p>這就是課程說的「一開始比較快，之後慢慢接近目標」。</p>
+        <div class="memory-line"><span>一直 Lerp</span><strong>離目標遠時走很多；離目標近時只走一點，所以看起來會慢慢停下來。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="delta"><span class="section-index">04</span><div>
+        <h2>課程把固定的 0.5 換成 Time.deltaTime</h2>
+        <p>課程接著提到，不同電腦每秒執行 Update 的次數可能不同，因此會把固定的 <code>0.5</code> 換成 <code>Time.deltaTime</code>，希望不同電腦上的變化不要差太多。</p>
+        <pre><code>Mathf.Lerp(current, target, Time.deltaTime)</code></pre>
+        <p>可以先把它想成：「每一幀只往目標靠一小點，而且這一小點會參考這一幀花了多少時間。」</p>
+        <aside class="callout"><span class="callout-label">概念校正</span><p><code>Lerp(current, target, Time.deltaTime)</code> 常被拿來做平滑逼近，但不要把它記成「固定速度移動」。固定速度是另一種問題，下一堂看到實際程式時再分清楚。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>Lerp 不是「移動指令」，而是問：A 和 B 中間，照這個比例應該拿哪個值？</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-43-idea"> 能用「A 往 B 走一點」解釋 Lerp</label>
+        <label><input type="checkbox" data-check="lesson-43-t"> 知道 t = 0、0.5、1 分別代表 A、中間、B</label>
+        <label><input type="checkbox" data-check="lesson-43-repeat"> 知道反覆用目前值 Lerp 到目標時，會越來越靠近且變化越小</label>
+        <label><input type="checkbox" data-check="lesson-43-formula"> 看得懂 A + (B - A) * t 的意思</label>
+        <label><input type="checkbox" data-check="lesson-43-delta"> 知道課程使用 Time.deltaTime 來減少幀率差異，但它不等於固定速度</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-13.html"><small>上一堂</small><strong>← ch3_13 Quaternion</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_15 Lerp_程式說明 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
