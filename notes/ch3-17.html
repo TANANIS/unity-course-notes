@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_17 Raycast_1 筆記，以直覺方式整理射線用途、Origin、Direction、Max Distance、LayerMask、Trigger 查詢與 Ray。">
+  <title>ch3_17 Raycast_1（射線用法介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_17</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 46</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_17 Raycast_1（射線用法介紹）</h1>
+        <p>先把 Raycast 想成一支「看不見的雷射筆」：從某個地方往某個方向照出去，再問 Unity「這條線有沒有碰到東西？」這堂先建立射線的基本零件，不急著背所有 overload。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">RAYCAST · ORIGIN · DIRECTION · DISTANCE · LAYERMASK</span><h2 id="lesson-map-title">拿一支看不見的雷射筆出去問路</h2><p>射擊遊戲可以用它確認槍口前面是不是敵人；從空中往下射，也可以拿來判斷離地面還有多遠。用途很多，但骨架其實很固定。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#idea"><strong>01</strong><span>Raycast 是什麼<small>無形雷射筆</small></span></a>
+          <a href="#parts"><strong>02</strong><span>四個常見零件<small>從哪射、往哪射、多遠、打誰</small></span></a>
+          <a href="#trigger"><strong>03</strong><span>Trigger 算不算<small>透明感應門</small></span></a>
+          <a href="#ray"><strong>04</strong><span>Ray 是什麼<small>Origin + Direction</small></span></a>
+          <a href="#model"><strong>05</strong><span>整堂模型<small>看到 Raycast 先問五件事</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="idea"><span class="section-index">01</span><div>
+        <h2>Raycast：往一個方向射出看不見的線</h2>
+        <p>課程先用槍戰遊戲當例子：槍口往前打一條無形射線，如果碰到可攻擊的怪物，就能知道目前瞄準的是誰，之後再做射擊、傷害或命中特效。</p>
+        <pre><code>槍口 ●────────────────────→ 怪物
+          看不見的射線</code></pre>
+        <p>另一個例子是從空中往下射，測量角色離地面還有多遠，再拿這個結果決定何時打開降落傘。</p>
+        <pre><code>槍戰：前面是不是敵人？
+降落：下面離地面還多遠？</code></pre>
+        <div class="memory-line"><span>一句話記憶</span><strong>Raycast = 往某個方向問 Unity：「這條線碰到東西了嗎？」</strong></div>
+      </div></section>
+
+      <section class="note-section" id="parts"><span class="section-index">02</span><div>
+        <h2>Raycast 的常見零件：從哪裡、往哪裡、射多遠、哪些東西算數</h2>
+        <p>課程提到 Raycast 有很多 overload，但常見參數一直圍繞幾件事：</p>
+        <pre><code>Origin
+→ 從哪裡開始射？
+
+Direction
+→ 往哪個方向射？
+
+Max Distance
+→ 最遠射多遠？
+
+LayerMask
+→ 哪些 Layer 才算目標？</code></pre>
+        <p>可以把它畫成：</p>
+        <pre><code>●────────────────────────→
+↑                        ↑
+Origin                   Max Distance
+
+整條箭頭指的方向 = Direction</code></pre>
+        <p><code>Direction</code> 只回答「往哪裡」，不包含「多遠」。例如「往前」只是一個方向，真正最遠可以檢查多遠，要另外交給最大距離。</p>
+        <p><code>LayerMask</code> 則像篩選器：場景裡就算有牆、地板、裝飾和敵人，你也可以只讓這次射線在意某些 Layer。</p>
+        <div class="memory-line"><span>四個問題</span><strong>從哪射？往哪射？射多遠？哪些東西算？</strong></div>
+      </div></section>
+
+      <section class="note-section" id="trigger"><span class="section-index">03</span><div>
+        <h2>Trigger 要不要算命中？Raycast 也可以決定</h2>
+        <p>上一堂的 Trigger 像「可以穿過的感應區」。這堂課接著說，射線可以決定遇到 Trigger 時要怎麼處理：</p>
+        <pre><code>Trigger 算命中
+→ 雷射碰到感應區也算碰到
+
+Trigger 不算
+→ 把它當透明的，射線繼續往後
+
+使用 Global 設定
+→ 跟 Unity 專案裡的預設物理設定走</code></pre>
+        <p>五歲版：前面有一扇透明感應門，你可以告訴雷射筆「看到透明門也要停」，或「假裝它不存在，繼續照後面的東西」。</p>
+        <div class="memory-line"><span>Trigger 查詢</span><strong>Raycast 不只決定打哪裡，也能決定感應區要不要算碰到。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="ray"><span class="section-index">04</span><div>
+        <h2>Ray：把「起點 + 方向」包在一起</h2>
+        <p>課程最後特別介紹 <code>Ray</code>。這堂先把它理解成一個很簡單的小盒子，裡面主要放兩件事：</p>
+        <pre><code>Ray
+├─ origin      → 從哪裡開始
+└─ direction   → 往哪裡前進</code></pre>
+        <p>所以 Ray 本身不是「撞到了什麼」的結果，它只是先把一條射線的起點與方向描述好。</p>
+        <pre><code>Ray = Origin + Direction</code></pre>
+        <div class="memory-line"><span>Ray</span><strong>一張小紙條：寫著「從這裡開始，往那邊射」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">05</span><div>
+        <h2>不要背 overload，看到 Raycast 先問這五件事</h2>
+        <pre><code>1. 從哪裡射？       Origin
+2. 往哪裡射？       Direction
+3. 最遠射多遠？     Max Distance
+4. 哪些東西才算？   LayerMask
+5. Trigger 算不算？ Trigger 查詢設定</code></pre>
+        <p>而如果程式先建立了一個 <code>Ray</code>：</p>
+        <pre><code>Ray = Origin + Direction</code></pre>
+        <p>就代表前兩個資訊先被包在一起了。這堂只先建立這個骨架，下一堂才繼續看實際射線程式怎麼寫。</p>
+        <div class="memory-line"><span>這堂核心</span><strong>Raycast 是一條有起點、有方向、可限制距離與目標範圍的無形檢查線。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-46-idea"> 能用「無形雷射筆」解釋 Raycast</label>
+        <label><input type="checkbox" data-check="lesson-46-origin"> 知道 Origin 是射線起點，Direction 是射線方向</label>
+        <label><input type="checkbox" data-check="lesson-46-distance"> 知道 Direction 不包含距離，最大距離要另外指定</label>
+        <label><input type="checkbox" data-check="lesson-46-layer"> 知道 LayerMask 可以篩選哪些 Layer 需要被射線考慮</label>
+        <label><input type="checkbox" data-check="lesson-46-trigger"> 知道射線可以決定 Trigger 是否算命中</label>
+        <label><input type="checkbox" data-check="lesson-46-ray"> 能把 Ray 解釋成 Origin + Direction</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-16.html"><small>上一堂</small><strong>← ch3_16 Collision</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_18 Raycast_2 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
