@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_24 Invoke 簡介筆記，以 ELI5 方式整理 Invoke、InvokeRepeating、CancelInvoke 的用途，以及延遲與重複呼叫的基本模型。">
+  <title>ch3_24 Invoke_簡介｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_24</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 53</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_24 Invoke_簡介</h1>
+        <p>這堂先介紹 Unity 的 Invoke 系列用途：如果某個方法不想現在立刻執行，而是希望延遲幾秒、固定間隔重複呼叫，或之後取消這些排程，就可以使用 Invoke、InvokeRepeating 與 CancelInvoke。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">INVOKE · DELAY · REPEAT · CANCEL</span><h2 id="lesson-map-title">不是現在做，而是叫 Unity 幫你「晚點再做」</h2><p>ELI5：把 Invoke 想成 Unity 裡的鬧鐘。你先告訴 Unity「幾秒後幫我呼叫這個方法」，Unity 會把它排進時間表，等時間到了再替你執行。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#problem"><strong>01</strong><span>為什麼需要 Invoke<small>延遲與倒數</small></span></a>
+          <a href="#invoke"><strong>02</strong><span>Invoke<small>一次性鬧鐘</small></span></a>
+          <a href="#repeat"><strong>03</strong><span>InvokeRepeating<small>循環鬧鐘</small></span></a>
+          <a href="#cancel"><strong>04</strong><span>CancelInvoke<small>取消排程</small></span></a>
+          <a href="#limit"><strong>05</strong><span>同類別限制<small>方法要在同一個 class</small></span></a>
+          <a href="#model"><strong>06</strong><span>整堂模型<small>排程 → 等待 → 呼叫</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="problem"><span class="section-index">01</span><div>
+        <h2>這堂先從兩種需求開始：倒數計時、延遲執行</h2>
+        <p>課程先提出兩個常見需求：一個是做倒數計時，另一個是讓某個方法不要現在執行，而是延遲一秒、兩秒或其他時間之後再呼叫。</p>
+        <pre><code>現在
+ ↓
+我有一個方法要執行
+ ↓
+但不是現在
+ ↓
+希望過幾秒再執行</code></pre>
+        <p>Invoke 系列就是 Unity 提供的一種簡單排程方式。</p>
+        <div class="memory-line"><span>問題核心</span><strong>Invoke 解決的是「晚一點再呼叫方法」以及「固定時間重複呼叫方法」這類需求。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="invoke"><span class="section-index">02</span><div>
+        <h2>Invoke：延遲之後，只呼叫一次</h2>
+        <p>課程介紹的第一種形式是 <code>Invoke</code>。第一個資訊是方法名稱字串，第二個資訊是要延遲多久。</p>
+        <pre><code>Invoke("方法名稱", delay);</code></pre>
+        <p>ELI5：它就是一次性鬧鐘。</p>
+        <pre><code>現在
+ ↓
+Invoke("Explode", 2f)
+ ↓
+Unity 設一個 2 秒鬧鐘
+ ↓
+2 秒到了
+ ↓
+呼叫 Explode()</code></pre>
+        <p>這堂只先講基本概念，實際程式碼會留到下一堂再看。</p>
+        <div class="memory-line"><span>Invoke</span><strong>等指定時間後，呼叫指定方法一次。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="repeat"><span class="section-index">03</span><div>
+        <h2>InvokeRepeating：第一次先等，之後固定間隔一直呼叫</h2>
+        <p>第二種是 <code>InvokeRepeating</code>。課程說明它需要方法名稱、第一次呼叫前要延遲多久，以及之後每次重複呼叫的時間間隔。</p>
+        <pre><code>InvokeRepeating(
+    "方法名稱",
+    第一次延遲多久,
+    之後每隔多久
+);</code></pre>
+        <p>ELI5：這不是一次性鬧鐘，而是循環鬧鐘。</p>
+        <pre><code>開始
+ ↓
+先等 2 秒
+ ↓
+呼叫一次
+ ↓
+再等 1 秒
+ ↓
+再呼叫一次
+ ↓
+再等 1 秒
+ ↓
+繼續重複...</code></pre>
+        <p>課程也用倒數計時當作容易聯想到的用途：如果希望每一秒重複做一次事情，就可以用這種重複呼叫的概念。</p>
+        <div class="memory-line"><span>InvokeRepeating</span><strong>先等第一次延遲，之後按照固定間隔重複呼叫同一個方法。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="cancel"><span class="section-index">04</span><div>
+        <h2>CancelInvoke：不想等了，或不想再重複，就把排程取消</h2>
+        <p>第三個是 <code>CancelInvoke</code>。如果原本排好的延遲呼叫突然不需要了，或某個 <code>InvokeRepeating</code> 不想再繼續呼叫，就可以指定方法名稱把它取消。</p>
+        <pre><code>CancelInvoke("方法名稱");</code></pre>
+        <p>ELI5：</p>
+        <pre><code>Invoke          = 設一次性鬧鐘
+InvokeRepeating = 設循環鬧鐘
+CancelInvoke    = 把那顆鬧鐘關掉</code></pre>
+        <div class="memory-line"><span>CancelInvoke</span><strong>取消指定方法目前排定的延遲或重複呼叫。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="limit"><span class="section-index">05</span><div>
+        <h2>這堂特別提醒：Invoke 用方法名稱找同一個類別裡的方法</h2>
+        <p>課程提醒，這種 Invoke 寫法指定的方法名稱必須是在同一個類別裡。也就是說，某個 class 裡呼叫 Invoke 時，指定的方法也要存在於這個 class 中；不能只靠方法名稱字串直接去其他類別裡找。</p>
+        <pre><code>class Bomb
+{
+    Invoke("Explode", 2f);
+
+    void Explode()
+    {
+        // 同一個 class 裡的方法
+    }
+}</code></pre>
+        <div class="memory-line"><span>這堂限制</span><strong>Invoke 指定的方法名稱，要對應同一個類別中的方法。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">06</span><div>
+        <h2>把整堂壓成三顆鬧鐘</h2>
+        <pre><code>Invoke
+＝ 延遲後執行一次
+＝ 一次性鬧鐘
+
+InvokeRepeating
+＝ 延遲開始 + 固定間隔重複
+＝ 循環鬧鐘
+
+CancelInvoke
+＝ 取消排定的呼叫
+＝ 關掉鬧鐘</code></pre>
+        <p>真正要記住的思考方式是：</p>
+        <pre><code>我不是現在呼叫方法
+        ↓
+我先告訴 Unity
+「過幾秒再幫我呼叫」
+        ↓
+Unity 幫我排程
+        ↓
+時間到了
+        ↓
+方法被呼叫</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>Invoke 系列就是把方法呼叫交給 Unity 排程：晚點做、重複做，或取消不要做。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-53-purpose"> 知道 Invoke 系列是在處理延遲與重複呼叫</label>
+        <label><input type="checkbox" data-check="lesson-53-invoke"> 能說出 Invoke 是延遲後呼叫一次</label>
+        <label><input type="checkbox" data-check="lesson-53-repeat"> 能說出 InvokeRepeating 的第一次延遲與重複間隔差別</label>
+        <label><input type="checkbox" data-check="lesson-53-cancel"> 知道 CancelInvoke 可以取消指定方法的排程</label>
+        <label><input type="checkbox" data-check="lesson-53-class"> 記得這堂的 Invoke 方法名稱要對應同一個 class 裡的方法</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-23.html"><small>上一堂</small><strong>← ch3_23 event_2</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_25 Invoke_程式說明 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
