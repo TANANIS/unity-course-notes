@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_16 碰撞器 Collision 筆記，以直覺方式整理 Collision、Trigger、Collider、Rigidbody 與常用碰撞事件。">
+  <title>ch3_16 碰撞器（Collision）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_16</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 45</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_16 碰撞器（Collision）</h1>
+        <p>這堂先把 Unity 的碰撞想成兩種門：一種是「真的牆」，撞到會被擋住；另一種是「感應門」，可以穿過去，但 Unity 會知道你進來了。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">COLLIDER · COLLISION · TRIGGER · RIGIDBODY</span><h2 id="lesson-map-title">撞牆，和走進感應區，是兩件不同的事</h2><p>牆壁需要真的擋住角色；金幣、NPC 感應區或事件區域通常只需要知道「有人進來」，不一定要把人彈回去。Unity 用 Collision 和 Trigger 把這兩種需求分開。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#two-types"><strong>01</strong><span>兩種碰撞<small>擋住 vs. 穿過</small></span></a>
+          <a href="#trigger"><strong>02</strong><span>Is Trigger<small>把牆變成感應區</small></span></a>
+          <a href="#setup"><strong>03</strong><span>測試設定<small>Collider + Rigidbody</small></span></a>
+          <a href="#callbacks"><strong>04</strong><span>四個常用事件<small>Enter / Exit</small></span></a>
+          <a href="#rigidbody"><strong>05</strong><span>Rigidbody 規則<small>至少一邊要有</small></span></a>
+          <a href="#model"><strong>06</strong><span>一張表記住<small>Collision vs. Trigger</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="two-types"><span class="section-index">01</span><div>
+        <h2>先分兩種：真的撞到，和只是「被偵測到」</h2>
+        <p>課程把碰撞分成兩類：</p>
+        <pre><code>Collision
+→ 像牆壁
+→ 你撞到它，它會擋住你
+→ 彼此不能直接穿過
+
+Trigger
+→ 像感應門 / 金幣區域
+→ 你可以穿過去
+→ 但 Unity 仍然知道你進來了</code></pre>
+        <p>五歲版：Collision 是「門真的鎖著」；Trigger 是「門打開了，但門口有感應器」。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Collision 會擋；Trigger 不擋，但會通知你有人經過。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="trigger"><span class="section-index">02</span><div>
+        <h2>Is Trigger：把 Collider 從「牆」改成「感應區」</h2>
+        <p>Collider 原本可以拿來阻擋物件。把 Collider 上的 <code>Is Trigger</code> 勾起來後，課程示範物件就能穿過，不再互相阻擋。</p>
+        <pre><code>Is Trigger = OFF
+→ 這是一面牆
+→ 撞到會被擋住
+
+Is Trigger = ON
+→ 這是一個感應區
+→ 可以穿過，但仍可收到 Trigger 事件</code></pre>
+        <p>課程用金幣作例子：角色走過金幣時，不希望被金幣卡住，只希望知道「角色碰到金幣了」，然後執行後續行為。</p>
+        <div class="memory-line"><span>Is Trigger</span><strong>勾起來不是「沒有碰撞」，而是從物理阻擋改成只做進出偵測。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="setup"><span class="section-index">03</span><div>
+        <h2>課程測試：Cube 加 Rigidbody，再拿去撞 Cube2</h2>
+        <p>課程的測試設定是：</p>
+        <pre><code>Cube
+├─ Collider
+├─ Rigidbody
+└─ TestCollision
+
+Cube2
+└─ Collider</code></pre>
+        <p>課程把 Cube 的 <code>Rigidbody</code> 加上去，並先取消 <code>Use Gravity</code>，這樣手動拖動 Cube 測試碰撞時比較容易觀察，不會一直被重力拉走。</p>
+        <p>接著用編輯器把 Cube 推向 Cube2：</p>
+        <pre><code>Cube → Cube2
+
+Is Trigger 關閉
+→ Cube 會被擋住
+
+Is Trigger 開啟
+→ Cube 可以穿過</code></pre>
+        <p>課程還示範 Trigger 模式下，碰到的物件可以透過程式被刪除，因此看起來會「一碰就消失」。</p>
+        <div class="memory-line"><span>測試重點</span><strong>先用同一對物件切換 Is Trigger，最容易看懂「阻擋」和「只偵測」的差別。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="callbacks"><span class="section-index">04</span><div>
+        <h2>四個常用事件：進來和離開，各有 Collision / Trigger 版本</h2>
+        <p>課程主要介紹四個常用方法：</p>
+        <pre><code>OnCollisionEnter(...)
+→ 開始撞到普通 Collider
+
+OnCollisionExit(...)
+→ 離開普通 Collider
+
+OnTriggerEnter(...)
+→ 進入 Trigger 區域
+
+OnTriggerExit(...)
+→ 離開 Trigger 區域</code></pre>
+        <p>五歲版可以想成門口警衛：</p>
+        <pre><code>Enter
+→「有人進來了！」
+
+Exit
+→「那個人出去了！」</code></pre>
+        <p>差別只在這個門是「真的牆」還是「感應區」。沒有勾 <code>Is Trigger</code> 時走 Collision 那組；勾了之後走 Trigger 那組。</p>
+        <aside class="callout"><span class="callout-label">課程範例</span><p>課程在 Trigger 進入事件中示範刪除碰到的物件，所以物件穿過 Trigger 時會直接消失。重點不是「Trigger 會自動刪除」，而是 Trigger 事件被觸發後，程式選擇執行刪除。</p></aside>
+        <div class="memory-line"><span>事件選擇</span><strong>普通 Collider 看 OnCollision...；Is Trigger 勾起來看 OnTrigger...</strong></div>
+      </div></section>
+
+      <section class="note-section" id="rigidbody"><span class="section-index">05</span><div>
+        <h2>只有 Collider 還不夠：課程要求其中一邊要有 Rigidbody</h2>
+        <p>課程特別提醒：兩個互動的物件不能只有 Collider，其中至少一邊需要有 <code>Rigidbody</code>，否則這堂示範的碰撞 / Trigger 回呼不會照預期出現。</p>
+        <pre><code>物件 A：Collider + Rigidbody
+物件 B：Collider
+→ 可以做這堂的碰撞事件測試
+
+物件 A：只有 Collider
+物件 B：只有 Collider
+→ 課程提醒：不會有預期的事件反應</code></pre>
+        <p>五歲版：Collider 像「身體外框」，Rigidbody 像跟物理系統辦了一張身分證。至少要有一個人真的登記進物理系統，Unity 才會照這堂的方式處理事件。</p>
+        <div class="memory-line"><span>Rigidbody</span><strong>兩個 Collider 要互動時，先檢查其中至少一邊有沒有 Rigidbody。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">06</span><div>
+        <h2>不要背一堆詞，先問「我要不要擋住它？」</h2>
+        <pre><code>我要它真的擋住玩家嗎？
+
+YES
+↓
+普通 Collider
+↓
+Collision
+↓
+OnCollisionEnter / Exit
+
+NO，只想知道有人經過
+↓
+勾 Is Trigger
+↓
+Trigger
+↓
+OnTriggerEnter / Exit</code></pre>
+        <p>典型例子：</p>
+        <pre><code>牆、地板、建築物
+→ Collision
+
+金幣、事件區、NPC 感應範圍
+→ Trigger</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>Collider 決定「哪裡算碰到」；Is Trigger 決定「要不要真的擋住」；Rigidbody 讓物理互動能被系統處理。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-45-collision"> 能用「牆壁」解釋 Collision</label>
+        <label><input type="checkbox" data-check="lesson-45-trigger"> 能用「感應區」解釋 Trigger</label>
+        <label><input type="checkbox" data-check="lesson-45-istrigger"> 知道 Is Trigger 開啟後可以穿透，但仍然能收到事件</label>
+        <label><input type="checkbox" data-check="lesson-45-callbacks"> 能區分 OnCollisionEnter / Exit 與 OnTriggerEnter / Exit</label>
+        <label><input type="checkbox" data-check="lesson-45-destroy"> 知道 Trigger 不會自動刪物件；課程是收到事件後用程式刪除</label>
+        <label><input type="checkbox" data-check="lesson-45-rigidbody"> 記得課程碰撞測試要求其中至少一個物件有 Rigidbody</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-15.html"><small>上一堂</small><strong>← ch3_15 Lerp_程式說明</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_17 Raycast_1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
