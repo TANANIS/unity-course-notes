@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_18 Raycast_2 筆記，以直覺方式整理 TransformDirection、Ray、Debug.DrawRay、Physics.Raycast、RaycastHit、out 與 LayerMask。">
+  <title>ch3_18 Raycast_2（射線用法介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_18</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 47</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_18 Raycast_2（射線用法介紹）</h1>
+        <p>上一堂只認識「雷射筆有哪些零件」，這堂真的把它射出去：先算世界方向、建立 Ray、用 Debug 畫出來，再讓 Physics.Raycast 回答「到底有沒有撞到、撞到誰」。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">RAY · DEBUG.DRAWRAY · RAYCASTHIT · OUT · LAYERMASK</span><h2 id="lesson-map-title">把雷射筆射出去，再把撞到的答案拿回來</h2><p>整堂可以想成探路：先準備起點和方向，派出一條看不見的探測線，如果撞到東西，就把命中資訊塞進 RaycastHit，接著程式再決定要做什麼。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#direction"><strong>01</strong><span>世界方向<small>TransformDirection</small></span></a>
+          <a href="#ray"><strong>02</strong><span>建立 Ray<small>Origin + Direction</small></span></a>
+          <a href="#debug"><strong>03</strong><span>畫出 Debug 線<small>只給開發者看</small></span></a>
+          <a href="#hit"><strong>04</strong><span>RaycastHit + out<small>把命中答案帶回來</small></span></a>
+          <a href="#response"><strong>05</strong><span>命中後做事情<small>變藍、離開變紅</small></span></a>
+          <a href="#layer"><strong>06</strong><span>LayerMask<small>只理指定 Layer</small></span></a>
+          <a href="#model"><strong>07</strong><span>完整流程<small>一次串起來</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="direction"><span class="section-index">01</span><div>
+        <h2>先把「我的前方」換成世界真正的方向</h2>
+        <pre><code>Vector3 forward = transform.TransformDirection(Vector3.forward);</code></pre>
+        <p><code>Vector3.forward</code> 可以先理解成「物件自己的前方」。但物件可能已經轉過身，所以課程用 <code>TransformDirection()</code> 把 Local 方向轉成 World 方向。</p>
+        <pre><code>物件自己說：
+「往我的前面射！」
+
+Unity 需要知道：
+「你現在轉過之後，世界裡的前面到底是哪邊？」
+
+TransformDirection
+→ Local 方向換成 World 方向</code></pre>
+        <div class="memory-line"><span>世界方向</span><strong>先把「我的前方」翻譯成「世界裡真正往哪邊」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="ray"><span class="section-index">02</span><div>
+        <h2>建立 Ray：從自己位置，往剛算好的方向射</h2>
+        <pre><code>Ray ray = new Ray(
+    transform.position,
+    forward
+);</code></pre>
+        <p>這正好接回上一堂：</p>
+        <pre><code>Ray
+├─ origin    = transform.position
+└─ direction = forward</code></pre>
+        <p>五歲版：拿一張小紙條寫下「從我現在站的位置開始，往這個方向照」。</p>
+        <div class="memory-line"><span>Ray</span><strong>Ray 只描述「從哪裡、往哪裡」，還沒有真的做物理檢查。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="debug"><span class="section-index">03</span><div>
+        <h2>Debug.DrawRay：先讓自己看見那條本來看不見的線</h2>
+        <pre><code>Debug.DrawRay(
+    ray.origin,
+    ray.direction * distance,
+    Color.blue
+);</code></pre>
+        <p>Raycast 本身是看不見的，所以課程先用藍色 Debug 線幫開發者確認方向。</p>
+        <pre><code>ray.direction
+→ 只有方向：→
+
+ray.direction * distance
+→ 方向乘上長度：────────────────→</code></pre>
+        <p>課程設定 <code>distance = 100</code>，因此 Debug 線大約畫到 100 的距離。</p>
+        <aside class="callout"><span class="callout-label">注意</span><p><code>Debug.DrawRay</code> 是除錯工具，不是遊戲裡真正可見的雷射特效。課程也明確把真正畫線的效果留到後面的 Line Renderer。</p></aside>
+        <div class="memory-line"><span>Debug.DrawRay</span><strong>只是開發者的螢光筆，用來確認射線到底往哪裡。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="hit"><span class="section-index">04</span><div>
+        <h2>RaycastHit：探測線撞到東西後帶回來的小紙條</h2>
+        <pre><code>RaycastHit hit;</code></pre>
+        <p>在射出去以前，我們根本不知道會碰到誰，所以先準備一個空的 <code>hit</code>，等 <code>Physics.Raycast</code> 執行後再把答案塞進去。</p>
+        <pre><code>if (Physics.Raycast(ray, out hit, distance))
+{
+    ...
+}</code></pre>
+        <p>把它翻成人話：</p>
+        <pre><code>Physics.Raycast(
+    ray,         → 把哪條射線射出去？
+    out hit,     → 撞到的答案幫我塞進 hit
+    distance     → 最遠找多遠？
+)</code></pre>
+        <p><code>Physics.Raycast(...)</code> 本身還會回傳 <code>bool</code>：</p>
+        <pre><code>true  → 有撞到
+false → 沒撞到</code></pre>
+        <p>這也正是前面 C# 學過的 <code>out</code> 真正派上用場的地方：方法執行時負責把結果寫回變數。</p>
+        <div class="memory-line"><span>Ray vs. RaycastHit</span><strong>Ray 是「我要往哪查」；RaycastHit 是「查完撞到什麼」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="response"><span class="section-index">05</span><div>
+        <h2>射到東西後，就可以拿 hit 找到那個物件</h2>
+        <pre><code>hitRenderer = hit.collider.GetComponent&lt;Renderer&gt;();
+hitRenderer.material.color = Color.blue;</code></pre>
+        <p><code>hit.collider</code> 可以先理解成：「剛剛被射線碰到的那個 Collider」。課程接著從它身上取得 <code>Renderer</code>，再把材質顏色改成藍色。</p>
+        <pre><code>射線命中
+   ↓
+hit 告訴我碰到誰
+   ↓
+取得對方 Renderer
+   ↓
+改成藍色</code></pre>
+        <p>如果下一幀沒有再射中，而且之前確實有記住一個 <code>hitRenderer</code>：</p>
+        <pre><code>else if (hitRenderer != null)
+{
+    hitRenderer.material.color = Color.red;
+    hitRenderer = null;
+}</code></pre>
+        <p>五歲版：雷射照著它時變藍，雷射移開後把原本那個東西改回紅色，然後忘掉它。</p>
+        <div class="memory-line"><span>命中後</span><strong>Raycast 只負責偵測；真正要變色、扣血、刪除，都是我們收到 hit 後自己寫的行為。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="layer"><span class="section-index">06</span><div>
+        <h2>LayerMask：今天這支雷射只理指定 Layer</h2>
+        <pre><code>int layerMask = LayerMask.GetMask("NPC_Layer");</code></pre>
+        <p>這行把名為 <code>NPC_Layer</code> 的 Layer 做成一個遮罩。課程原本沒有 LayerMask 的版本是：</p>
+        <pre><code>Physics.Raycast(ray, out hit, distance)</code></pre>
+        <p>加上 LayerMask 後則可以變成：</p>
+        <pre><code>Physics.Raycast(ray, out hit, distance, layerMask)</code></pre>
+        <p>ELI5：原本雷射說「路上誰都算」，現在改成「我今天只找掛著 NPC_Layer 名牌的人」。其他 Layer 就算在線上，也可以像透明的一樣不算命中。</p>
+        <div class="memory-line"><span>LayerMask</span><strong>不是改變射線方向，而是決定「哪些物件值得被這次射線看見」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">07</span><div>
+        <h2>整堂串起來：派探測線出去，把答案帶回來</h2>
+        <pre><code>1. 算世界方向
+   TransformDirection(Vector3.forward)
+          ↓
+2. 建立 Ray
+   position + direction
+          ↓
+3. Debug.DrawRay
+   先讓自己看見射線方向
+          ↓
+4. 準備 RaycastHit hit
+   等等裝命中答案
+          ↓
+5. Physics.Raycast(ray, out hit, distance)
+          ↓
+       有撞到嗎？
+       ↙      ↘
+    true      false
+      ↓
+ hit 告訴我撞到誰
+      ↓
+ 改顏色 / 做其他事情
+          ↓
+6. LayerMask
+   可限制哪些 Layer 才算命中</code></pre>
+        <aside class="callout"><span class="callout-label">課程程式</span><p>範例裡 LayerMask 版本先被註解，先示範「全部都能命中」，之後再切換成指定 <code>NPC_Layer</code> 的版本，觀察其他 Layer 不再有反應。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>Ray 描述查詢方向；Physics.Raycast 執行查詢；RaycastHit 把命中結果帶回來；LayerMask 決定誰算數。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-47-direction"> 知道 TransformDirection(Vector3.forward) 是把 Local 前方轉成 World 方向</label>
+        <label><input type="checkbox" data-check="lesson-47-ray"> 能解釋 Ray = origin + direction</label>
+        <label><input type="checkbox" data-check="lesson-47-debug"> 知道 Debug.DrawRay 只是除錯視覺，不是真正的雷射特效</label>
+        <label><input type="checkbox" data-check="lesson-47-hit"> 能解釋 RaycastHit 是拿來存命中資訊</label>
+        <label><input type="checkbox" data-check="lesson-47-out"> 知道 out hit 是由 Physics.Raycast 執行時把結果寫回 hit</label>
+        <label><input type="checkbox" data-check="lesson-47-bool"> 知道 Physics.Raycast 回傳 true / false 表示有沒有命中</label>
+        <label><input type="checkbox" data-check="lesson-47-layer"> 知道 LayerMask.GetMask 可以限制哪些 Layer 被射線視為目標</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-17.html"><small>上一堂</small><strong>← ch3_17 Raycast_1</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_19 screen_to_ray →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
