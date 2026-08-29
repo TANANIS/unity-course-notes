@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_23 event_2 筆記，以 ELI5 方式整理 delegate 的方法規格、event 的訂閱與觸發，以及 OnEnable / OnDisable 的註冊與取消註冊。">
+  <title>ch3_23 event_2（事件使用方式）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_23</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 52</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_23 event_2（事件使用方式）</h1>
+        <p>上一堂只先知道 Event 是「宣布某件事發生了」。這堂把完整流程補起來：先用 delegate 規定能被註冊的方法長相，再建立 event，接收端用 += 訂閱、用 -= 退訂，最後由發送端一次通知所有已註冊的方法。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">DELEGATE · EVENT · SUBSCRIBE · ONENABLE · ONDISABLE</span><h2 id="lesson-map-title">先規定誰能加入，再讓大家訂閱同一個廣播</h2><p>ELI5：Event 可以先想成一個廣播頻道。想收到通知的方法要先符合 delegate 規定的「方法長相」，再把自己登記進去。事件一觸發，所有已登記的方法就一起收到通知與參數。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#scene"><strong>01</strong><span>場景實測<small>平行物件也能一起收到</small></span></a>
+          <a href="#delegate"><strong>02</strong><span>delegate<small>規定方法長相</small></span></a>
+          <a href="#event"><strong>03</strong><span>event<small>建立廣播名單</small></span></a>
+          <a href="#invoke"><strong>04</strong><span>觸發事件<small>一次通知全部</small></span></a>
+          <a href="#subscribe"><strong>05</strong><span>訂閱與退訂<small>OnEnable / OnDisable</small></span></a>
+          <a href="#model"><strong>06</strong><span>整堂模型<small>規格 → 訂閱 → 廣播</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="scene"><span class="section-index">01</span><div>
+        <h2>場景先證明一件事：沒有父子關係，也能一起收到事件</h2>
+        <p>課程準備了數個彼此平行、沒有父子階層關係的物件。發送端送出事件後，兩個接收端都會收到同一個「刪除」事件，並依照傳入的秒數延遲後刪除自己。</p>
+        <pre><code>發送端
+   │
+   └──「刪除事件發生了，延遲 5 秒」
+                ↓
+              Event
+           ↙         ↘
+       接收物件 A   接收物件 B
+           ↓            ↓
+        5 秒後刪除    5 秒後刪除</code></pre>
+        <p>這正好接回上一堂：Event 不需要靠 Transform 的父子階層來決定誰能收到通知。</p>
+        <div class="memory-line"><span>場景重點</span><strong>彼此平行的物件，只要有訂閱同一個 Event，就能一起收到通知。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="delegate"><span class="section-index">02</span><div>
+        <h2>delegate：先規定「可以被註冊的方法，要長什麼樣子」</h2>
+        <p>老師這堂反覆強調「方法的樣子」。範例中的方法規格是：沒有回傳值，而且會接收一個整數參數。</p>
+        <pre><code>delegate void 某個Delegate(int value);</code></pre>
+        <p>ELI5：把 delegate 想成一個插座規格。只有插頭長得對的方法，才能插進這個位置。</p>
+        <pre><code>規格要求：
+
+回傳值：void
+參數：一個 int
+
+所以符合的形狀是：
+void 某方法(int value)</code></pre>
+        <p>重點不是方法叫什麼，而是它的回傳值與參數形式要符合這個 delegate 定義。</p>
+        <aside class="callout"><span class="callout-label">字幕限制</span><p>字幕把實際 delegate、event 與方法名稱辨識得很不穩定，因此這篇只保留課堂能確定的「方法規格」與流程；程式碼識別字改用概念名稱，不假裝還原老師原始命名。</p></aside>
+        <div class="memory-line"><span>delegate</span><strong>它先定義一種方法規格：哪些方法的「長相」有資格被放進來。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="event"><span class="section-index">03</span><div>
+        <h2>event：建立一個只能放「符合規格方法」的事件</h2>
+        <p>接著老師宣告一個靜態事件，事件使用前面定義好的 delegate 型別。概念上就是：</p>
+        <pre><code>public delegate void DeleteAction(int seconds);
+public static event DeleteAction DeleteEvent;</code></pre>
+        <p>上面的名稱是為了方便理解而重新命名，但結構對應課堂內容：<code>DeleteAction</code> 規定方法必須是 <code>void + 一個 int</code>；<code>DeleteEvent</code> 則負責保存符合這個規格、而且已經註冊進來的方法。</p>
+        <p>ELI5：</p>
+        <pre><code>delegate
+＝ 會員資格
+＝「方法必須長這樣」
+
+Event
+＝ 會員名單 / 廣播頻道
+＝「符合資格的方法可以登記進來」</code></pre>
+        <div class="memory-line"><span>event</span><strong>delegate 先定規格，event 再保存符合規格、已經訂閱的方法。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="invoke"><span class="section-index">04</span><div>
+        <h2>觸發 Event：一次把參數送給所有已註冊的方法</h2>
+        <p>課程在 Update 裡檢查 Inspector 的勾選狀態。條件成立時，就觸發事件並把設定好的整數值一起傳出去。</p>
+        <pre><code>if (DeleteEvent != null)
+{
+    DeleteEvent(seconds);
+}</code></pre>
+        <p>這段是依照字幕內容重寫的等價示意。老師也特別提醒，事件目前可能沒有任何方法註冊，所以呼叫前要先確認它不是空的。</p>
+        <p>ELI5：不是發送者自己跑去找每一個接收物件，而是：</p>
+        <pre><code>「刪除事件發生了！」
+        +
+「這次的數值是 5」
+        ↓
+      Event(5)
+        ↓
+所有已訂閱的方法一起被叫
+        ↓
+每個方法都收到 5</code></pre>
+        <p>課程還會在觸發後把勾選狀態關掉，避免 Update 每一幀都重複觸發同一個事件。</p>
+        <div class="memory-line"><span>觸發</span><strong>呼叫 Event 一次，就會把同一個參數送給所有已註冊、而且符合 delegate 規格的方法。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="subscribe"><span class="section-index">05</span><div>
+        <h2>+= 是訂閱；-= 是退訂，而且課程放在 OnEnable / OnDisable</h2>
+        <p>接收端會在 <code>OnEnable</code> 裡把自己的方法註冊進事件，在 <code>OnDisable</code> 裡再取消註冊。</p>
+        <pre><code>void OnEnable()
+{
+    Sender.DeleteEvent += DeleteMe;
+}
+
+void OnDisable()
+{
+    Sender.DeleteEvent -= DeleteMe;
+}
+
+void DeleteMe(int seconds)
+{
+    // 收到事件後，依 seconds 做刪除處理
+}</code></pre>
+        <p>ELI5：</p>
+        <pre><code>OnEnable
+＝ 我上線了
+＝ 開始收這個頻道的通知
+＝ +=
+
+OnDisable
+＝ 我下線了
+＝ 不要再通知我
+＝ -=</code></pre>
+        <p>老師最後特別提醒，註冊與取消註冊這兩步不能漏掉，否則這套事件流程不會照預期工作。</p>
+        <div class="memory-line"><span>訂閱生命週期</span><strong>OnEnable 用 += 加入通知名單；OnDisable 用 -= 把自己移出名單。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">06</span><div>
+        <h2>把整堂壓成六個動作</h2>
+        <pre><code>① delegate
+「能來聽 Event 的方法，必須長這樣」
+        ↓
+② event
+「建立一個通知頻道」
+        ↓
+③ += 方法
+「我要訂閱」
+        ↓
+④ Event(參數)
+「事情發生了，廣播出去」
+        ↓
+⑤ 所有訂閱方法被呼叫
+「每個人都拿到同一份參數」
+        ↓
+⑥ -= 方法
+「我不聽了，取消訂閱」</code></pre>
+        <p>如果只剩五秒能複習，就記這個版本：</p>
+        <pre><code>delegate = 方法規格
+event    = 廣播頻道
++=       = 訂閱
+Event()  = 廣播
+-=       = 退訂</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>delegate 規定能訂閱的方法長相；event 保存訂閱者；觸發時一次通知全部；物件啟用時訂閱、停用時退訂。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-52-scene"> 能解釋為什麼兩個平行物件也能一起收到 Event</label>
+        <label><input type="checkbox" data-check="lesson-52-delegate"> 知道 delegate 這堂是在規定方法的回傳值與參數形式</label>
+        <label><input type="checkbox" data-check="lesson-52-event"> 知道 event 會保存符合 delegate 規格、已註冊的方法</label>
+        <label><input type="checkbox" data-check="lesson-52-invoke"> 知道觸發 Event 時會把參數送給所有訂閱者</label>
+        <label><input type="checkbox" data-check="lesson-52-subscribe"> 能記住 += 是訂閱、-= 是取消訂閱</label>
+        <label><input type="checkbox" data-check="lesson-52-lifecycle"> 知道課程在 OnEnable 註冊、OnDisable 取消註冊</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-22.html"><small>上一堂</small><strong>← ch3_22 event_1</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_24 Invoke_簡介 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
