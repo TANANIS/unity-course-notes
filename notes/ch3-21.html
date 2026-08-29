@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_21 message_2 筆記，以直覺方式整理 SendMessage、BroadcastMessage、SendMessageUpwards 的實測與訊息參數傳遞。">
+  <title>ch3_21 message_2（物體間的訊息傳遞介紹）｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_21</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 50</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_21 message_2（物體間的訊息傳遞介紹）</h1>
+        <p>上一堂只先記住「自己 / 往下 / 往上」。這堂把三種 Message 真的掛到父子階層裡測試，然後再多加一件事：發訊息時可以順便帶一個參數給接收端使用。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">SENDMESSAGE · BROADCASTMESSAGE · SENDMESSAGEUPWARDS · PARAMETER</span><h2 id="lesson-map-title">不只喊「做這件事」，還能順便塞一個東西給對方</h2><p>Message 的第一個重點是「誰聽得到」，第二個重點則是「要執行哪個方法、要不要順便帶一個值」。課程用顏色當參數，讓收到訊息的物件把自己的 Material 顏色改掉。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#setup"><strong>01</strong><span>測試階層<small>父 / 自己 / 子</small></span></a>
+          <a href="#verify"><strong>02</strong><span>三種方向實測<small>自己 / ↑ / ↓</small></span></a>
+          <a href="#parameter"><strong>03</strong><span>訊息帶參數<small>方法名稱 + 一個值</small></span></a>
+          <a href="#receiver"><strong>04</strong><span>接收端怎麼收<small>Color 參數</small></span></a>
+          <a href="#model"><strong>05</strong><span>完整模型<small>喊給誰 + 喊什麼</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="setup"><span class="section-index">01</span><div>
+        <h2>先擺一棵很單純的父子階層</h2>
+        <p>課程準備三個物件，排成上、中、下三層，再把發訊息的腳本放在中間那層，三個物件都掛上接收訊息的腳本。</p>
+        <pre><code>上層物件
+   │
+中間物件  ← 從這裡發訊息
+   │
+下層物件</code></pre>
+        <p>ELI5：就像把三個人分別放在樓上、你房間、樓下，然後站在中間測試不同喊法到底誰聽得到。</p>
+        <div class="memory-line"><span>測試目的</span><strong>把發送者放中間，最容易一次看出「只自己、往上、往下」的差別。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="verify"><span class="section-index">02</span><div>
+        <h2>三種 Message 實際按一次，規則就固定下來</h2>
+        <pre><code>        上層 ✓
+          ↑
+          ↑ SendMessageUpwards
+          ↑
+        中間 ✓  ← 發送者
+          ↓
+          ↓ BroadcastMessage
+          ↓
+        下層 ✓
+
+SendMessage
+→ 只有中間自己</code></pre>
+        <p>課程實測結果：</p>
+        <pre><code>SendMessage
+→ 自己
+
+SendMessageUpwards
+→ 自己 + 上層父物件
+
+BroadcastMessage
+→ 自己 + 下層子物件</code></pre>
+        <p>而且「同一層附近的其他物件」不會因為離得近就收到 <code>SendMessage</code>。它看的是物件階層與發送方式，不是場景裡誰站得比較近。</p>
+        <div class="memory-line"><span>方向規則</span><strong>Send = 自己；Upwards = 自己 + ↑；Broadcast = 自己 + ↓。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="parameter"><span class="section-index">03</span><div>
+        <h2>Message 還可以順便帶一個參數</h2>
+        <p>這堂新增的重點是：發訊息時除了指定「要找哪個方法」，還可以附帶一個值，交給接收端的方法使用。</p>
+        <pre><code>Message(
+    "方法名稱",
+    一個參數
+)</code></pre>
+        <p>ELI5：不是只大喊「變色！」，而是大喊「變色！」的同時，順手把一盒彩色筆丟過去。</p>
+        <pre><code>「請執行變色方法」
+        +
+「這個 Color 拿去用」</code></pre>
+        <p>課程用不同顏色做示範，讓不同發送方式帶著一個 <code>Color</code> 值一起傳出去。</p>
+        <aside class="callout"><span class="callout-label">字幕能確定的範圍</span><p>課程明確說明第一個資訊是要呼叫的方法名稱，第二個可以帶一組參數；接收方法的實際名稱在字幕辨識中不清楚，所以這篇不硬寫一個不存在的名稱。</p></aside>
+        <div class="memory-line"><span>訊息內容</span><strong>第一個重點是「做哪個方法」；第二個可以是「順便把這個值帶過去」。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="receiver"><span class="section-index">04</span><div>
+        <h2>接收端要準備一個「收得下那個值」的方法</h2>
+        <p>課程的接收端方法會接一個 <code>Color</code> 參數。收到 Message 後，方法拿到這個顏色，再把自己的 Material 顏色改掉。</p>
+        <pre><code>收到訊息
+   ↓
+找到指定的方法
+   ↓
+把 Color 參數交進去
+   ↓
+方法拿 Color 改 Material</code></pre>
+        <p>五歲版：有人喊你的名字，還丟給你一盒彩色筆。你聽得懂那個指令，也接得到彩色筆，就拿它去把自己塗成指定顏色。</p>
+        <p>課程最後也提醒，這個 Message 介面在範例中是一組參數；字幕沒有再展開更多參數形式，所以這篇就停在課堂講到的範圍。</p>
+        <div class="memory-line"><span>接收端</span><strong>方法名稱要對得上，而且參數型別要能接住發送過來的那個值。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">05</span><div>
+        <h2>把 message_1 + message_2 合起來，只要問兩件事</h2>
+        <pre><code>第一題：我要喊給誰？
+
+SendMessage
+→ 自己
+
+SendMessageUpwards
+→ 自己 + ↑ 父階層
+
+BroadcastMessage
+→ 自己 + ↓ 子階層
+
+
+第二題：我要跟他說什麼？
+
+方法名稱
++
+可附帶的一個參數</code></pre>
+        <p>所以整個流程可以想成：</p>
+        <pre><code>發送端
+「請執行某個方法」
+        +
+「這個值也拿去」
+        ↓
+依 Message 類型決定傳給誰
+        ↓
+接收端找到對應方法
+        ↓
+把參數交進方法
+        ↓
+執行自己的行為</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>Message = 指定「誰聽得到」+ 用方法名稱叫它做事 + 可以順便帶一個值。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-50-hierarchy"> 能說出三層測試階層為什麼把發送者放中間</label>
+        <label><input type="checkbox" data-check="lesson-50-send"> 知道 SendMessage 只在發送者自己身上找接收方法</label>
+        <label><input type="checkbox" data-check="lesson-50-up"> 知道 SendMessageUpwards 是自己 + 父階層</label>
+        <label><input type="checkbox" data-check="lesson-50-broadcast"> 知道 BroadcastMessage 是自己 + 子階層</label>
+        <label><input type="checkbox" data-check="lesson-50-parameter"> 知道 Message 可以帶一組參數給接收方法</label>
+        <label><input type="checkbox" data-check="lesson-50-color"> 能解釋課程如何用 Color 參數讓接收物件改變材質顏色</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-20.html"><small>上一堂</small><strong>← ch3_20 message_1</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_22 event_1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
