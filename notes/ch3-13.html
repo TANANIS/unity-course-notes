@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unity 課程 ch3_13 Quaternion 筆記，整理 Quaternion.LookRotation、Quaternion.RotateTowards、方向向量與平滑轉向目標的基本流程。">
+  <meta name="description" content="Unity 課程 ch3_13 Quaternion 筆記，以直覺方式整理 Quaternion.LookRotation、Quaternion.RotateTowards、方向向量與平滑轉向目標。">
   <title>ch3_13 Quaternion（四元數常用方法介紹）｜Unity 課程筆記</title>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../lesson-layout.css">
@@ -22,63 +22,82 @@
       <header class="note-header">
         <div class="lesson-kicker"><span>LESSON 42</span><span class="complete-badge">已整理</span></div>
         <h1>ch3_13 Quaternion（四元數常用方法介紹）</h1>
-        <p>這堂不處理四元數的數學推導，而是用 <code>LookRotation</code> 算出「應該朝向哪裡」，再用 <code>RotateTowards</code> 控制物件逐步轉向目標。</p>
+        <p>這堂先不要管四元數的數學。先把它想成：Unity 用來表示「物件現在朝哪裡」的一種旋轉資料。這堂真正要做的事只有一件：讓物件慢慢把頭轉向目標。</p>
       </header>
 
       <section class="lesson-intro" aria-labelledby="lesson-map-title">
-        <div><span class="eyebrow">QUATERNION · LOOKROTATION · ROTATETOWARDS · DIRECTION</span><h2 id="lesson-map-title">先算目標旋轉，再決定用多快轉過去</h2><p>上一堂的 <code>Transform.LookAt()</code> 可以直接面向目標；這堂把過程拆開，因此可以保留「面向誰」的計算，同時自行控制旋轉速度。</p></div>
+        <div><span class="eyebrow">QUATERNION · LOOKROTATION · ROTATETOWARDS · DIRECTION</span><h2 id="lesson-map-title">先知道「朋友在哪」，再慢慢把頭轉過去</h2><p>可以把整堂想成：你站在原地，朋友站在旁邊。先算出朋友在哪個方向，再算出頭要轉成什麼方向，最後不要瞬間甩頭，而是一點一點轉過去。</p></div>
         <nav class="lesson-outline" aria-label="本課快速導覽">
-          <a href="#direction"><strong>01</strong><span>方向向量<small>target - self</small></span></a>
-          <a href="#lookrotation"><strong>02</strong><span>LookRotation<small>方向 → Quaternion</small></span></a>
-          <a href="#rotatetowards"><strong>03</strong><span>RotateTowards<small>目前 → 目標旋轉</small></span></a>
-          <a href="#flow"><strong>04</strong><span>完整流程<small>平滑追蹤目標</small></span></a>
+          <a href="#idea"><strong>01</strong><span>Quaternion 是什麼<small>先當旋轉資料看</small></span></a>
+          <a href="#direction"><strong>02</strong><span>朋友在哪<small>target - self</small></span></a>
+          <a href="#lookrotation"><strong>03</strong><span>LookRotation<small>算出該朝哪</small></span></a>
+          <a href="#rotatetowards"><strong>04</strong><span>RotateTowards<small>慢慢轉過去</small></span></a>
+          <a href="#flow"><strong>05</strong><span>完整流程<small>一行一行翻成人話</small></span></a>
+          <a href="#lookat"><strong>06</strong><span>和 LookAt 比較<small>直接看 vs. 控制轉速</small></span></a>
         </nav>
       </section>
 
-      <section class="note-section" id="direction"><span class="section-index">01</span><div>
-        <h2>先用兩個位置相減，算出目標方向</h2>
-        <pre><code>Vector3 direction = target.position - transform.position;</code></pre>
-        <p><code>target.position</code> 是目標的位置，<code>transform.position</code> 是自己的位置。用「目標 - 自己」得到的向量，就是從自己指向目標的方向。</p>
-        <pre><code>自己 ─────────→ 目標
-     direction</code></pre>
-        <div class="memory-line"><span>方向公式</span><strong>要找「我往目標的方向」，就是 target.position - transform.position。</strong></div>
+      <section class="note-section" id="idea"><span class="section-index">01</span><div>
+        <h2>Quaternion 先想成「物件朝哪裡」的資料</h2>
+        <p>這堂不需要先理解四元數背後的數學。對現在來說，只要知道：</p>
+        <pre><code>position  → 物件在哪裡
+rotation  → 物件朝哪裡
+Quaternion → Unity 常用來表示 rotation 的方式</code></pre>
+        <p>所以看到 Quaternion 時先不要緊張。把它當成一張「方向小紙條」就好，上面寫著物件應該朝哪裡。</p>
+        <div class="memory-line"><span>一句話記憶</span><strong>Quaternion = Unity 用來表示旋轉方向的一種資料。</strong></div>
       </div></section>
 
-      <section class="note-section" id="lookrotation"><span class="section-index">02</span><div>
-        <h2>Quaternion.LookRotation：把方向轉成「面向該方向」的旋轉</h2>
+      <section class="note-section" id="direction"><span class="section-index">02</span><div>
+        <h2>第一步：朋友到底在哪個方向？</h2>
+        <pre><code>Vector3 direction = target.position - transform.position;</code></pre>
+        <p><code>target.position</code> 是朋友站的位置，<code>transform.position</code> 是自己站的位置。</p>
+        <p>所以「朋友的位置 - 我的位置」就會得到一支箭頭，從我這裡指向朋友：</p>
+        <pre><code>我 ●--------------------→ ● 朋友
+          direction</code></pre>
+        <p>五歲版：你不用知道朋友的完整地址，你只要知道「他在我右邊那邊」。這個 <code>direction</code> 就是在回答這件事。</p>
+        <div class="memory-line"><span>方向公式</span><strong>目標位置 - 自己位置 = 從自己指向目標的方向。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="lookrotation"><span class="section-index">03</span><div>
+        <h2>LookRotation：告訴我「頭應該轉成哪裡」</h2>
         <pre><code>Quaternion lookAtQuaternion =
     Quaternion.LookRotation(direction);</code></pre>
-        <p><code>LookRotation()</code> 接收方向向量，回傳一個 Quaternion。這個 Quaternion 表示：物件若要朝向 <code>direction</code>，它的旋轉應該是什麼。</p>
-        <p>它和上一堂的 <code>transform.LookAt()</code> 用途相近，但差別在於 <code>LookRotation()</code> 只先「算出旋轉」，不會立刻修改 Transform，因此後面還能自行決定如何套用。</p>
+        <p><code>LookRotation()</code> 不會直接幫物件轉頭。它只是看著剛才那支方向箭頭，幫你算出：</p>
+        <pre><code>「如果我要看著這個方向，rotation 應該長什麼樣？」</code></pre>
+        <p>可以想成你用手指著朋友，然後問 Unity：「如果我要面向他，我的頭要轉成什麼方向？」Unity 算完後，把答案裝進一個 Quaternion 給你。</p>
         <pre><code>direction
     ↓
 Quaternion.LookRotation(direction)
     ↓
-目標 Quaternion</code></pre>
-        <div class="memory-line"><span>LookRotation</span><strong>方向向量進去，得到「朝向這個方向所需要的 Quaternion」。</strong></div>
+「應該朝這裡」的 Quaternion</code></pre>
+        <div class="memory-line"><span>LookRotation</span><strong>它負責算答案，不負責真的把 Transform 轉過去。</strong></div>
       </div></section>
 
-      <section class="note-section" id="rotatetowards"><span class="section-index">03</span><div>
-        <h2>Quaternion.RotateTowards：限制每次最多旋轉多少角度</h2>
+      <section class="note-section" id="rotatetowards"><span class="section-index">04</span><div>
+        <h2>RotateTowards：不要瞬間甩頭，每次只轉一點</h2>
         <pre><code>transform.rotation = Quaternion.RotateTowards(
     transform.rotation,
     lookAtQuaternion,
     20 * Time.deltaTime
 );</code></pre>
-        <p>第一個參數是目前旋轉，第二個參數是想抵達的目標旋轉，第三個參數則是這一次最多能靠近多少角度。</p>
-        <p>這堂在 <code>Update()</code> 中持續呼叫，並把第三個參數寫成 <code>20 * Time.deltaTime</code>，因此可把 20 理解成約每秒最多旋轉 20 度。把數值調大，物件就會更快轉向目標。</p>
-        <pre><code>目前 rotation
-      ↓
-RotateTowards(current, target, maxDegreesDelta)
-      ↓
-更接近目標的 rotation</code></pre>
-        <aside class="callout"><span class="callout-label">參數語意</span><p><code>RotateTowards</code> 的第三個參數不是「延遲時間」，而是這次呼叫允許旋轉的最大角度。搭配 <code>Time.deltaTime</code> 後，才形成容易控制的每秒旋轉速度。</p></aside>
-        <div class="memory-line"><span>RotateTowards</span><strong>它不是瞬間跳到目標角度，而是每幀限制最多轉多少。</strong></div>
+        <p>這三個參數可以直接翻成人話：</p>
+        <pre><code>transform.rotation
+→ 我現在頭朝哪裡
+
+lookAtQuaternion
+→ 我最後想朝哪裡
+
+20 * Time.deltaTime
+→ 這一幀最多准我轉多少</code></pre>
+        <p>因為這行放在 <code>Update()</code> 裡每幀執行，所以物件會一點一點轉向目標，而不是瞬間跳到目標旋轉。</p>
+        <p>課程使用 <code>20 * Time.deltaTime</code>，可以理解成每秒最多大約旋轉 20 度。數字調大，就會更快轉過去。</p>
+        <aside class="callout"><span class="callout-label">概念校正</span><p>第三個參數不是「延遲多久才轉」，而是這一次呼叫最多能旋轉多少角度。搭配 <code>Time.deltaTime</code>，才形成容易理解的每秒旋轉速度。</p></aside>
+        <div class="memory-line"><span>RotateTowards</span><strong>現在方向 → 目標方向，但每一幀只准靠近一點。</strong></div>
       </div></section>
 
-      <section class="note-section" id="flow"><span class="section-index">04</span><div>
-        <h2>完整程式：持續平滑轉向 target</h2>
-        <p>課程範例的欄位名稱寫成 <code>tager</code>；筆記以下用語意較清楚的 <code>target</code> 表示同一個目標 Transform。</p>
+      <section class="note-section" id="flow"><span class="section-index">05</span><div>
+        <h2>完整程式：一行一行翻成人話</h2>
+        <p>課程範例的欄位名稱寫成 <code>tager</code>；筆記統一整理成較清楚的 <code>target</code>。</p>
         <pre><code>public Transform target;
 
 void Update()
@@ -99,27 +118,53 @@ void TestLookRotation()
         20 * Time.deltaTime
     );
 }</code></pre>
-        <pre><code>target.position - transform.position
-                ↓
-            direction
-                ↓
-      Quaternion.LookRotation
-                ↓
-        目標 Quaternion
-                ↓
-      Quaternion.RotateTowards
-                ↓
-       逐步把自己轉向目標</code></pre>
-        <p>這種拆法比直接使用 <code>LookAt()</code> 多了一層控制：目標朝向可以先算出來，再選擇要瞬間套用、限制轉速，或搭配其他旋轉方法。</p>
+        <pre><code>public Transform target;
+→ 我要看誰？
+
+目标位置 - 自己位置
+→ 他在我哪個方向？
+
+LookRotation(direction)
+→ 如果我要看他，我應該朝哪裡？
+
+RotateTowards(...)
+→ 不要瞬間轉，每幀慢慢轉一點。</code></pre>
+        <p>所以整堂其實只是這個流程：</p>
+        <pre><code>朋友在哪？
+   ↓
+算出方向
+   ↓
+算出該轉成什麼方向
+   ↓
+每幀慢慢轉過去</code></pre>
         <div class="memory-line"><span>這堂核心</span><strong>LookRotation 負責「我要朝哪裡」；RotateTowards 負責「我要多快轉過去」。</strong></div>
       </div></section>
 
+      <section class="note-section" id="lookat"><span class="section-index">06</span><div>
+        <h2>和上一堂 LookAt 的差別：直接看，還是自己控制轉頭速度</h2>
+        <pre><code>transform.LookAt(target);
+→ 直接讓物件面向目標
+
+Quaternion.LookRotation(direction)
++ Quaternion.RotateTowards(...)
+→ 先算目標旋轉，再自己控制怎麼轉過去</code></pre>
+        <p>五歲版：</p>
+        <pre><code>LookAt
+→「看他！」然後直接把頭轉過去。
+
+LookRotation + RotateTowards
+→「他在那裡，慢慢把頭轉過去。」</code></pre>
+        <p>因此這堂的寫法多了一層控制，比較適合需要平滑轉向的行為，例如敵人、砲塔或角色逐漸面向目標。</p>
+        <div class="memory-line"><span>LookAt vs. Quaternion</span><strong>LookAt 比較直接；拆成 LookRotation + RotateTowards 就能控制轉向過程。</strong></div>
+      </div></section>
+
       <section class="checklist compact-checklist"><h2>完成檢查</h2>
-        <label><input type="checkbox" data-check="lesson-42-direction"> 能寫出 target.position - transform.position 並解釋方向</label>
-        <label><input type="checkbox" data-check="lesson-42-lookrotation"> 知道 LookRotation 會由方向算出 Quaternion，而不是直接旋轉 Transform</label>
-        <label><input type="checkbox" data-check="lesson-42-rotatetowards"> 能說明 RotateTowards 的 current、target、maxDegreesDelta 三個參數</label>
-        <label><input type="checkbox" data-check="lesson-42-speed"> 知道 20 * Time.deltaTime 在 Update 中代表約每秒最多旋轉 20 度</label>
-        <label><input type="checkbox" data-check="lesson-42-lookat"> 能說明 LookAt 與 LookRotation + RotateTowards 在控制方式上的差異</label>
+        <label><input type="checkbox" data-check="lesson-42-quaternion"> 能把 Quaternion 先理解成 Unity 表示旋轉方向的資料</label>
+        <label><input type="checkbox" data-check="lesson-42-direction"> 知道 target.position - transform.position 是在算「目標在我哪個方向」</label>
+        <label><input type="checkbox" data-check="lesson-42-lookrotation"> 知道 LookRotation 是算出目標旋轉，不會直接修改 Transform</label>
+        <label><input type="checkbox" data-check="lesson-42-rotatetowards"> 能把 RotateTowards 三個參數翻成「現在、目標、這次最多轉多少」</label>
+        <label><input type="checkbox" data-check="lesson-42-speed"> 知道 20 * Time.deltaTime 在 Update 中可理解成每秒最多約旋轉 20 度</label>
+        <label><input type="checkbox" data-check="lesson-42-lookat"> 能用「直接轉頭 vs. 慢慢轉頭」解釋 LookAt 與 LookRotation + RotateTowards</label>
       </section>
 
       <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-12.html"><small>上一堂</small><strong>← ch3_12 Transform_2</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_14 Lerp_簡介 →</strong></a></nav>
