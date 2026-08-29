@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_26 Coroutine 簡介筆記，以 ELI5 方式整理 Coroutine 的用途、和 Invoke 的差異，以及 Coroutine 不是新執行緒的重要觀念。">
+  <title>ch3_26 Coroutine_簡介｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_26</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 55</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_26 Coroutine_簡介</h1>
+        <p>這堂先建立 Coroutine 的用途與限制：它可以拿來處理延遲、倒數與分階段執行，而且比前面的 Invoke 更有彈性；但 Coroutine 不是新的執行緒，仍然會佔用 Unity 主執行緒的工作量。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">COROUTINE · INVOKE · WAIT · MAIN THREAD</span><h2 id="lesson-map-title">做到一半先停一下，之後再回來繼續</h2><p>ELI5：Coroutine 可以先想成「同一個工作人員做事情做到一半，先把這件事放旁邊，去處理別的工作，等條件到了再回來接著做」。它不是多找一個人來幫忙。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#use"><strong>01</strong><span>能做什麼<small>延遲、倒數、分階段</small></span></a>
+          <a href="#invoke"><strong>02</strong><span>和 Invoke 的差異<small>流程更有彈性</small></span></a>
+          <a href="#thread"><strong>03</strong><span>不是新執行緒<small>仍在 Main Thread</small></span></a>
+          <a href="#load"><strong>04</strong><span>工作量仍有成本<small>塞太重照樣卡</small></span></a>
+          <a href="#model"><strong>05</strong><span>整堂模型<small>暫停 → 讓出 → 繼續</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="use"><span class="section-index">01</span><div>
+        <h2>Coroutine 的用途和 Invoke 有點接近，但可以寫成一段會暫停、再繼續的流程</h2>
+        <p>課程先把 Coroutine 和前面的 Invoke 放在一起比較。接下來會用 Coroutine 重做 Invoke 範例裡的「延遲幾秒後再執行」與「倒數計時」。</p>
+        <pre><code>現在開始流程
+    ↓
+做到某一步
+    ↓
+暫停 / 等待
+    ↓
+時間或條件到了
+    ↓
+從原本的位置繼續</code></pre>
+        <p>ELI5：不是把整件事拆成很多鬧鐘，而是讓同一段流程自己知道「這裡先等等，等等再往下做」。</p>
+        <div class="memory-line"><span>Coroutine</span><strong>可以把一段工作寫成「做到這裡先停，之後再接著做」的流程。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="invoke"><span class="section-index">02</span><div>
+        <h2>和 Invoke 相比，Coroutine 不只是在同一個 class 裡用方法名稱排程</h2>
+        <p>課程指出，前面的 Invoke 會受到「用同一類別裡的方法名稱呼叫」這種使用方式限制；Coroutine 沒有被綁死在這個模型裡，因此老師把它描述成比 Invoke 更強大、更有彈性。</p>
+        <pre><code>Invoke
+＝「Unity，幾秒後幫我叫這個方法」
+
+Coroutine
+＝「這整段流程先跑到這裡，等一下，再從這裡繼續」</code></pre>
+        <aside class="callout"><span class="callout-label">這堂先不進語法</span><p>字幕這堂只建立概念，沒有開始講 IEnumerator、yield return 或 StartCoroutine 的寫法；這些留到下一堂實作再整理。</p></aside>
+        <div class="memory-line"><span>和 Invoke 的差別</span><strong>Invoke 偏向排程方法；Coroutine 偏向控制一整段可暫停、可續跑的流程。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="thread"><span class="section-index">03</span><div>
+        <h2>最重要的警告：Coroutine 不是新的 Thread</h2>
+        <p>老師特別強調，Coroutine 仍然掛在 Unity 的主要執行緒上。它不會因為開始一個 Coroutine，就自動多出另一條執行緒或多一個 CPU 工作人員。</p>
+        <pre><code>真正新增 Thread：
+
+工作人員 A      工作人員 B
+   ↓               ↓
+各自處理工作      各自處理工作
+
+
+Coroutine：
+
+同一個工作人員
+   ↓
+做 A
+   ↓
+A 暫停
+   ↓
+去處理別的工作
+   ↓
+之後回來繼續 A</code></pre>
+        <p>ELI5：Coroutine 是同一個人重新安排工作順序，不是公司突然多請了一個員工。</p>
+        <div class="memory-line"><span>不是多執行緒</span><strong>Coroutine 只是讓流程暫停與續跑，不等於平行運算，也不是新執行緒。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="load"><span class="section-index">04</span><div>
+        <h2>Coroutine 裡塞很重的工作，主執行緒還是會被拖慢</h2>
+        <p>課程用主執行緒像一個很忙的工作人員來解釋：畫面、遊戲邏輯與其他工作本來就需要它處理。Coroutine 仍然在同一條主要執行緒上，所以如果 Coroutine 自己做了大量工作，負擔仍然會回到 Main Thread。</p>
+        <pre><code>Coroutine 工作量太大
+        ↓
+主執行緒工作變重
+        ↓
+其他遊戲工作也可能被影響
+        ↓
+畫面不順 / 延遲等問題</code></pre>
+        <p>所以 Coroutine 的價值是「安排流程與等待」，不是免費增加運算能力。</p>
+        <div class="memory-line"><span>效能觀念</span><strong>Coroutine 能安排工作，但不能把重工作 magically 移出主執行緒。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">05</span><div>
+        <h2>把整堂壓成這個模型</h2>
+        <pre><code>Coroutine
+＝ 可以暫停、等待、再繼續的流程
+
+用途
+＝ 延遲、倒數、分階段執行
+
+比 Invoke 彈性高
+＝ 不只是「幾秒後叫同 class 某個方法」
+
+但是：
+Coroutine ≠ Thread
+Coroutine ≠ 平行運算
+Coroutine ≠ 免費算力
+
+它仍然在 Unity Main Thread 上。</code></pre>
+        <p>五秒複習版：</p>
+        <pre><code>Coroutine
+＝ 做到一半先停
+＝ 讓出執行
+＝ 之後再繼續
+
+不是：
+「另外開一條執行緒幫我做」</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>Coroutine 是主執行緒裡可以暫停與續跑的流程控制工具，不是多執行緒。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-55-use"> 能把 Coroutine 解釋成「做到一半可以暫停，之後再繼續」</label>
+        <label><input type="checkbox" data-check="lesson-55-invoke"> 知道課程接下來會用 Coroutine 重做延遲與倒數範例</label>
+        <label><input type="checkbox" data-check="lesson-55-thread"> 能明確說出 Coroutine 不是新的執行緒</label>
+        <label><input type="checkbox" data-check="lesson-55-main-thread"> 知道 Coroutine 仍然掛在 Unity Main Thread 上</label>
+        <label><input type="checkbox" data-check="lesson-55-load"> 知道 Coroutine 裡做重工作仍可能拖慢主執行緒</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-25.html"><small>上一堂</small><strong>← ch3_25 Invoke_程式說明</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_27 Coroutine_程式說明1 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
