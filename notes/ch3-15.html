@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_15 Lerp 程式說明筆記，以直覺方式整理 Mathf.Lerp、Color.Lerp、Vector3.Lerp、Quaternion.Lerp 與 Time.deltaTime 的實際用法。">
+  <title>ch3_15 Lerp_程式說明｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_15</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 44</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_15 Lerp_程式說明</h1>
+        <p>上一堂說 Lerp 是「A 往 B 靠近一點」。這堂把同一個想法真的套到數字、顏色、位置和旋轉上。東西不同，玩法其實沒變。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">MATHF · COLOR · VECTOR3 · QUATERNION · LERP</span><h2 id="lesson-map-title">四種 Lerp，其實都在做同一件事</h2><p>先告訴 Unity「我現在在哪裡」，再告訴它「我要去哪裡」，最後給一個比例，Unity 就幫你找出這次應該走到哪。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#setup"><strong>01</strong><span>測試準備<small>Material 與目標旋轉</small></span></a>
+          <a href="#number"><strong>02</strong><span>Mathf.Lerp<small>數字往 100 靠近</small></span></a>
+          <a href="#color"><strong>03</strong><span>Color.Lerp<small>顏色慢慢變藍</small></span></a>
+          <a href="#position"><strong>04</strong><span>Vector3.Lerp<small>位置往目標靠近</small></span></a>
+          <a href="#rotation"><strong>05</strong><span>Quaternion.Lerp<small>旋轉往 180° 靠近</small></span></a>
+          <a href="#model"><strong>06</strong><span>共同模型<small>現在、目標、比例</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="setup"><span class="section-index">01</span><div>
+        <h2>先準備顏色和旋轉要用的東西</h2>
+        <pre><code>float lerpNumber = 0;
+Material materialComp = null;
+Quaternion euler;
+
+void Start()
+{
+    materialComp = GetComponent&lt;Renderer&gt;().material;
+    euler = Quaternion.Euler(new Vector3(0, 180, 0));
+}</code></pre>
+        <p><code>materialComp</code> 是等等要改顏色的材質；<code>euler</code> 則先存好一個「Y 軸轉到 180°」的目標旋轉。</p>
+        <div class="memory-line"><span>先準備</span><strong>顏色要有 Material；旋轉要先準備一個目標 Quaternion。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="number"><span class="section-index">02</span><div>
+        <h2>Mathf.Lerp：把數字一直往 100 拉</h2>
+        <pre><code>lerpNumber = Mathf.Lerp(lerpNumber, 100, 0.5f);
+Debug.Log(lerpNumber);</code></pre>
+        <p>把它想成有一條繩子，每次都把現在的數字往 100 拉一半：</p>
+        <pre><code>0
+↓ 拉剩下距離的一半
+50
+↓
+75
+↓
+87.5
+↓
+93.75
+↓
+...</code></pre>
+        <p>所以它不是每次固定加 10，也不是每次走固定距離。離 100 很遠時拉很多，越靠近 100，能拉的距離就越小。</p>
+        <p>課程後面也示範把固定的 <code>0.5f</code> 換成 <code>Time.deltaTime</code>，讓每一幀只靠近一小部分。</p>
+        <div class="memory-line"><span>Mathf.Lerp</span><strong>數字版：「我現在是多少？我要變多少？這次靠近幾成？」</strong></div>
+      </div></section>
+
+      <section class="note-section" id="color"><span class="section-index">03</span><div>
+        <h2>Color.Lerp：每一幀多混一點藍色</h2>
+        <pre><code>materialComp.color = Color.Lerp(
+    materialComp.color,
+    Color.blue,
+    Time.deltaTime
+);</code></pre>
+        <p>五歲版可以直接想成調顏料：</p>
+        <pre><code>現在的顏色
+    +
+偷偷混一點藍色
+    ↓
+新的顏色
+    ↓
+下一幀再混一點藍色
+    ↓
+越來越藍</code></pre>
+        <p>第一個參數是現在的顏色，第二個參數是目標顏色 <code>Color.blue</code>，第三個參數告訴它這次要往藍色靠多少。</p>
+        <div class="memory-line"><span>Color.Lerp</span><strong>不是「突然換色」，而是一直把現在的顏色往目標顏色混。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="position"><span class="section-index">04</span><div>
+        <h2>Vector3.Lerp：讓物件慢慢走向 (20, 0, 0)</h2>
+        <pre><code>transform.position = Vector3.Lerp(
+    transform.position,
+    new Vector3(20, 0, 0),
+    Time.deltaTime
+);</code></pre>
+        <p>這次 A 和 B 不再是數字，而是兩個位置：</p>
+        <pre><code>現在的位置 ●--------------------○ (20, 0, 0)
+            ↓ 每幀往右靠一點
+          ●------------------○
+             ↓
+             ●---------------○</code></pre>
+        <p>因為每一幀都拿「新的現在位置」重新 Lerp，所以一開始靠近得明顯，之後越靠近目標，剩下的距離越小。</p>
+        <div class="memory-line"><span>Vector3.Lerp</span><strong>把「數字往 100 靠」換成「位置往目標座標靠」，概念完全一樣。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="rotation"><span class="section-index">05</span><div>
+        <h2>Quaternion.Lerp：讓旋轉慢慢靠近 180°</h2>
+        <pre><code>transform.rotation = Quaternion.Lerp(
+    transform.rotation,
+    euler,
+    Time.deltaTime * 2
+);</code></pre>
+        <p><code>transform.rotation</code> 是現在的方向，<code>euler</code> 是 Start 裡先準備好的 Y 軸 180° 目標，最後的 <code>Time.deltaTime * 2</code> 則讓每幀靠近的比例比單純 <code>Time.deltaTime</code> 大一些。</p>
+        <pre><code>現在朝這邊 →
+       ↓ 每幀轉一點
+        ↘
+         ↓
+          ← 目標 180°</code></pre>
+        <p>課程把位置 Lerp 和旋轉 Lerp 同時開著，因此物件可以一邊移動、一邊轉向。</p>
+        <div class="memory-line"><span>Quaternion.Lerp</span><strong>旋轉也只是另一種 A → B：目前旋轉 → 目標旋轉。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">06</span><div>
+        <h2>不要背四套 API，只記同一個三格盒子</h2>
+        <pre><code>Lerp(現在, 目標, 這次靠近多少)
+
+Mathf.Lerp      → 數字
+Color.Lerp      → 顏色
+Vector3.Lerp    → 位置 / 向量
+Quaternion.Lerp→ 旋轉</code></pre>
+        <p>所以看到任何 Lerp，都先問三件事：</p>
+        <pre><code>1. 我現在是什麼？
+2. 我要變成什麼？
+3. 這次往目標靠多少？</code></pre>
+        <aside class="callout"><span class="callout-label">概念校正</span><p>像 <code>Vector3.Lerp(current, target, Time.deltaTime)</code> 這種「每幀把現在值再往目標拉一點」的寫法，會形成越來越慢的平滑逼近。它不是固定速度移動，也不要把 <code>Time.deltaTime</code> 理解成一加上去就自動變成完美的幀率無關運動。</p></aside>
+        <div class="memory-line"><span>這堂核心</span><strong>Lerp 的資料型別會變，但問題永遠是：現在 → 目標 → 取中間多少。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-44-mathf"> 能解釋 Mathf.Lerp(目前值, 100, 0.5f) 為什麼會得到 50、75、87.5...</label>
+        <label><input type="checkbox" data-check="lesson-44-color"> 知道 Color.Lerp 可以讓 Material 顏色逐步靠近 Color.blue</label>
+        <label><input type="checkbox" data-check="lesson-44-vector3"> 知道 Vector3.Lerp 可以讓 position 逐步靠近目標位置</label>
+        <label><input type="checkbox" data-check="lesson-44-quaternion"> 知道 Quaternion.Lerp 可以讓 rotation 逐步靠近目標旋轉</label>
+        <label><input type="checkbox" data-check="lesson-44-model"> 看到 Lerp 時會先找「現在、目標、比例」三個參數</label>
+        <label><input type="checkbox" data-check="lesson-44-speed"> 知道反覆 Lerp(current, target, Time.deltaTime) 是平滑逼近，不是固定速度</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-14.html"><small>上一堂</small><strong>← ch3_14 Lerp_簡介</strong></a><a class="next" href="../course.html"><small>下一堂</small><strong>ch3_16 碰撞器（Collision）→</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
