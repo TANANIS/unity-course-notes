@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unity 課程 ch3_28 Coroutine 程式說明2筆記，以 ELI5 方式整理 while 倒數、yield return WaitForSeconds、跨類別取得 IEnumerator 並交給 StartCoroutine 執行。">
+  <title>ch3_28 Coroutine_程式說明2｜Unity 課程筆記</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>課程筆記</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../course.html">課程目錄</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">課程首頁</a><span>/</span><a href="../course.html">Unity3D 遊戲設計使用 C#</a><span>/</span><span>ch3_28</span></nav>
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>LESSON 57</span><span class="complete-badge">已整理</span></div>
+        <h1>ch3_28 Coroutine_程式說明2</h1>
+        <p>這堂用 Coroutine 完成倒數計時，並刻意拆成兩個類別：一個類別提供倒數用的 IEnumerator，另一個類別取得那段 Coroutine，再交給 StartCoroutine 執行。倒數本身用 while 決定是否繼續，每一輪用 yield return new WaitForSeconds(1) 等待約一秒。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="lesson-map-title">
+        <div><span class="eyebrow">COROUTINE · WHILE · WAITFORSECONDS · CROSS CLASS</span><h2 id="lesson-map-title">只要還沒倒數完，就做一次、等一秒、再回來判斷</h2><p>ELI5：上一堂學的是「做到中間可以等」。這堂把等待塞進 while 裡，所以流程會變成：做一次 → 等一秒 → 回來檢查還要不要繼續。另一個類別只負責把這段流程拿來啟動。</p></div>
+        <nav class="lesson-outline" aria-label="本課快速導覽">
+          <a href="#two-classes"><strong>01</strong><span>兩個類別<small>一個提供流程，一個啟動</small></span></a>
+          <a href="#while"><strong>02</strong><span>while 倒數<small>count &gt; 0 才繼續</small></span></a>
+          <a href="#wait"><strong>03</strong><span>每輪等一秒<small>yield + WaitForSeconds</small></span></a>
+          <a href="#start"><strong>04</strong><span>跨類別啟動<small>把 IEnumerator 交給 StartCoroutine</small></span></a>
+          <a href="#invoke"><strong>05</strong><span>和 InvokeRepeating 比<small>取消 vs 條件結束</small></span></a>
+          <a href="#uses"><strong>06</strong><span>實際用途<small>怪物與障礙物生成</small></span></a>
+          <a href="#model"><strong>07</strong><span>整堂模型<small>做 → 等 → 判斷 → 重複</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="two-classes"><span class="section-index">01</span><div>
+        <h2>老師故意拆成兩個 class，示範 Coroutine 可以把別處提供的流程拿來執行</h2>
+        <p>這堂的範例不是把所有東西塞在同一個類別。課程把「倒數計時的 Coroutine」與「啟動 Coroutine」拆成兩個類別：一個專門提供倒數流程，另一個負責取得前者的元件並啟動它。</p>
+        <pre><code>倒數類別
+└─ 提供 Countdown() 這段 IEnumerator
+
+啟動類別
+└─ 取得倒數類別元件
+   ↓
+   取得 Countdown()
+   ↓
+   StartCoroutine(...)</code></pre>
+        <p>ELI5：A 不一定要自己寫倒數流程，它可以去 B 那裡拿一份「倒數工作流程」，再叫 Unity 開始跑。</p>
+        <aside class="callout"><span class="callout-label">字幕限制</span><p>字幕裡兩個實際類別名與方法名辨識不可靠，因此筆記只保留能確定的結構：一個類別負責倒數，另一個類別取得它並啟動 Coroutine。</p></aside>
+        <div class="memory-line"><span>兩個 class</span><strong>Coroutine 流程可以由另一個類別提供，再交給 StartCoroutine 執行。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="while"><span class="section-index">02</span><div>
+        <h2>while 決定「還要不要再跑下一輪」</h2>
+        <p>倒數方法本身會回傳 IEnumerator，裡面使用 while。課程的條件概念是：只要 count 還大於 0，就持續執行；當 count 變成 0，不再符合條件，while 就結束。</p>
+        <pre><code>IEnumerator Countdown()
+{
+    while (count &gt; 0)
+    {
+        // 顯示 / 處理目前的 count
+        count--;
+
+        yield return new WaitForSeconds(1);
+    }
+}</code></pre>
+        <p>上面的識別字是依字幕流程整理的等價示意，重點是課堂中的控制結構：</p>
+        <pre><code>10 &gt; 0 → 繼續
+9  &gt; 0 → 繼續
+8  &gt; 0 → 繼續
+...
+1  &gt; 0 → 繼續
+0  &gt; 0 → false
+        ↓
+while 結束</code></pre>
+        <div class="memory-line"><span>while</span><strong>它負責判斷這個 Coroutine 還要不要再跑下一輪。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="wait"><span class="section-index">03</span><div>
+        <h2>每跑完一輪就 yield 一秒，所以倒數看起來是一秒跳一次</h2>
+        <p>while 每跑完一次，課程會讓 Coroutine 暫停約一秒：</p>
+        <pre><code>yield return new WaitForSeconds(1);</code></pre>
+        <p>所以實際流程不是瞬間把數字全部減完，而是：</p>
+        <pre><code>顯示 10 / count--
+        ↓
+等約 1 秒
+        ↓
+回到 while 判斷
+        ↓
+顯示 9 / count--
+        ↓
+等約 1 秒
+        ↓
+再回去判斷
+        ↓
+...</code></pre>
+        <p>老師也用「跑十次就會累積十次等待」來說明：每一輪都有自己的等待時間。</p>
+        <div class="memory-line"><span>yield + while</span><strong>while 控制重複次數；yield return WaitForSeconds(1) 控制每輪之間的時間。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="start"><span class="section-index">04</span><div>
+        <h2>啟動端：取得另一個元件，再把它提供的 IEnumerator 交給 StartCoroutine</h2>
+        <p>另一個類別的工作很單純：先取得提供倒數流程的元件，接著呼叫它的方法取得 IEnumerator，最後用 StartCoroutine 開始執行。</p>
+        <pre><code>// 等價示意
+StartCoroutine(otherComponent.Countdown());</code></pre>
+        <pre><code>啟動類別
+   ↓
+找到倒數元件
+   ↓
+取得 Countdown() 的 IEnumerator
+   ↓
+StartCoroutine(...)
+   ↓
+Unity 開始跑那段倒數流程</code></pre>
+        <p>這就是課程這堂刻意拆成兩個類別要展示的重點。</p>
+        <div class="memory-line"><span>跨類別</span><strong>啟動 Coroutine 的類別，不必就是定義那段 IEnumerator 的類別。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="invoke"><span class="section-index">05</span><div>
+        <h2>和 InvokeRepeating 比：一個靠取消，一個可以靠 while 條件自然結束</h2>
+        <p>前面的 InvokeRepeating 倒數範例會持續重複呼叫，所以課程在倒數到 0 時用 CancelInvoke 停止。這堂 Coroutine 則把「是否繼續」直接寫進 while 條件裡。</p>
+        <pre><code>InvokeRepeating
+＝ 固定一直呼叫
+→ 到停止條件時 CancelInvoke
+
+Coroutine + while
+＝ 條件成立才進下一輪
+→ 條件 false，while 自然結束</code></pre>
+        <p>這不是說哪一個永遠比較好，而是這堂讓你看到 Coroutine 可以把「重複、等待、結束條件」一起寫在同一段流程裡。</p>
+        <div class="memory-line"><span>差異</span><strong>Coroutine 可以直接把停止條件寫成流程的一部分。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="uses"><span class="section-index">06</span><div>
+        <h2>老師最後舉的用途：固定間隔生成怪物或障礙物</h2>
+        <p>課程最後提到 Coroutine 很常用，除了倒數，也可以拿來控制怪物、障礙物等內容的週期性生成。</p>
+        <pre><code>生成一次
+   ↓
+等待一段時間
+   ↓
+條件還成立？
+   ↓ Yes
+再生成一次
+   ↓
+再等待...</code></pre>
+        <p>這堂沒有提供完整生怪程式碼，所以筆記只保留老師提到的使用方向，不另外補實作。</p>
+        <div class="memory-line"><span>用途</span><strong>Coroutine 很適合描述「做一次 → 等一下 → 再做一次」的遊戲流程。</strong></div>
+      </div></section>
+
+      <section class="note-section" id="model"><span class="section-index">07</span><div>
+        <h2>Coroutine 三堂課，到這裡可以合成完整模型</h2>
+        <pre><code>IEnumerator
+＝ 一段可以暫停的流程
+
+StartCoroutine
+＝ 啟動那段流程
+
+yield return
+＝ 先停在這裡
+
+WaitForSeconds(1)
+＝ 每輪等待約一秒
+
+while
+＝ 決定還要不要再跑下一輪
+
+跨類別
+＝ 別的元件提供 IEnumerator
+   也可以交給 StartCoroutine 執行</code></pre>
+        <p>五秒複習版：</p>
+        <pre><code>while (還沒結束)
+{
+    做一次
+    ↓
+    yield 等一下
+    ↓
+    回來重新判斷
+}
+
+整體：
+做 → 等 → 判斷 → 重複 → 結束</code></pre>
+        <div class="memory-line"><span>這堂核心</span><strong>while 管「要不要繼續」，yield 管「多久後再繼續」；Coroutine 因此能把重複、等待與結束寫成一條完整流程。</strong></div>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>完成檢查</h2>
+        <label><input type="checkbox" data-check="lesson-57-classes"> 能說明為什麼範例故意拆成兩個類別</label>
+        <label><input type="checkbox" data-check="lesson-57-while"> 知道 while(count &gt; 0) 決定倒數是否繼續</label>
+        <label><input type="checkbox" data-check="lesson-57-wait"> 知道每輪 yield return WaitForSeconds(1) 會等待約一秒</label>
+        <label><input type="checkbox" data-check="lesson-57-start"> 能說明另一個 class 的 IEnumerator 如何交給 StartCoroutine 執行</label>
+        <label><input type="checkbox" data-check="lesson-57-invoke"> 能比較 InvokeRepeating + CancelInvoke 與 Coroutine + while 的停止方式</label>
+        <label><input type="checkbox" data-check="lesson-57-use"> 記得老師提到怪物與障礙物生成也是 Coroutine 的使用方向</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="課程筆記導覽"><a href="ch3-27.html"><small>上一堂</small><strong>← ch3_27 Coroutine_程式說明1</strong></a><a class="next" href="../course.html"><small>本章完成</small><strong>回課程目錄 →</strong></a></nav>
+    </article>
+  </main>
+</body>
+</html>
