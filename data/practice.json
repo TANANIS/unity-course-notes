@@ -25,6 +25,14 @@
       "status": "概念整理",
       "description": "從 ch2_15 的 struct 延伸，整理 struct 與 class 的值／參考差異、Vector2/3/4 的分量、Vector3 為什麼適合 struct，以及 Vector 與 Transform 移動之間的真正關係。",
       "url": "practice/struct-and-vector3.html"
+    },
+    {
+      "id": "practice-04",
+      "title": "Project 視窗：Assets 與 Packages",
+      "category": "Unity 專案結構",
+      "status": "概念整理",
+      "description": "從 Universal 3D 空白專案出發，理解 Project 視窗中 Assets、Packages、Settings 與常見套件的用途，建立小型專案的基本資料夾判斷框架。",
+      "url": "practice/project-window-assets-packages.html"
     }
   ]
 }
