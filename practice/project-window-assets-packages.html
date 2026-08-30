@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自主練習：從 Universal 3D 空白專案出發，理解 Project 視窗中 Assets、Packages 與常見預設資料夾的用途。">
+  <title>Project 視窗：Assets 與 Packages｜自主練習｜Unity Notes</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../lesson-layout.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳至主要內容</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="回到首頁"><span class="brand-mark" aria-hidden="true">U</span><span><strong>Unity Notes</strong><small>自主練習</small></span></a>
+    <nav class="top-actions" aria-label="網站操作"><a class="text-link" href="../practice.html">自主練習</a><a class="text-link" href="../course.html">目前課程</a><button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" aria-pressed="false">◐</button></nav>
+  </header>
+
+  <main id="main-content" class="note-shell">
+    <nav class="breadcrumb" aria-label="麵包屑"><a href="../index.html">首頁</a><span>/</span><a href="../practice.html">自主練習</a><span>/</span><span>Project 視窗：Assets 與 Packages</span></nav>
+
+    <article class="lesson-note">
+      <header class="note-header">
+        <div class="lesson-kicker"><span>SELF PRACTICE 04</span><span class="complete-badge">概念整理</span></div>
+        <h1>Project 視窗：Assets 與 Packages</h1>
+        <p>建立 Universal 3D 空白專案後，先辨認 Project 視窗裡哪些是自己的專案內容、哪些是 Unity 或套件提供的功能，避免把所有資料夾當成同一類東西。</p>
+      </header>
+
+      <section class="lesson-intro" aria-labelledby="practice-map-title">
+        <div>
+          <span class="eyebrow">PROJECT WINDOW</span>
+          <h2 id="practice-map-title">先建立最重要的二分法</h2>
+          <p><strong>Assets 是專案內容；Packages 是專案依賴的套件。</strong> 平常開發主要會在 Assets 中建立與整理自己的場景、腳本、Prefab、材質與美術資產。</p>
+        </div>
+        <nav class="lesson-outline" aria-label="本篇快速導覽">
+          <a href="#assets"><strong>01</strong><span>Assets<small>自己的專案內容</small></span></a>
+          <a href="#packages"><strong>02</strong><span>Packages<small>Unity 與第三方套件</small></span></a>
+          <a href="#template"><strong>03</strong><span>Universal 3D<small>預設會看到什麼</small></span></a>
+          <a href="#folders"><strong>04</strong><span>資料夾習慣<small>先簡單就好</small></span></a>
+          <a href="#rules"><strong>05</strong><span>操作原則<small>不要亂改 Package</small></span></a>
+        </nav>
+      </section>
+
+      <section class="note-section" id="assets"><span class="section-index">01</span><div>
+        <h2>Assets：自己的專案內容</h2>
+        <p>Assets 是 Unity 專案中最常直接工作的區域。放進這裡的場景、腳本、Prefab、材質、圖片、模型、音效等，會被 Unity 匯入並成為 Project 中可使用的資產。</p>
+        <div class="memory-line"><span>核心記憶</span><strong>Assets = 我正在做的遊戲內容。</strong></div>
+        <dl class="term-list">
+          <div><dt>Scenes</dt><dd>存放場景檔（.unity）。目前的測試場景或正式關卡都會放在這裡。</dd></div>
+          <div><dt>Scripts</dt><dd>存放自己的 C# Script。Universal 3D 預設不一定會建立，通常由自己新增。</dd></div>
+          <div><dt>Prefabs</dt><dd>存放可重複使用的 GameObject 樣板。</dd></div>
+          <div><dt>Materials</dt><dd>存放材質資產，控制物件表面如何被渲染。</dd></div>
+          <div><dt>Art</dt><dd>可用來集中模型、貼圖、Sprite 等美術內容；是否再細分視專案規模而定。</dd></div>
+        </dl>
+      </div></section>
+
+      <section class="note-section" id="packages"><span class="section-index">02</span><div>
+        <h2>Packages：專案依賴的功能套件</h2>
+        <p>Packages 顯示目前專案正在使用的 Unity Package。它們不是一般遊戲素材，而是替專案提供額外 API、Editor 工具或系統功能。</p>
+        <div class="memory-line"><span>核心記憶</span><strong>Packages = 這個專案依賴哪些工具與功能。</strong></div>
+        <dl class="term-list">
+          <div><dt>AI Navigation</dt><dd>NavMesh 與 AI 導航相關功能。</dd></div>
+          <div><dt>Input System</dt><dd>Unity 新版輸入系統，處理鍵盤、滑鼠、手把與其他輸入裝置。</dd></div>
+          <div><dt>Burst</dt><dd>將特定 C# 工作最佳化編譯，常與 Jobs / DOTS 生態一起使用。</dd></div>
+          <div><dt>Collections</dt><dd>提供高效能容器與資料結構，常見於 Jobs / DOTS 工作流程。</dd></div>
+          <div><dt>Mathematics</dt><dd>Unity 的數學型別與函式套件，例如 float3 等。</dd></div>
+          <div><dt>JetBrains Rider Editor</dt><dd>Unity 與 Rider IDE 的整合支援。</dd></div>
+          <div><dt>Newtonsoft Json</dt><dd>常用的 JSON 序列化與反序列化工具。</dd></div>
+        </dl>
+        <aside class="callout"><span class="callout-label">管理 Package</span><p>新增、移除或檢查套件時，優先使用 <strong>Window → Package Manager</strong>，而不是直接進入 Packages 內容中亂改原始檔。</p></aside>
+      </div></section>
+
+      <section class="note-section" id="template"><span class="section-index">03</span><div>
+        <h2>Universal 3D 模板中的預設內容</h2>
+        <p>使用 Universal 3D 建立專案時，Unity 會替專案配置 URP，因此除了 Scenes 之外，通常還會看到一些由模板建立的設定與教學內容。</p>
+        <dl class="term-list">
+          <div><dt>Settings</dt><dd>通常包含 URP Renderer、Render Pipeline Asset 等渲染設定。這些不是垃圾檔，剛開始不要隨意刪除。</dd></div>
+          <div><dt>TutorialInfo</dt><dd>模板或 Welcome / 教學功能使用的內容，可能包含 Icons 與 Scripts。通常不是遊戲核心的一部分。</dd></div>
+        </dl>
+        <p>是否刪除模板附帶內容，不需要在剛開專案時急著處理。先確認用途與引用關係，再決定是否清理。</p>
+      </div></section>
+
+      <section class="note-section" id="folders"><span class="section-index">04</span><div>
+        <h2>小型練習專案先用簡單目錄</h2>
+        <p>剛開始不需要先設計一套巨大企業級目錄。只要讓內容有基本分區，就足夠支撐目前的驗收練習。</p>
+        <pre><code>Assets
+├─ Scenes
+├─ Scripts
+├─ Prefabs
+├─ Materials
+└─ Art</code></pre>
+        <p>目錄結構應該隨專案需求成長。若現在根本還沒有動畫、音效、Shader，就沒有必要先建立二十個空資料夾假裝專案很成熟。</p>
+      </div></section>
+
+      <section class="note-section" id="rules"><span class="section-index">05</span><div>
+        <h2>目前階段的操作原則</h2>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>自己的內容放 Assets</strong><p>場景、腳本、Prefab、材質、美術資產都以 Assets 為主要工作區。</p></div></li>
+          <li><span>02</span><div><strong>Packages 當作依賴理解</strong><p>知道它們提供什麼功能即可，不需要把每個 Package 內容讀完。</p></div></li>
+          <li><span>03</span><div><strong>透過 Package Manager 管理套件</strong><p>新增或移除功能時使用 Unity 正式提供的管理介面。</p></div></li>
+          <li><span>04</span><div><strong>不要為整理而整理</strong><p>先讓 Project 可以被理解、可以繼續開發，再視需求擴充目錄結構。</p></div></li>
+        </ol>
+      </div></section>
+
+      <section class="checklist compact-checklist"><h2>這次自主練習想確認的事</h2>
+        <label><input type="checkbox" data-check="practice-project-assets"> 能說明 Assets 與 Packages 的根本差異</label>
+        <label><input type="checkbox" data-check="practice-project-settings"> 知道 Universal 3D 的 Settings 不是一般遊戲內容</label>
+        <label><input type="checkbox" data-check="practice-project-package-manager"> 知道套件應優先透過 Package Manager 管理</label>
+        <label><input type="checkbox" data-check="practice-project-folders"> 能替小型 Unity 專案建立基本的 Assets 目錄結構</label>
+      </section>
+
+      <nav class="note-pagination" aria-label="自主練習導覽"><a href="../practice.html"><small>返回</small><strong>← 自主練習</strong></a><a class="next" href="../practice.html"><small>目前</small><strong>繼續實作 →</strong></a></nav>
+    </article>
+  </main>
+
+  <footer class="global-footer"><p>把 Project 視窗看懂，之後才不會把自己的內容、模板設定與套件依賴混成一鍋。</p></footer>
+</body>
+</html>
